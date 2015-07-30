@@ -8,7 +8,7 @@ case class LatticeNode(term:Term, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
 }
 
-class Lattice(length:Int, connectingCostDict:Array[Array[Short]]) {
+class Lattice(length:Int, connectingCostDict:Array[Array[Int]]) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
   var bos = new LatticeNode(new Term("BOS", 0, 0, 0, null), 0)
@@ -47,9 +47,9 @@ class Lattice(length:Int, connectingCostDict:Array[Array[Short]]) {
 
 
   def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
-    var minTotalCost:Int = 9999
+    var minTotalCost:Int = 99999999
     endingNodes.foreach{ endingNode =>
-      val connectingCost:Short = connectingCostDict(endingNode.term.rightId)(startingNode.term.leftId)
+      val connectingCost:Int = connectingCostDict(endingNode.term.rightId)(startingNode.term.leftId)
       val totalCost = endingNode.accumulatedCost + endingNode.term.cost + connectingCost
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost
