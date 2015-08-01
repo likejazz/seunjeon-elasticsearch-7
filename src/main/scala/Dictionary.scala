@@ -1,13 +1,21 @@
 import dict.DoubleArrayTrie
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 
 import scala.io.Source
 
 case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
-                cost:Short,
-                feature:Seq[String])
+                cost:Int,
+                feature:Seq[String]) {
+}
+
+object Term {
+  def createUnknownTerm(surface:String): Term = {
+    new Term(surface, -1, -1, 9999*surface.length, Seq[String]())
+  }
+}
 
 class Dictionary {
   var indexedLexiconDict: IndexedSeq[(String, Seq[Term])] = null
@@ -26,6 +34,7 @@ class Dictionary {
                costDict: Iterator[String]): Unit = {
     loadLexiconDict(lexiconDict)
     loadCostDict(costDict)
+    this
   }
 
   def loadLexiconDict(lexiconDictIter: Iterator[String]): Unit = {
@@ -49,23 +58,49 @@ class Dictionary {
       foreach(v => costDict(v(0))(v(1)) = v(2))
   }
 
+  // TODO: 꼭 리팩토링하자
   def parseText(text:String): Seq[Term] = {
-    val lattice = new Lattice(text.length, costDict)
-    text.split(" ").foreach { eojeol =>
-      for (textIdx <- 0 to eojeol.length) {
-        trie.commonPrefixSearch(eojeol, textIdx, 0, 0).foreach{ i =>
-          val terms:(String, Seq[Term]) = indexedLexiconDict.get(i)
-          terms._2.foreach(term => lattice.add(term, textIdx, textIdx + term.surface.length-1))
-        }
-      }
-    }
+    val lattice = buildLattice(text.split(" "))
     lattice.getBestPath
+  }
+
+  def buildLattice(eojeols: Array[String]): Lattice = {
+    val lattice = new Lattice(eojeols.foldLeft(0)(_ + _.length), costDict)
+    var eojeolOffset = 0
+    eojeols.foreach { eojeol: String =>
+      for (textIdx <- 0 to eojeol.length) {
+        val termOffset = eojeolOffset + textIdx
+        val suffixSurface = eojeol.substring(textIdx)
+        // 자바(1)/자바(2), 자바스크립트
+        val indexedLexiconDictPositions = trie.commonPrefixSearch(suffixSurface, 0, 0, 0)
+        val searchedTerms = indexedLexiconDictPositions.flatMap { indexLexiconDictPos =>
+          indexedLexiconDict.get(indexLexiconDictPos)._2
+        }
+        addTermsToLattice(lattice, searchedTerms, termOffset)
+        val termLengthSet = searchedTerms.map(term => term.surface.length).toSet
+
+        // TODO: insert unknown-word to lattice
+        // 자, 자바스, 자바스크, 자바스크립
+        val unkownTerms = (1 to suffixSurface.length).toSet.diff(termLengthSet).
+          map( i => Term.createUnknownTerm(suffixSurface.substring(0, i)))
+        unkownTerms.foreach(unknownTerm =>
+          lattice.add(unknownTerm, termOffset, termOffset + unknownTerm.surface.length - 1))
+      }
+      eojeolOffset += eojeol.length
+    }
+    lattice
+  }
+
+  def addTermsToLattice(lattice: Lattice, terms: Seq[Term], termOffset: Int): Unit = {
+    terms.foreach { term =>
+      lattice.add(term, termOffset, termOffset + term.surface.length - 1)
+    }
   }
 }
 
+// csv 사전 로딩
 object Dictionary {
   val LEXICON_DICT_PATH = "/home/parallels/Downloads/mecab-ko-dic-1.6.1-20140814/NNG.csv"
   val COST_DICT_PATH = "/home/parallels/Downloads/mecab-ko-dic-1.6.1-20140814/matrix.def"
   //val path = "/home/parallels/Downloads/test.csv"
-
 }

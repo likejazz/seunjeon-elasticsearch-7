@@ -49,7 +49,11 @@ class Lattice(length:Int, connectingCostDict:Array[Array[Int]]) {
   def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
     var minTotalCost:Int = 99999999
     endingNodes.foreach{ endingNode =>
-      val connectingCost:Int = connectingCostDict(endingNode.term.rightId)(startingNode.term.leftId)
+      val connectingCost:Int = if (endingNode.term.rightId == -1 || startingNode.term.leftId == -1) {
+        0
+      } else {
+        connectingCostDict(endingNode.term.rightId)(startingNode.term.leftId)
+      }
       val totalCost = endingNode.accumulatedCost + endingNode.term.cost + connectingCost
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost
