@@ -3,6 +3,7 @@ import scala.io.Source
 /**
  * Created by parallels on 8/2/15.
  */
+// TODO: serialize
 class ConnectionCostDict {
   var costDict: Array[Array[Int]] = null//Array.ofDim[Short](1, 2)
 

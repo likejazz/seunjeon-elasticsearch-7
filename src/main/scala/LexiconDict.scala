@@ -1,4 +1,4 @@
-import java.io.File
+import java.io._
 import scala.collection.JavaConversions._
 
 import dict.DoubleArrayTrie
@@ -6,6 +6,7 @@ import dict.DoubleArrayTrie
 import scala.io.Source
 import scala.util.matching.Regex
 
+// TODO: serialize
 class LexiconDict {
   var indexedDict: IndexedSeq[(String, Seq[Term])] = null
   var trie: DoubleArrayTrie = null
@@ -44,4 +45,19 @@ class LexiconDict {
     }
   }
 
+  def save(): Unit = {
+    val store = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("store.dat"), 16384))
+    store.writeObject(indexedDict)
+    store.close
+    trie.save("trie.dat")
+  }
+
+  def open(): Unit = {
+    val in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("store.dat"), 16384))
+    indexedDict = in.readObject().asInstanceOf[IndexedSeq[(String, Seq[Term])]]
+    in.close()
+
+    trie = new DoubleArrayTrie
+    trie.open("trie.dat")
+  }
 }

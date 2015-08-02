@@ -1,6 +1,6 @@
 import org.scalatest._
 
-class DictionarySuite extends FunSuite with BeforeAndAfter {
+class TaggerSuite extends FunSuite with BeforeAndAfter {
   var dictionary:Tagger = null
   var lexicons: String = null
   var connectionCosts: String = null
