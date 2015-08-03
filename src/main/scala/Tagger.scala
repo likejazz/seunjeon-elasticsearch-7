@@ -8,7 +8,7 @@ case class Term(surface:String,
 
 object Term {
   def createUnknownTerm(surface:String): Term = {
-    new Term(surface, -1, -1, 9999*surface.length, Seq[String]())
+    new Term(surface, -1, -1, 500*surface.length, Seq[String]("UNKNOWN"))
   }
 }
 

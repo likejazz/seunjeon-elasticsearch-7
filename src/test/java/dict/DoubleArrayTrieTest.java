@@ -19,9 +19,10 @@ public class DoubleArrayTrieTest {
         keywords.add("가가");
         keywords.add("감자");
         keywords.add("고구마");
+        keywords.add("고구마");
         keywords.add("양파");
 
-        int [] values = {1, 2, 3, 4};
+        int [] values = {1, 2, 3, 4, 5};
 
         DoubleArrayTrie da = new DoubleArrayTrie();
 //        da.build(keywords);

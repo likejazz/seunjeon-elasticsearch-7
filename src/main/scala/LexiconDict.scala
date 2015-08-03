@@ -1,8 +1,8 @@
 import java.io._
-import scala.collection.JavaConversions._
 
 import dict.DoubleArrayTrie
 
+import scala.collection.JavaConversions._
 import scala.io.Source
 import scala.util.matching.Regex
 
@@ -46,6 +46,11 @@ class LexiconDict {
   }
 
   def save(): Unit = {
+    // TODO: serialize
+    // size/head/body
+    // size: keyword count
+    // head: pointer of byte-string placed in body
+    // body: length/byte-string
     val store = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("store.dat"), 16384))
     store.writeObject(indexedDict)
     store.close

@@ -29,7 +29,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("sentence") {
-    val result = dictionary.parseText("안녕하세요. 형태소분석기입니다.").map(t => t.surface + ":" + t.feature).mkString(",")
+    val result = dictionary.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
     println(result)
   }
 
