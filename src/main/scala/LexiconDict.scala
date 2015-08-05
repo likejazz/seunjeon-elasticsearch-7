@@ -1,5 +1,6 @@
 import java.io._
 
+import com.google.common.collect.ImmutableList
 import dict.DoubleArrayTrie
 
 import scala.collection.JavaConversions._
@@ -8,7 +9,7 @@ import scala.util.matching.Regex
 
 // TODO: serialize
 class LexiconDict {
-  var indexedDict: IndexedSeq[(String, Seq[Term])] = null
+  var surfaceIndexDict: ImmutableList[(String, ImmutableList[Term])] = null
   var trie: DoubleArrayTrie = null
 
   def loadFromPath(dir: String): Unit = {
@@ -27,39 +28,42 @@ class LexiconDict {
     // TODO: exeption
     val terms: Iterator[Term] = iterator.map {line: String =>
       val l = line.split(",")
-      new Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size - 1))
+      new Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size - 1).mkString(","))
     }
     build(terms.toIndexedSeq)
   }
 
   private def build(terms: Seq[Term]): Unit = {
-    indexedDict = terms.groupBy(t => t.surface).toIndexedSeq.sortBy(t => t._1)
+    val surfaceIndexDictTemp = terms.groupBy(t => t.surface).toIndexedSeq.sortBy(t => t._1)
+    val surfaceIndexDictTemp2 = surfaceIndexDictTemp.map{it =>
+      val surface = it._1
+      val terms = ImmutableList.copyOf[Term](it._2)
+      (surface, terms)
+    }
+    surfaceIndexDict = ImmutableList.copyOf[(String, ImmutableList[Term])](surfaceIndexDictTemp2)
+
     trie = new DoubleArrayTrie
-    trie.build(indexedDict.map(t => t._1))
+    trie.build(surfaceIndexDict.map(t => t._1))
   }
 
   def prefixSearch(keyword: String): Seq[Term] = {
     val indexedLexiconDictPositions = trie.commonPrefixSearch(keyword, 0, 0, 0)
     indexedLexiconDictPositions.flatMap { indexLexiconDictPos =>
-      indexedDict.get(indexLexiconDictPos)._2
+      surfaceIndexDict.get(indexLexiconDictPos)._2
     }
   }
 
   def save(): Unit = {
-    // TODO: serialize
-    // size/head/body
-    // size: keyword count
-    // head: pointer of byte-string placed in body
-    // body: length/byte-string
-    val store = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("store.dat"), 16384))
-    store.writeObject(indexedDict)
+    // Term 에서 surface 를 빼면 serialize deserialze하는데 더 빠를 것 같음.
+    val store = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("store.dat"), 1024*16))
+    store.writeObject(surfaceIndexDict)
     store.close
     trie.save("trie.dat")
   }
 
   def open(): Unit = {
-    val in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("store.dat"), 16384))
-    indexedDict = in.readObject().asInstanceOf[IndexedSeq[(String, Seq[Term])]]
+    val in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("store.dat"), 1024*16))
+    surfaceIndexDict = in.readObject().asInstanceOf[ImmutableList[(String, ImmutableList[Term])]]
     in.close()
 
     trie = new DoubleArrayTrie

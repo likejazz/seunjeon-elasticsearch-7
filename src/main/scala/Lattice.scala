@@ -12,8 +12,8 @@ case class LatticeNode(term:Term, var accumulatedCost:Int = 9999) {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, Array("BOS")), 0)
-  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, Array("EOS")))
+  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0)
+  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"))
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos

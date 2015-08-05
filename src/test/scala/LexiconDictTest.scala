@@ -2,6 +2,7 @@ import org.scalatest.FunSuite
 
 
 class LexiconDictTest extends FunSuite {
+
   test("save and open") {
     val lexicons =
       """감자,1,2,100,NNG,*,F,감자,*,*,*,*,*
