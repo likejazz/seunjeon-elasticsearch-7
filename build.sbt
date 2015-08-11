@@ -1,6 +1,8 @@
+organization := "org.bitbucket.eunjeon"
+
 name := "seunjeon"
 
-version := "1.0"
+version := "0.1.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
@@ -11,6 +13,10 @@ libraryDependencies ++= Seq(
 )
 
 publishMavenStyle := true
+
+publishArtifact in Test := false
+
+isSnapshot := true
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
@@ -40,6 +46,11 @@ pomExtra := (
       <id>budditao</id>
       <name>yungho yu</name>
       <url>https://www.facebook.com/yungho.yu</url>
+    </developer>
+    <developer>
+      <id>bibreen</id>
+      <name>Yong-woon Lee</name>
+      <url>https://twitter.com/bibreen</url>
     </developer>
   </developers>
   <issueManagement>
