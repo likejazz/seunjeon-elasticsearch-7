@@ -5,6 +5,10 @@ import java.io._
 import scala.io.Source
 
 
+object ConnectionCostDict {
+  val resourceConnDicFile = "/connection_cost.dat"
+}
+
 class ConnectionCostDict {
   var costDict: Array[Int] = null
 
@@ -47,7 +51,7 @@ class ConnectionCostDict {
   }
 
   def load(): ConnectionCostDict = {
-    val inputStream = getClass.getResourceAsStream("/connection_cost.dat")
+    val inputStream = getClass.getResourceAsStream(ConnectionCostDict.resourceConnDicFile)
     load(inputStream)
     this
   }

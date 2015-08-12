@@ -24,9 +24,8 @@ case class Term(surface:String,
 }
 
 object LexiconDict {
-  val lexiconPath = "lexicon.dat"
-  val lexiconTriePath = "lexicon_trie.dat"
-
+  val lexiconResourceFile = "/lexicon.dat"
+  val lexiconTrieResourceFile = "/lexicon_trie.dat"
 }
 
 class LexiconDict {
@@ -79,8 +78,8 @@ class LexiconDict {
     }
   }
 
-  def save(lexiconPath: String = LexiconDict.lexiconPath,
-           lexiconTriePath: String = LexiconDict.lexiconTriePath): Unit = {
+  def save(lexiconPath: String = LexiconDict.lexiconResourceFile,
+           lexiconTriePath: String = LexiconDict.lexiconTrieResourceFile): Unit = {
     // TODO: Term 에서 surface 를 빼면 serialize deserialze하는데 더 빠를 것 같음.
     val store = new ObjectOutputStream(
       new BufferedOutputStream(
@@ -91,21 +90,21 @@ class LexiconDict {
   }
 
   def load(): LexiconDict = {
-    val inputStream = getClass.getResourceAsStream("/lexicon.dat")
-    val lexiconTrieFile = new File(getClass.getResource("/lexicon_trie.dat").getFile())
+    val lexiconStream = getClass.getResourceAsStream(LexiconDict.lexiconResourceFile)
+    val lexiconTrieStream = getClass.getResourceAsStream(LexiconDict.lexiconTrieResourceFile)
 
-    load(inputStream, lexiconTrieFile)
+    load(lexiconStream, lexiconTrieStream)
     this
   }
 
-  private def load(lexiconStream: InputStream, lexiconTrieFile: File): Unit = {
+  private def load(lexiconStream: InputStream, lexiconTrieStream: InputStream): Unit = {
     val in = new ObjectInputStream(
       new BufferedInputStream(lexiconStream, 1024*16))
     surfaceIndexDict = in.readObject().asInstanceOf[ImmutableList[(String, ImmutableList[Term])]]
     in.close()
 
     trie = new DoubleArrayTrie
-    trie.open(lexiconTrieFile)
+    trie.open(lexiconTrieStream)
 
   }
 }

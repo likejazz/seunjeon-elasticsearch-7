@@ -4,17 +4,21 @@ import org.scalatest.FunSuite
 
 
 class BuildDict extends FunSuite {
+  val resourcePath = "src/main/resources"
 
   test("compile lexicon dictionary") {
     val lexiconDict = new LexiconDict
     lexiconDict.loadFromCsvFiles("mecab-ko-dic")
-    lexiconDict.save("src/main/resources/lexicon.dat", "src/main/resources/lexicon_trie.dat")
+    lexiconDict.save(
+      resourcePath  + LexiconDict.lexiconResourceFile,
+      resourcePath + LexiconDict.lexiconTrieResourceFile)
   }
 
   test("compile connection-cost dictionary") {
     val connectionCostDict = new ConnectionCostDict
     connectionCostDict.loadFromFile("mecab-ko-dic/matrix.def")
-    connectionCostDict.save("src/main/resources/connection_cost.dat")
+    connectionCostDict.save(
+      resourcePath + ConnectionCostDict.resourceConnDicFile)
   }
 
 }

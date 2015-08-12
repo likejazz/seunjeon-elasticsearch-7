@@ -15,14 +15,7 @@
  */
 package org.bitbucket.eunjeon.seunjeon;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -291,6 +284,33 @@ public class DoubleArrayTrie {
         key = null;
 
         return error_;
+    }
+
+    public void open(InputStream inputStream) throws IOException {
+        List<Integer> baseList = new ArrayList<>();
+        List<Integer> checkList = new ArrayList<>();
+
+        DataInputStream is = null;
+        try {
+            is = new DataInputStream(new BufferedInputStream(inputStream, BUF_SIZE));
+            for (int i = 0; is.available() > 0; i++) {
+                baseList.add(is.readInt());
+                checkList.add(is.readInt());
+            }
+        } finally {
+            if (is != null)
+                is.close();
+        }
+        base = IntegerToInt(baseList);
+        check = IntegerToInt(checkList);
+    }
+
+    private int[] IntegerToInt(List<Integer> from) {
+        int[] to = new int[from.size()];
+        for (int i=0; i< from.size(); i++) {
+            to[i] = from.get(i);
+        }
+        return to;
     }
 
     public void open(File file) throws IOException {
