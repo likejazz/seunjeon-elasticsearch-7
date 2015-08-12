@@ -2,9 +2,17 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
+import com.google.common.collect.ImmutableList
+
+import scala.collection.JavaConversions._
+import scala.collection.mutable
+import scala.io.Source
+import scala.util.control.NonFatal
+import scala.util.matching.Regex
+
 object Term {
   def createUnknownTerm(surface:String): Term = {
-    new Term(surface, -1, -1, 500*surface.length, "UNKNOWN")
+    new Term(surface, -1, -1, 4000*surface.length, "UNKNOWN")
   }
 }
 
@@ -14,14 +22,6 @@ case class Term(surface:String,
                 cost:Int,
                 feature:String) {
 }
-
-import com.google.common.collect.ImmutableList
-
-import scala.collection.JavaConversions._
-import scala.collection.mutable
-import scala.io.Source
-import scala.util.control.NonFatal
-import scala.util.matching.Regex
 
 object LexiconDict {
   val lexiconPath = "lexicon.dat"
