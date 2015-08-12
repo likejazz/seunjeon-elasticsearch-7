@@ -5,20 +5,20 @@ import org.scalatest.FunSuite
 
 class ConnectionCostDictTest extends FunSuite {
 
-  test("ConnectionCost load performance") {
+  ignore("ConnectionCost load performance") {
     {
       val startTime = System.nanoTime()
       val connectionCostDict = new ConnectionCostDict
-      connectionCostDict.loadFromFile("/home/parallels/Downloads/mecab-ko-dic-1.6.1-20140814/matrix.def")
+      connectionCostDict.loadFromFile("mecab-ko-dic/matrix.def")
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime) / 1000000
       println(s"$elapsedTime ms")
-      connectionCostDict.save("src/main/resources/connection_cost.dat")
+      connectionCostDict.save("src/test/resources/connection_cost.dat")
     }
     {
       val startTime = System.nanoTime()
       val connectionCostDict = new ConnectionCostDict
-      connectionCostDict.open()
+      connectionCostDict.load()
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime) / 1000000
       println(s"$elapsedTime ms")

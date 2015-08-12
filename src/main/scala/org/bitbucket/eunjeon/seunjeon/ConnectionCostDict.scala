@@ -46,12 +46,13 @@ class ConnectionCostDict {
 
   }
 
-  def open(): Unit = {
+  def load(): ConnectionCostDict = {
     val inputStream = getClass.getResourceAsStream("/connection_cost.dat")
-    open(inputStream)
+    load(inputStream)
+    this
   }
 
-  def open(inputStream: InputStream): Unit = {
+  private def load(inputStream: InputStream): Unit = {
     val in = new ObjectInputStream(
       new BufferedInputStream(inputStream, 1024*16))
     costDict = in.readObject().asInstanceOf[Array[Int]]

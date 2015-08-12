@@ -1,14 +1,25 @@
 package org.bitbucket.eunjeon.seunjeon
 
-import java.io.File
-import java.io._
+import java.io.{File, _}
+
+object Term {
+  def createUnknownTerm(surface:String): Term = {
+    new Term(surface, -1, -1, 500*surface.length, "UNKNOWN")
+  }
+}
+
+case class Term(surface:String,
+                leftId:Short,
+                rightId:Short,
+                cost:Int,
+                feature:String) {
+}
 
 import com.google.common.collect.ImmutableList
-import org.bitbucket.eunjeon.seunjeon.DoubleArrayTrie
 
 import scala.collection.JavaConversions._
-import scala.io.Source
 import scala.collection.mutable
+import scala.io.Source
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
@@ -22,7 +33,7 @@ class LexiconDict {
   var surfaceIndexDict: ImmutableList[(String, ImmutableList[Term])] = null
   var trie: DoubleArrayTrie = null
 
-  def loadFromPath(dir: String): Unit = {
+  def loadFromCsvFiles(dir: String): Unit = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
     val totalIter:Iterator[String] = files.map(f => Source.fromFile(f, "utf-8").getLines()).reduceLeft(_ ++ _)
@@ -79,16 +90,15 @@ class LexiconDict {
     trie.save(lexiconTriePath)
   }
 
-  def open(): Unit = {
-
+  def load(): LexiconDict = {
     val inputStream = getClass.getResourceAsStream("/lexicon.dat")
     val lexiconTrieFile = new File(getClass.getResource("/lexicon_trie.dat").getFile())
 
-    open(inputStream, lexiconTrieFile)
-
+    load(inputStream, lexiconTrieFile)
+    this
   }
 
-  def open(lexiconStream: InputStream, lexiconTrieFile: File): Unit = {
+  private def load(lexiconStream: InputStream, lexiconTrieFile: File): Unit = {
     val in = new ObjectInputStream(
       new BufferedInputStream(lexiconStream, 1024*16))
     surfaceIndexDict = in.readObject().asInstanceOf[ImmutableList[(String, ImmutableList[Term])]]

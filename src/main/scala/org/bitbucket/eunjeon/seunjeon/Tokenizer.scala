@@ -1,16 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
-class Parser {
-  var lexiconDict: LexiconDict = null
-  var connectionCostDict: ConnectionCostDict = null
-  
-  def setLexiconDict(dict: LexiconDict): Unit = {
-    lexiconDict = dict
-  }
-
-  def setConnectionCostDict(dict: ConnectionCostDict): Unit = {
-    connectionCostDict = dict
-  }
+class Tokenizer (lexiconDict: LexiconDict = null,
+                 connectionCostDict: ConnectionCostDict = null) {
 
   // TODO: 꼭 리팩토링하자
   def parseText(text:String): Seq[Term] = {

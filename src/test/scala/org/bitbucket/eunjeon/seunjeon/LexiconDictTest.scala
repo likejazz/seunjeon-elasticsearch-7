@@ -17,25 +17,25 @@ class LexiconDictTest extends FunSuite {
     saveLexiconDict.save()
 
     val openLexiconDict = new LexiconDict
-    openLexiconDict.open()
+    openLexiconDict.load()
     val result = openLexiconDict.prefixSearch("고구마")
     result.foreach(t => println(t.surface))
   }
 
-  test("org.bitbucket.org.eunjeon.seunjeon.LexiconDict load performance") {
+  ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict load performance") {
     {
       val startTime = System.nanoTime()
       val lexiconDict = new LexiconDict
-      lexiconDict.loadFromPath("/home/parallels/Downloads/mecab-ko-dic-1.6.1-20140814")
+      lexiconDict.loadFromCsvFiles("mecab-ko-dic")
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime)
       println(s"$elapsedTime ns")
-      lexiconDict.save()
+      lexiconDict.save("src/test/resources/lexicon.dat", "src/test/resources/lexicon_trie.dat")
     }
     {
       val startTime = System.nanoTime()
       val lexiconDict = new LexiconDict
-      lexiconDict.open()
+      lexiconDict.load()
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime)
       println(s"$elapsedTime ns")

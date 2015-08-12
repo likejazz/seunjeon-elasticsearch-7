@@ -7,7 +7,7 @@ class BuildDict extends FunSuite {
 
   test("compile lexicon dictionary") {
     val lexiconDict = new LexiconDict
-    lexiconDict.loadFromPath("mecab-ko-dic")
+    lexiconDict.loadFromCsvFiles("mecab-ko-dic")
     lexiconDict.save("src/main/resources/lexicon.dat", "src/main/resources/lexicon_trie.dat")
   }
 
