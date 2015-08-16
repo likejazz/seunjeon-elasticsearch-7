@@ -1,0 +1,686 @@
+
+==  C0 Controls and Basic Latin (로마자 기본) ==
+ 
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0000
+|style="font-size:75%;"|NUL||style="font-size:75%;"|SOH||style="font-size:75%;"|STX||style="font-size:75%;"|ETX||style="font-size:75%;"|EOT||style="font-size:75%;"|ENQ||style="font-size:75%;"|ACK||style="font-size:75%;"|BEL||style="font-size:75%;"|BS||style="font-size:75%;"|HT||style="font-size:75%;"|LF||style="font-size:75%;"|VT||style="font-size:75%;"|FF||style="font-size:75%;"|CR||style="font-size:75%;"|SO||style="font-size:75%;"|SI
+|- 0010
+|style="font-size:75%;"|DLE||style="font-size:75%;"|DC1||style="font-size:75%;"|DC2||style="font-size:75%;"|DC3||style="font-size:75%;"|DC4||style="font-size:75%;"|NAK||style="font-size:75%;"|SYN||style="font-size:75%;"|ETB||style="font-size:75%;"|CAN||style="font-size:75%;"|EM||style="font-size:75%;"|SUB||style="font-size:75%;"|ESC||style="font-size:75%;"|FS||style="font-size:75%;"|GS||style="font-size:75%;"|RS||style="font-size:75%;"|US
+|- 0020
+|&#32;||&#33;||&#34;||&#35;||&#36;||&#37;||&#38;||&#39;||&#40;||&#41;||&#42;||&#43;||&#44;||&#45;||&#46;||&#47;
+|- 0030
+|0||1||2||3||4||5||6||7||8||9||&#58;||&#59;||&#60;||&#61;||&#62;||&#63;
+|- 0040
+|&#64;||A||B||C||D||E||F||G||H||I||J||K||L||M||N||O
+|- 0050
+|P||Q||R||S||T||U||V||W||X||Y||Z||&#91;|| ||&#93;||&#94;||&#95;
+|- 0060
+|&#96;||a||b||c||d||e||f||g||h||i||j||k||l||m||n||o
+|- 0070
+|p||q||r||s||t||u||v||w||x||y||z||&#123;|| DEL
+|}
+
+==  C1 Controls and Latin-1 Supplement (라틴-1 보충) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0080
+|style="font-size:75%;"|PAD||style="font-size:75%;"|HOP||style="font-size:75%;"|BPH||style="font-size:75%;"|NBH||style="font-size:75%;"|IND||style="font-size:75%;"|NEL||style="font-size:75%;"|SSA||style="font-size:75%;"|ESA||style="font-size:75%;"|HTS||style="font-size:75%;"|HTJ||style="font-size:75%;"|VTS||style="font-size:75%;"|PLD||style="font-size:75%;"|PLU||style="font-size:75%;"|RI||style="font-size:75%;"|SS2||style="font-size:75%;"|SS3
+|- 0090
+|style="font-size:75%;"|DCS||style="font-size:75%;"|PU1||style="font-size:75%;"|PU2||style="font-size:75%;"|STS||style="font-size:75%;"|CCH||style="font-size:75%;"|MW||style="font-size:75%;"|SPA||style="font-size:75%;"|EPA||style="font-size:75%;"|SOS||style="font-size:75%;"|SGCI||style="font-size:75%;"|SCI||style="font-size:75%;"|CSI||style="font-size:75%;"|ST||style="font-size:75%;"|OSC||style="font-size:75%;"|PM||style="font-size:75%;"|APC
+|- 00A0
+|style="font-size:75%;"|NBSP||&#161;||&#162;||&#163;||&#164;||&#165;|| ||&#167;||&#168;||&#169;||&#170;||&#171;||&#172;||style="font-size:75%;"|SHY||&#174;||&#175;
+|- 00B0
+|&#176;||&#177;||&#178;||&#179;||&#180;||&#181;||&#182;||&#183;||&#184;||&#185;||&#186;||&#187;||&#188;||&#189;||&#190;||&#191;
+|- 00C0
+|&#192;||&#193;||&#194;||&#195;||&#196;||&#197;||&#198;||&#199;||&#200;||&#201;||&#202;||&#203;||&#204;||&#205;||&#206;||&#207;
+|- 00D0
+|&#208;||&#209;||&#210;||&#211;||&#212;||&#213;||&#214;||&#215;||&#216;||&#217;||&#218;||&#219;||&#220;||&#221;||&#222;||&#223;
+|- 00E0
+|&#224;||&#225;||&#226;||&#227;||&#228;||&#229;||&#230;||&#231;||&#232;||&#233;||&#234;||&#235;||&#236;||&#237;||&#238;||&#239;
+|- 00F0
+|&#240;||&#241;||&#242;||&#243;||&#244;||&#245;||&#246;||&#247;||&#248;||&#249;||&#250;||&#251;||&#252;||&#253;||&#254;||&#255;
+|}
+
+==  Latin Extended-A (로마자 확장 A) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0100
+|Ā||ā||Ă||ă||Ą||ą||Ć||ć||Ĉ||ĉ||Ċ||ċ||Č||č||Ď||ď
+|- 0110
+|Đ||đ||Ē||ē||Ĕ||ĕ||Ė||ė||Ę||ę||Ě||ě||Ĝ||ĝ||Ğ||ğ
+|- 0120
+|Ġ||ġ||Ģ||ģ||Ĥ||ĥ||Ħ||ħ||Ĩ||ĩ||Ī||ī||Ĭ||ĭ||Į||į
+|- 0130
+|İ||ı||Ĳ||ĳ||Ĵ||ĵ||Ķ||ķ||ĸ||Ĺ||ĺ||Ļ||ļ||Ľ||ľ||Ŀ
+|- 0140
+|ŀ||Ł||ł||Ń||ń||Ņ||ņ||Ň||ň||ŉ||Ŋ||ŋ||Ō||ō||Ŏ||ŏ
+|- 0150
+|Ő||ő||Œ||œ||Ŕ||ŕ||Ŗ||ŗ||Ř||ř||Ś||ś||Ŝ||ŝ||Ş||ş
+|- 0160
+|Š||š||Ţ||ţ||Ť||ť||Ŧ||ŧ||Ũ||ũ||Ū||ū||Ŭ||ŭ||Ů||ů
+|- 0170
+|Ű||ű||Ų||ų||Ŵ||ŵ||Ŷ||ŷ||Ÿ||Ź||ź||Ż||ż||Ž||ž||style="background:rgb(255,20,147);"|ſ
+|}
+
+==  Latin Extended-B (로마자 확장 B) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0180
+|ƀ||Ɓ||Ƃ||ƃ||Ƅ||ƅ||Ɔ||Ƈ||ƈ||Ɖ||Ɗ||Ƌ||ƌ||ƍ||Ǝ||Ə
+|- 0190
+|Ɛ||Ƒ||ƒ||Ɠ||Ɣ||ƕ||Ɩ||Ɨ||Ƙ||ƙ||ƚ||ƛ||Ɯ||Ɲ||ƞ||Ɵ
+|- 01A0
+|Ơ||ơ||Ƣ||ƣ||Ƥ||ƥ||Ʀ||Ƨ||ƨ||Ʃ||ƪ||ƫ||Ƭ||ƭ||Ʈ||Ư
+|- 01B0
+|ư||Ʊ||Ʋ||Ƴ||ƴ||Ƶ||ƶ||Ʒ||Ƹ||ƹ||ƺ||ƻ||Ƽ||ƽ||ƾ||ƿ
+|- 01C0
+|ǀ||ǁ||ǂ||ǃ||Ǆ||ǅ||ǆ||Ǉ||ǈ||ǉ||Ǌ||ǋ||ǌ||Ǎ||ǎ||Ǐ
+|- 01D0
+|ǐ||Ǒ||ǒ||Ǔ||ǔ||Ǖ||ǖ||Ǘ||ǘ||Ǚ||ǚ||Ǜ||ǜ||ǝ||Ǟ||ǟ
+|- 01E0
+|Ǡ||ǡ||Ǣ||ǣ||Ǥ||ǥ||Ǧ||ǧ||Ǩ||ǩ||Ǫ||ǫ||Ǭ||ǭ||Ǯ||ǯ
+|-style="background:rgb(255,20,147);" 01F0
+|style="background:rgb(255,192,203);"|ǰ||Ǳ||ǲ||ǳ||Ǵ||ǵ||style="background:rgb(250,128,114);"|Ƕ||style="background:rgb(250,128,114);"|Ƿ||style="background:rgb(250,128,114);"|Ǹ||style="background:rgb(250,128,114);"|ǹ||Ǻ||ǻ||Ǽ||ǽ||Ǿ||ǿ
+|-style="background:#333;color:#fff;" F
+|-style="background:rgb(255,20,147);" 0200
+|Ȁ||ȁ||Ȃ||ȃ||Ȅ||ȅ||Ȇ||ȇ||Ȉ||ȉ||Ȋ||ȋ||Ȍ||ȍ||Ȏ||ȏ
+|-style="background:rgb(255,20,147);" 0210
+|Ȑ||ȑ||Ȓ||ȓ||Ȕ||ȕ||Ȗ||ȗ||style="background:rgb(250,128,114);"|Ș||style="background:rgb(250,128,114);"|ș||style="background:rgb(250,128,114);"|Ț||style="background:rgb(250,128,114);"|ț||style="background:rgb(250,128,114);"|Ȝ||style="background:rgb(250,128,114);"|ȝ||style="background:rgb(250,128,114);"|Ȟ||style="background:rgb(250,128,114);"|ȟ
+|-style="background:rgb(250,128,114);" 0220
+|style="background:rgb(240,24,24);"|Ƞ||style="background:rgb(244,164,96);"|ȡ||Ȣ||ȣ||Ȥ||ȥ||Ȧ||ȧ||Ȩ||ȩ||Ȫ||ȫ||Ȭ||ȭ||Ȯ||ȯ
+|-style="background:rgb(210,105,30);" 0230
+|style="background:rgb(250,128,114);"|Ȱ||style="background:rgb(250,128,114);"|ȱ||style="background:rgb(250,128,114);"|Ȳ||style="background:rgb(250,128,114);"|ȳ||style="background:rgb(244,164,96);"|ȴ||style="background:rgb(244,164,96);"|ȵ||style="background:rgb(244,164,96);"|ȶ||ȷ||ȸ||ȹ||Ⱥ||Ȼ||ȼ||Ƚ||Ⱦ||ȿ
+|-style="background:rgb(135,206,235);" 0240
+|style="background:rgb(210,105,30);"|ɀ||style="background:rgb(210,105,30);"|Ɂ||ɂ||Ƀ||Ʉ||Ʌ||Ɇ||ɇ||Ɉ||ɉ||Ɋ||ɋ||Ɍ||ɍ||Ɏ||ɏ
+|}
+
+==  IPA Extensions (IPA 확장) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0250
+|ɐ||ɑ||ɒ||ɓ||ɔ||ɕ||ɖ||ɗ||ɘ||ə||ɚ||ɛ||ɜ||ɝ||ɞ||ɟ
+|- 0260
+|ɠ||ɡ||ɢ||ɣ||ɤ||ɥ||ɦ||ɧ||ɨ||ɩ||ɪ||ɫ||ɬ||ɭ||ɮ||ɯ
+|- 0270
+|ɰ||ɱ||ɲ||ɳ||ɴ||ɵ||ɶ||ɷ||ɸ||ɹ||ɺ||ɻ||ɼ||ɽ||ɾ||ɿ
+|- 0280
+|ʀ||ʁ||ʂ||ʃ||ʄ||ʅ||ʆ||ʇ||ʈ||ʉ||ʊ||ʋ||ʌ||ʍ||ʎ||ʏ
+|- 0290
+|ʐ||ʑ||ʒ||ʓ||ʔ||ʕ||ʖ||ʗ||ʘ||ʙ||ʚ||ʛ||ʜ||ʝ||ʞ||ʟ
+|- 02A0
+|ʠ||ʡ||ʢ||ʣ||ʤ||ʥ||ʦ||ʧ||ʨ||style="background:rgb(250,128,114);"|ʩ||style="background:rgb(250,128,114);"|ʪ||style="background:rgb(250,128,114);"|ʫ||style="background:rgb(250,128,114);"|ʬ||style="background:rgb(250,128,114);"|ʭ||style="background:rgb(244,164,96);"|ʮ||style="background:rgb(244,164,96);"|ʯ
+|}
+
+==  Spacing Modifier Letters (수식 문자 ) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 02B0
+|ʰ||ʱ||ʲ||ʳ||ʴ||ʵ||ʶ||ʷ||ʸ||ʹ||ʺ||ʻ||ʼ||ʽ||ʾ||ʿ
+|- 02C0
+|ˀ||ˁ||˂||˃||˄||˅||ˆ||ˇ||ˈ||ˉ||ˊ||ˋ||ˌ||ˍ||ˎ||ˏ
+|- 02D0
+|ː||ˑ||˒||˓||˔||˕||˖||˗||˘||˙||˚||˛||˜||˝||˞||style="background:rgb(250,128,114);"|˟
+|- 02E0
+|ˠ||ˡ||ˢ||ˣ||ˤ||˥||˦||˧||˨||˩||style="background:rgb(250,128,114);"|˪||style="background:rgb(250,128,114);"|˫||style="background:rgb(250,128,114);"|ˬ||style="background:rgb(250,128,114);"|˭||style="background:rgb(250,128,114);"|ˮ||style="background:rgb(244,164,96);"|˯
+|-style="background:rgb(244,164,96);" 02F0
+|˰||˱||˲||˳||˴||˵||˶||˷||˸||˹||˺||˻||˼||˽||˾||˿
+|}
+
+==  Combining Diacritical Marks (조합용 발음 구별 부호) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0300
+|&#768;||&#769;||&#770;||&#771;||&#772;||&#773;||&#774;||&#775;||&#776;||&#777;||&#778;||&#779;||&#780;||&#781;||&#782;||&#783;
+|- 0310
+|&#784;||&#785;||&#786;||&#787;||&#788;||&#789;||&#790;||&#791;||&#792;||&#793;||&#794;||&#795;||&#796;||&#797;||&#798;||&#799;
+|- 0320
+|&#800;||&#801;||&#802;||&#803;||&#804;||&#805;||&#806;||&#807;||&#808;||&#809;||&#810;||&#811;||&#812;||&#813;||&#814;||&#815;
+|- 0330
+|&#816;||&#817;||&#818;||&#819;||&#820;||&#821;||&#822;||&#823;||&#824;||&#825;||&#826;||&#827;||&#828;||&#829;||&#830;||&#831;
+|-style="background:rgb(250,128,114);" 0340
+|style="background:rgb(255,192,203);"|&#832;||style="background:rgb(255,192,203);"|&#833;||style="background:rgb(255,20,147);"|&#834;||style="background:rgb(255,20,147);"|&#835;||style="background:rgb(255,20,147);"|&#836;||style="background:rgb(255,20,147);"|&#837;||&#838;||&#839;||&#840;||&#841;||&#842;||&#843;||&#844;||&#845;||&#846;||style="background:rgb(240,24,24);font-size:75%"|CGJ
+|-style="background:rgb(244,164,96);" 0350
+|&#848;||&#849;||&#850;||&#851;||&#852;||&#853;||&#854;||&#855;||style="background:rgb(210,105,30);"|&#856;||style="background:rgb(210,105,30);"|&#857;||style="background:rgb(210,105,30);"|&#858;||style="background:rgb(210,105,30);"|&#859;||style="background:rgb(210,105,30);"|&#860;||&#861;||&#862;||&#863;
+|-style="background:rgb(240,24,24);" 0360
+|style="background:rgb(255,20,147);"|&#864;||style="background:rgb(255,20,147);"|&#865;||style="background:rgb(250,128,114);"|&#866;||&#867;||&#868;||&#869;||&#870;||&#871;||&#872;||&#873;||&#874;||&#875;||&#876;||&#877;||&#878;||&#879;
+|}
+
+==  Greek and Coptic (그리스와 콥트 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="el"
+|-style="background:#333;color:#fff;" F
+|-style="background:rgb(110,165,210);" 0370
+|Ͱ||ͱ||Ͳ||ͳ||style="background:rgb(255,20,147);"|&#884;||style="background:rgb(255,20,147);"|͵||Ͷ||ͷ||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(255,20,147);"|ͺ||style="background:rgb(135,206,235);"|ͻ||style="background:rgb(135,206,235);"|ͼ||style="background:rgb(135,206,235);"|ͽ||style="background:rgb(255,20,147);"|&#894;||style="background:rgb(234,145,0);"|&#x037f;
+|- 0380
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||΄||΅||Ά||style="background:rgb(255,20,147);"|&#903;||Έ||Ή||Ί||style="background:#666;"| ||Ό||style="background:#666;"| ||Ύ||Ώ
+|- 0390
+|ΐ||Α||Β||Γ||Δ||Ε||Ζ||Η||Θ||Ι||Κ||Λ||Μ||Ν||Ξ||Ο
+|- 03A0
+|Π||Ρ||style="background:#666;"| ||Σ||Τ||Υ||Φ||Χ||Ψ||Ω||Ϊ||Ϋ||ά||έ||ή||ί
+|- 03B0
+|ΰ||α||β||γ||δ||ε||ζ||η||θ||ι||κ||λ||μ||ν||ξ||ο
+|- 03C0
+|π||ρ||ς||σ||τ||υ||φ||χ||ψ||ω||ϊ||ϋ||ό||ύ||ώ||style="background:rgb(110,165,210);"|Ϗ
+|- 03D0
+|ϐ||ϑ||ϒ||ϓ||ϔ||ϕ||ϖ||style="background:rgb(250,128,114);"|ϗ||style="background:rgb(240,24,24);"|Ϙ||style="background:rgb(240,24,24);"|ϙ||Ϛ||style="background:rgb(250,128,114);"|ϛ||Ϝ||style="background:rgb(250,128,114);"|ϝ||Ϟ||style="background:rgb(250,128,114);"|ϟ
+|- 03E0
+|Ϡ||style="background:rgb(250,128,114);"|ϡ||Ϣ||ϣ||Ϥ||ϥ||Ϧ||ϧ||Ϩ||ϩ||Ϫ||ϫ||Ϭ||ϭ||Ϯ||ϯ
+|-style="background:rgb(244,164,96);" 03F0
+|style="background:rgb(255,192,203);"|ϰ||style="background:rgb(255,192,203);"|ϱ||style="background:rgb(255,192,203);"|ϲ||style="background:rgb(255, 20, 147);"|ϳ||style="background:rgb(220,20,60)"|ϴ||style="background:rgb(220,20,60)"|ϵ||style="background:rgb(240,24,24);"|϶||Ϸ||ϸ||Ϲ||Ϻ||ϻ||style="background:rgb(210,105,30);"|ϼ||style="background:rgb(210,105,30);"|Ͻ||style="background:rgb(210,105,30);"|Ͼ||style="background:rgb(210,105,30);"|Ͽ
+|}
+
+==  Cyrillic (키릴 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="ru"
+|-style="background:#333;color:#fff;" F
+|- 0400
+|style="background:rgb(250,128,114);"|Ѐ||Ё||Ђ||Ѓ||Є||Ѕ||І||Ї||Ј||Љ||Њ||Ћ||Ќ||style="background:rgb(250,128,114);"|Ѝ||Ў||Џ
+|- 0410
+|А||Б||В||Г||Д||Е||Ж||З||И||Й||К||Л||М||Н||О||П
+|- 0420
+|Р||С||Т||У||Ф||Х||Ц||Ч||Ш||Щ||Ъ||Ы||Ь||Э||Ю||Я
+|- 0430
+|а||б||в||г||д||е||ж||з||и||й||к||л||м||н||о||п
+|- 0440
+|р||с||т||у||ф||х||ц||ч||ш||щ||ъ||ы||ь||э||ю||я
+|- 0450
+|style="background:rgb(250,128,114);"|ѐ||ё||ђ||ѓ||є||ѕ||і||ї||ј||љ||њ||ћ||ќ||style="background:rgb(250,128,114);"|ѝ||ў||џ
+|- 0460
+|Ѡ||ѡ||Ѣ||ѣ||Ѥ||ѥ||Ѧ||ѧ||Ѩ||ѩ||Ѫ||ѫ||Ѭ||ѭ||Ѯ||ѯ
+|- 0470
+|Ѱ||ѱ||Ѳ||ѳ||Ѵ||ѵ||Ѷ||ѷ||Ѹ||ѹ||Ѻ||ѻ||Ѽ||ѽ||Ѿ||ѿ
+|- 0480
+|Ҁ||ҁ||҂||&#1155;||&#1156;||&#1157;||&#1158;||style="background:rgb(110,165,210);"|&#1159;||style="background:rgb(250,128,114);"|&#1160;||style="background:rgb(250,128,114);"|&#1161;||style="background:rgb(240,24,24);"|Ҋ||style="background:rgb(240,24,24);"|ҋ||style="background:rgb(250,128,114);"|Ҍ||style="background:rgb(250,128,114);"|ҍ||style="background:rgb(250,128,114);"|Ҏ||style="background:rgb(250,128,114);"|ҏ
+|- 0490
+|Ґ||ґ||Ғ||ғ||Ҕ||ҕ||Җ||җ||Ҙ||ҙ||Қ||қ||Ҝ||ҝ||Ҟ||ҟ
+|- 04A0
+|Ҡ||ҡ||Ң||ң||Ҥ||ҥ||Ҧ||ҧ||Ҩ||ҩ||Ҫ||ҫ||Ҭ||ҭ||Ү||ү
+|- 04B0
+|Ұ||ұ||Ҳ||ҳ||Ҵ||ҵ||Ҷ||ҷ||Ҹ||ҹ||Һ||һ||Ҽ||ҽ||Ҿ||ҿ
+|- 04C0
+|Ӏ||Ӂ||ӂ||Ӄ||ӄ||style="background:rgb(240,24,24);"|Ӆ||style="background:rgb(240,24,24);"|ӆ||Ӈ||ӈ||style="background:rgb(240,24,24);"|Ӊ||style="background:rgb(240,24,24);"|ӊ||Ӌ||ӌ||style="background:rgb(240,24,24);"|Ӎ||style="background:rgb(240,24,24);"|ӎ||style="background:rgb(135,206,235);"|ӏ
+|-style="background:rgb(255,20,147);" 04D0
+|Ӑ||ӑ||Ӓ||ӓ||Ӕ||ӕ||Ӗ||ӗ||Ә||ә||Ӛ||ӛ||Ӝ||ӝ||Ӟ||ӟ
+|-style="background:rgb(255,20,147);" 04E0
+|Ӡ||ӡ||Ӣ||ӣ||Ӥ||ӥ||Ӧ||ӧ||Ө||ө||Ӫ||ӫ||style="background:rgb(250,128,114);"|Ӭ||style="background:rgb(250,128,114);"|ӭ||Ӯ||ӯ
+|-style="background:rgb(255,20,147);" 04F0
+|Ӱ||ӱ||Ӳ||ӳ||Ӵ||ӵ||style="background:rgb(210,105,30);"|Ӷ||style="background:rgb(210,105,30);"|ӷ||Ӹ||ӹ||style="background:rgb(135,206,235);"|Ӻ||style="background:rgb(135,206,235);"|ӻ||style="background:rgb(135,206,235);"|Ӽ||style="background:rgb(135,206,235);"|ӽ||style="background:rgb(135,206,235);"|Ӿ||style="background:rgb(135,206,235);"|ӿ
+|}
+
+==  Cyrillic Supplement (키릴 문자 보충) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(240, 24, 24); text-align: center; border-collapse:collapse;" lang="ru"
+|-style="background:#333;color:#fff;" F
+|- 0500
+|Ԁ||ԁ||Ԃ||ԃ||Ԅ||ԅ||Ԇ||ԇ||Ԉ||ԉ||Ԋ||ԋ||Ԍ||ԍ||Ԏ||ԏ
+|-style="background:rgb(110,165,210);" 0510
+|style="background:rgb(135,206,235);"|Ԑ||style="background:rgb(135,206,235);"|ԑ||style="background:rgb(135,206,235);"|Ԓ||style="background:rgb(135,206,235);"|ԓ||Ԕ||ԕ||Ԗ||ԗ||Ԙ||ԙ||Ԛ||ԛ||Ԝ||ԝ||Ԟ||ԟ
+|-style="background:rgb(234,145,0);" 0520
+|style="background:rgb(110,165,210);"|Ԡ||style="background:rgb(110,165,210);"|ԡ||style="background:rgb(110,165,210);"|Ԣ||style="background:rgb(110,165,210);"|ԣ||style="background:rgb(90,90,147);"|&#x0524;||style="background:rgb(90,90,147);"|&#x0525;||style="background:rgb(212,230,114);"|&#x0526;||style="background:rgb(212,230,114);"|&#x0527;||&#x0528;||&#x0529;||&#x052a;||&#x052b;||&#x052c;||&#x052d;||&#x052e;||&#x052f; 
+|}
+
+==  Armenian (아르메니아 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="hy"
+|-style="background:#333;color:#fff;" F
+|- 0530
+|style="background:#666;"| ||Ա||Բ||Գ||Դ||Ե||Զ||Է||Ը||Թ||Ժ||Ի||Լ||Խ||Ծ||Կ
+|- 0540
+|Հ||Ձ||Ղ||Ճ||Մ||Յ||Ն||Շ||Ո||Չ||Պ||Ջ||Ռ||Ս||Վ||Տ
+|- 0550
+|Ր||Ց||Ւ||Փ||Ք||Օ||Ֆ||style="background:#666;"| ||style="background:#666;"| ||ՙ||՚||՛||՜||՝||՞||՟
+|- 0560
+|style="background:#666;"| ||ա||բ||գ||դ||ե||զ||է||ը||թ||ժ||ի||լ||խ||ծ||կ
+|- 0570
+|հ||ձ||ղ||ճ||մ||յ||ն||շ||ո||չ||պ||ջ||ռ||ս||վ||տ
+|- 0580
+|ր||ց||ւ||փ||ք||օ||ֆ||style="background:rgb(255,20,147);"|և||style="background:#666;"| ||։||style="background:rgb(250,128,114);"|֊||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(234,145,0);"|&#x058d;||style="background:rgb(234,145,0);"|&#x058e;||style="background:rgb(190,220,70);"|&#x058F;
+|}
+
+==  Hebrew (히브리 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="he"
+|-style="background:#333;color:#fff;" F
+|-style="background:rgb(173,255,47);" 0590
+|style="background:#666;"| ||&#1425;||&#1426;||&#1427;||&#1428;||&#1429;||&#1430;||&#1431;||&#1432;||&#1433;||&#1434;||&#1435;||&#1436;||&#1437;||&#1438;||&#1439;
+|-style="background:rgb(173,255,47);" 05A0
+|&#1440;||&#1441;||style="background:rgb(210,105,30);"|&#1442;||&#1443;||&#1444;||&#1445;||&#1446;||&#1447;||&#1448;||&#1449;||&#1450;||&#1451;||&#1452;||&#1453;||&#1454;||&#1455;
+|- 05B0
+|&#1456;||&#1457;||&#1458;||&#1459;||&#1460;||&#1461;||&#1462;||&#1463;||&#1464;||&#1465;||style="background:rgb(135,206,235);"|&#1466;||&#1467;||&#1468;||&#1469;||&#1470;||&#1471;
+|- 05C0
+|&#1472;||&#1473;||&#1474;||&#1475;||style="background:rgb(173,255,47);"|&#1476;||style="background:rgb(210,105,30);"|&#1477;||style="background:rgb(210,105,30);"|&#1478;||style="background:rgb(210,105,30);"|&#1479;||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|- 05D0
+|&#1488;||&#1489;||&#1490;||&#1491;||&#1492;||&#1493;||&#1494;||&#1495;||&#1496;||&#1497;||&#1498;||&#1499;||&#1500;||&#1501;||&#1502;||&#1503;
+|- 05E0
+|&#1504;||&#1505;||&#1506;||&#1507;||&#1508;||&#1509;||&#1510;||&#1511;||&#1512;||&#1513;||&#1514;||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 05F0
+|style="background:rgb(255,192,203);"|&#1520;||style="background:rgb(255,192,203);"|&#1521;||style="background:rgb(255,192,203);"|&#1522;||style="background:rgb(255,192,203);"|&#1523;||style="background:rgb(255,192,203);"|&#1524;|| || || || || || || || || || || 
+|}
+
+==  Arabic (아랍 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="ar"
+|-style="background:#333;color:#fff;" F
+|-style="background:rgb(244,164,96);" 0600
+|&#1536;||&#1537;||&#1538;||&#1539;||style="background:rgb(190,220,70);"|&#x0604;||style="background:rgb(234,145,0);"|&#x0605;||style="background:rgb(110,165,210);"|&#1542;||style="background:rgb(110,165,210);"|&#1543;||style="background:rgb(110,165,210);"|&#1544;||style="background:rgb(110,165,210);"|&#1545;||style="background:rgb(110,165,210);"|&#1546;||style="background:rgb(210,105,30);"|&#1547;||style="background:rgb(255,192,203);"|&#1548;||&#1549;||&#1550;||&#1551;
+|-style="background:rgb(244,164,96);" 0610
+|&#1552;||&#1553;||&#1554;||&#1555;||&#1556;||&#1557;||style="background:rgb(110,165,210);"|&#1558;||style="background:rgb(110,165,210);"|&#1559;||style="background:rgb(110,165,210);"|&#1560;||style="background:rgb(110,165,210);"|&#1561;||style="background:rgb(110,165,210);"|&#1562;||style="background:rgb(255,192,203);"|&#1563;||style="background:rgb(144,150,36); font-size:75%;"|ALM||style="background:#666;"| ||style="background:rgb(210,105,30);"|&#1566;||style="background:rgb(255,192,203);"|&#1567;
+|- 0620
+|style="background:rgb(212,230,114);"|&#x0620;||&#1569;||&#1570;||&#1571;||&#1572;||&#1573;||&#1574;||&#1575;||&#1576;||&#1577;||&#1578;||&#1579;||&#1580;||&#1581;||&#1582;||&#1583;
+|- 0630
+|&#1584;||&#1585;||&#1586;||&#1587;||&#1588;||&#1589;||&#1590;||&#1591;||&#1592;||&#1593;||&#1594;||style="background:rgb(110,165,210);"|&#1595;||style="background:rgb(110,165,210);"|&#1596;||style="background:rgb(110,165,210);"|&#1597;||style="background:rgb(110,165,210);"|&#1598;||style="background:rgb(110,165,210);"|&#1599;
+|- 0640
+|&#1600;||&#1601;||&#1602;||&#1603;||&#1604;||&#1605;||&#1606;||&#1607;||&#1608;||&#1609;||&#1610;||&#1611;||&#1612;||&#1613;||&#1614;||&#1615;
+|-style="background:rgb(210,105,30);" 0650
+|style="background:rgb(255,192,203);"|&#1616;||style="background:rgb(255,192,203);"|&#1617;||style="background:rgb(255,192,203);"|&#1618;||style="background:rgb(250,128,114);"|&#1619;||style="background:rgb(250,128,114);"|&#1620;||style="background:rgb(250,128,114);"|&#1621;||style="background:rgb(244,164,96);"|&#1622;||style="background:rgb(244,164,96);"|&#1623;||style="background:rgb(244,164,96);"|&#1624;||&#1625;||&#1626;||&#1627;||&#1628;||&#1629;||&#1630;||style="background:rgb(212,230,114);"|&#x065F;
+|- 0660
+|&#1632;||&#1633;||&#1634;||&#1635;||&#1636;||&#1637;||&#1638;||&#1639;||&#1640;||&#1641;||&#1642;||&#1643;||&#1644;||style="background:rgb(255,20,147);"|&#1645;||style="background:rgb(240,24,24);"|&#1646;||style="background:rgb(240,24,24);"|&#1647;
+|- 0670
+|&#1648;||&#1649;||&#1650;||&#1651;||&#1652;||&#1653;||&#1654;||&#1655;||&#1656;||&#1657;||&#1658;||&#1659;||&#1660;||&#1661;||&#1662;||&#1663;
+|- 0680
+|&#1664;||&#1665;||&#1666;||&#1667;||&#1668;||&#1669;||&#1670;||&#1671;||&#1672;||&#1673;||&#1674;||&#1675;||&#1676;||&#1677;||&#1678;||&#1679;
+|- 0690
+|&#1680;||&#1681;||&#1682;||&#1683;||&#1684;||&#1685;||&#1686;||&#1687;||&#1688;||&#1689;||&#1690;||&#1691;||&#1692;||&#1693;||&#1694;||&#1695;
+|- 06A0
+|&#1696;||&#1697;||&#1698;||&#1699;||&#1700;||&#1701;||&#1702;||&#1703;||&#1704;||&#1705;||&#1706;||&#1707;||&#1708;||&#1709;||&#1710;||&#1711;
+|- 06B0
+|&#1712;||&#1713;||&#1714;||&#1715;||&#1716;||&#1717;||&#1718;||&#1719;||style="background:rgb(250,128,114);"|&#1720;||style="background:rgb(250,128,114);"|&#1721;||&#1722;||&#1723;||&#1724;||&#1725;||&#1726;||style="background:rgb(250,128,114);"|&#1727;
+|- 06C0
+|&#1728;||&#1729;||&#1730;||&#1731;||&#1732;||&#1733;||&#1734;||&#1735;||&#1736;||&#1737;||&#1738;||&#1739;||&#1740;||&#1741;||&#1742;||style="background:rgb(250,128,114);"|&#1743;
+|-style="background:rgb(255,20,147);" 06D0
+|style="background:rgb(255,192,203);"|&#1744;||style="background:rgb(255,192,203);"|&#1745;||style="background:rgb(255,192,203);"|&#1746;||style="background:rgb(255,192,203);"|&#1747;||style="background:rgb(255,192,203);"|&#1748;||style="background:rgb(255,192,203);"|&#1749;||&#1750;||&#1751;||&#1752;||&#1753;||&#1754;||&#1755;||&#1756;||&#1757;||&#1758;||&#1759;
+|-style="background:rgb(255,20,147);" 06E0
+|&#1760;||&#1761;||&#1762;||&#1763;||&#1764;||&#1765;||&#1766;||&#1767;||&#1768;||&#1769;||&#1770;||&#1771;||&#1772;||&#1773;||style="background:rgb(244,164,96);"|&#1774;||style="background:rgb(244,164,96);"|&#1775;
+|- 06F0
+|&#1776;||&#1777;||&#1778;||&#1779;||&#1780;||&#1781;||&#1782;||&#1783;||&#1784;||&#1785;||style="background:rgb(250,128,114);"|&#1786;||style="background:rgb(250,128,114);"|&#1787;||style="background:rgb(250,128,114);"|&#1788;||style="background:rgb(250,128,114);"|&#1789;||style="background:rgb(250,128,114);"|&#1790;||style="background:rgb(244,164,96);"|&#1791;
+|}
+
+==  Syriac (시리아 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(250, 128, 114); text-align: center; border-collapse:collapse;" lang="syr"
+|-style="background:#333;color:#fff;" F
+|- 0700
+|&#1792;||&#1793;||&#1794;||&#1795;||&#1796;||&#1797;||&#1798;||&#1799;||&#1800;||&#1801;||&#1802;||&#1803;||&#1804;||&#1805;||style="background:#666;"| ||&#x70f;
+|- 0710
+|&#1808;||&#1809;||&#1810;||&#1811;||&#1812;||&#1813;||&#1814;||&#1815;||&#1816;||&#1817;||&#1818;||&#1819;||&#1820;||&#1821;||&#1822;||&#1823;
+|- 0720
+|&#1824;||&#1825;||&#1826;||&#1827;||&#1828;||&#1829;||&#1830;||&#1831;||&#1832;||&#1833;||&#1834;||&#1835;||&#1836;||style="background:rgb(244,164,96);"|&#1837;||style="background:rgb(244,164,96);"|&#1838;||style="background:rgb(244,164,96);"|&#1839;
+|- 0730
+|&#1840;||&#1841;||&#1842;||&#1843;||&#1844;||&#1845;||&#1846;||&#1847;||&#1848;||&#1849;||&#1850;||&#1851;||&#1852;||&#1853;||&#1854;||&#1855;
+|- 0740
+|&#1856;||&#1857;||&#1858;||&#1859;||&#1860;||&#1861;||&#1862;||&#1863;||&#1864;||&#1865;||&#1866;||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(244,164,96);"|&#1869;||style="background:rgb(244,164,96);"|&#1870;||style="background:rgb(244,164,96);"|&#1871;
+|}
+
+==  Arabic Supplement (아랍 문자 보충) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(210, 105, 30); text-align: center; border-collapse:collapse;" lang="ar"
+|-style="background:#333;color:#fff;" F
+|- 0750
+|&#1872;||&#1873;||&#1874;||&#1875;||&#1876;||&#1877;||&#1878;||&#1879;||&#1880;||&#1881;||&#1882;||&#1883;||&#1884;||&#1885;||&#1886;||&#1887;
+|- 0760
+|&#1888;||&#1889;||&#1890;||&#1891;||&#1892;||&#1893;||&#1894;||&#1895;||&#1896;||&#1897;||&#1898;||&#1899;||&#1900;||&#1901;||style="background:rgb(110,165,210);"|&#1902;||style="background:rgb(110,165,210);"|&#1903;
+|-style="background:rgb(110,165,210);" 0770
+|&#1904;||&#1905;||&#1906;||&#1907;||&#1908;||&#1909;||&#1910;||&#1911;||&#1912;||&#1913;||&#1914;||&#1915;||&#1916;||&#1917;||&#1918;||&#1919;
+|}
+
+==  Thaana (타나) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(250, 128, 114); text-align: center; border-collapse:collapse;" lang="dv"
+|-style="background:#333;color:#fff;" F
+|-style="background:rgb(250,128,114);" 0780
+|&#1920;||&#1921;||&#1922;||&#1923;||&#1924;||&#1925;||&#1926;||&#1927;||&#1928;||&#1929;||&#1930;||&#1931;||&#1932;||&#1933;||&#1934;||&#1935;
+|-style="background:rgb(250,128,114);" 0790
+|&#1936;||&#1937;||&#1938;||&#1939;||&#1940;||&#1941;||&#1942;||&#1943;||&#1944;||&#1945;||&#1946;||&#1947;||&#1948;||&#1949;||&#1950;||&#1951;
+|-style="background:rgb(250,128,114);" 07A0
+|&#1952;||&#1953;||&#1954;||&#1955;||&#1956;||&#1957;||&#1958;||&#1959;||&#1960;||&#1961;||&#1962;||&#1963;||&#1964;||&#1965;||&#1966;||&#1967;
+|-style="background:#666;" 07B0
+|style="background:rgb(250,128,114);"|&#1968;||style="background:rgb(240,24,24);"|&#1969;|| || || || || || || || || || || || || || 
+|}
+
+==   NKo (응코 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(135, 206, 235); text-align: center; border-collapse:collapse;" lang="man"
+|-style="background:#333;color:#fff;" F
+|- 07C0
+|&#1984;||&#1985;||&#1986;||&#1987;||&#1988;||&#1989;||&#1990;||&#1991;||&#1992;||&#1993;||&#1994;||&#1995;||&#1996;||&#1997;||&#1998;||&#1999;
+|- 07D0
+|&#2000;||&#2001;||&#2002;||&#2003;||&#2004;||&#2005;||&#2006;||&#2007;||&#2008;||&#2009;||&#2010;||&#2011;||&#2012;||&#2013;||&#2014;||&#2015;
+|- 07E0
+|&#2016;||&#2017;||&#2018;||&#2019;||&#2020;||&#2021;||&#2022;||&#2023;||&#2024;||&#2025;||&#2026;||&#2027;||&#2028;||&#2029;||&#2030;||&#2031;
+|- 07F0
+|&#2032;||&#2033;||&#2034;||&#2035;||&#2036;||&#2037;||&#2038;||&#2039;||&#2040;||&#2041;||&#2042;||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|}
+
+==  Samaritan (사마리아 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(90, 90, 147); text-align: center; border-collapse:collapse;" lang="sam"
+|-style="background:#333;color:#fff;" F
+|- 0800
+|&#x0800;||&#x0801;||&#x0802;||&#x0803;||&#x0804;||&#x0805;||&#x0806;||&#x0807;||&#x0808;||&#x0809;||&#x080A;||&#x080B;||&#x080C;||&#x080D;||&#x080E;||&#x080F;
+|- 0810
+|&#x0810;||&#x0811;||&#x0812;||&#x0813;||&#x0814;||&#x0815;||&#x0816;||&#x0817;||&#x0818;||&#x0819;||&#x081A;||&#x081B;||&#x081C;||&#x081D;||&#x081E;||&#x081F;
+|- 0820
+|&#x0820;||&#x0821;||&#x0822;||&#x0823;||&#x0824;||&#x0825;||&#x0826;||&#x0827;||&#x0828;||&#x0829;||&#x082A;||&#x082B;||&#x082C;||&#x082D;||style="background:#666;"| ||style="background:#666;"| 
+|- 0830
+|&#x0830;||&#x0831;||&#x0832;||&#x0833;||&#x0834;||&#x0835;||&#x0836;||&#x0837;||&#x0838;||&#x0839;||&#x083A;||&#x083B;||&#x083C;||&#x083D;||&#x083E;||style="background:#666;"| 
+|}
+
+==  Mandaic (만다 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(212, 230, 114); text-align: center; border-collapse:collapse;" lang="myz"
+|-style="background:#333;color:#fff;" F
+|- 0840
+|&#x0840;||&#x0841;||&#x0842;||&#x0843;||&#x0844;||&#x0845;||&#x0846;||&#x0847;||&#x0848;||&#x0849;||&#x084A;||&#x084B;||&#x084C;||&#x084D;||&#x084E;||&#x084F;
+|- 0850
+|&#x0850;||&#x0851;||&#x0852;||&#x0853;||&#x0854;||&#x0855;||&#x0856;||&#x0857;||&#x0858;||&#x0859;||&#x085A;||&#x085B;||style="background:#666;"| ||style="background:#666;"| ||&#x085E;||style="background:#666;"| 
+|}
+
+==  Unassigned (미등록) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: #666; text-align: center; border-collapse:collapse;" lang="en"
+|-style="background:#333;color:#fff;" F
+|- 0860
+| || || || || || || || || || || || || || || || 
+|- 0870
+| || || || || || || || || || || || || || || || 
+|- 0880
+| || || || || || || || || || || || || || || || 
+|- 0890
+| || || || || || || || || || || || || || || || 
+|}
+
+==  Arabic Extended-A (아랍 문자 확장 A) ==
+
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(190, 220, 70); text-align: center; border-collapse:collapse;" lang="ar"
+|-style="background:#333;color:#fff;" F
+|- 08A0
+|&#x08A0;||style="background:rgb(234,145,0);"|&#x08a1;||&#x08A2;||&#x08A3;||&#x08A4;||&#x08A5;||&#x08A6;||&#x08A7;||&#x08A8;||&#x08A9;||&#x08AA;||&#x08AB;||&#x08AC;||style="background:rgb(234,145,0);"|&#x08ad;||style="background:rgb(234,145,0);"|&#x08ae;||style="background:rgb(234,145,0);"|&#x08af;
+|-style="background:#666;" 08B0
+|style="background:rgb(234,145,0);"|&#x08b0;||style="background:rgb(234,145,0);"|&#x08b1;||style="background:rgb(234,145,0);"|&#x08b2;||style="background:rgb(212,127,0);"|&#x08B3; ||style="background:rgb(212,127,0);"|&#x08B4; || || || || || || || || || || || 
+|-style="background:#666;" 08C0
+| || || || || || || || || || || || || || || || 
+|-style="background:#666;" 08D0
+| || || || || || || || || || || || || || || || 
+|- 08E0
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(212,127,0);"|&#x08E3; ||&#x08E4;||&#x08E5;||&#x08E6;||&#x08E7;||&#x08E8;||&#x08E9;||&#x08EA;||&#x08EB;||&#x08EC;||&#x08ED;||&#x08EE;||&#x08EF;
+|- 08F0
+|&#x08F0;||&#x08F1;||&#x08F2;||&#x08F3;||&#x08F4;||&#x08F5;||&#x08F6;||&#x08F7;||&#x08F8;||&#x08F9;||&#x08FA;||&#x08FB;||&#x08FC;||&#x08FD;||&#x08FE;||style="background:rgb(234,145,0);"|&#x08ff;
+|}
+
+==  Devanagari (데바나가리) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="hi"
+|-style="background:#333;color:#fff;" F
+|- 0900
+|style="background:rgb(90,90,147);"|&#x0900;||ँ||ं||ः||style="background:rgb(244,164,96);"|ऄ||अ||आ||इ||ई||उ||ऊ||ऋ||ऌ||ऍ||ऎ||ए
+|- 0910
+|ऐ||ऑ||ऒ||ओ||औ||क||ख||ग||घ||ङ||च||छ||ज||झ||ञ||ट
+|- 0920
+|ठ||ड||ढ||ण||त||थ||द||ध||न||ऩ||प||फ||ब||भ||म||य
+|- 0930
+|र||ऱ||ल||ळ||ऴ||व||श||ष||स||ह||style="background:rgb(212,230,114);"|&#x093A;||style="background:rgb(212,230,114);"|&#x093B;||़||ऽ||ा||ि
+|- 0940
+|ी||ु||ू||ृ||ॄ||ॅ||ॆ||े||ै||ॉ||ॊ||ो||ौ||्||style="background:rgb(90,90,147);"|&#x094E;||style="background:rgb(212,230,114);"|&#x094F;
+|- 0950
+|ॐ||॑||॒||॓||॔||style="background:rgb(90,90,147);"|&#x0955;||style="background:rgb(212,230,114);"|&#x0956;||style="background:rgb(212,230,114);"|&#x0957;||&#2392;||&#2393;||&#2394;||&#2395;||&#2396;||&#2397;||&#2398;||&#2399;
+|- 0960
+|ॠ||ॡ||ॢ||ॣ||।||॥||०||१||२||३||४||५||६||७||८||९
+|-style="background:rgb(212,230,114);" 0970
+|style="background:rgb(255,192,203);"|॰||style="background:rgb(110,165,210);"|ॱ||style="background:rgb(110,165,210);"|ॲ||&#x0973;||&#x0974;||&#x0975;||&#x0976;||&#x0977;||style="background:rgb(234,145,0);"|&#x0978;||style="background:rgb(90,90,147);"|&#x0979;||style="background:rgb(90,90,147);"|&#x097A;||style="background:rgb(135,206,235);"|ॻ||style="background:rgb(135,206,235);"|ॼ||style="background:rgb(210,105,30);"|ॽ||style="background:rgb(135,206,235);"|ॾ||style="background:rgb(135,206,235);"|ॿ
+|}
+
+==  Bengali (벵골 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="bn"
+|-style="background:#333;color:#fff;" F
+|- 0980
+|style="background:rgb(234,145,0);"|&#x0980;||ঁ||ং||ঃ||style="background:#666;"| ||অ||আ||ই||ঈ||উ||ঊ||ঋ||ঌ||style="background:#666;"| ||style="background:#666;"| ||এ
+|- 0990
+|ঐ||style="background:#666;"| ||style="background:#666;"| ||ও||ঔ||ক||খ||গ||ঘ||ঙ||চ||ছ||জ||ঝ||ঞ||ট
+|- 09A0
+|ঠ||ড||ঢ||ণ||ত||থ||দ||ধ||ন||style="background:#666;"| ||প||ফ||ব||ভ||ম||য
+|- 09B0
+|র||style="background:#666;"| ||ল||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||শ||ষ||স||হ||style="background:#666;"| ||style="background:#666;"| ||়||style="background:rgb(244,164,96);"|ঽ||া||ি
+|- 09C0
+|ী||ু||ূ||ৃ||ৄ||style="background:#666;"| ||style="background:#666;"| ||ে||ৈ||style="background:#666;"| ||style="background:#666;"| ||ো||ৌ||্||style="background:rgb(210,105,30);"|ৎ||style="background:#666;"| 
+|-style="background:#666;" 09D0
+| || || || || || || ||style="background:rgb(255,192,203);"|ৗ|| || || || ||style="background:rgb(255,192,203);"|&#2524;||style="background:rgb(255,192,203);"|&#2525;|| ||style="background:rgb(255,192,203);"|&#2527;
+|- 09E0
+|ৠ||ৡ||ৢ||ৣ||style="background:#666;"| ||style="background:#666;"| ||০||১||২||৩||৪||৫||৬||৭||৮||৯
+|- 09F0
+|ৰ||ৱ||৲||৳||৴||৵||৶||৷||৸||৹||৺||style="background:rgb(90,90,147);"|&#x09FB;||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|}
+
+==  Gurmukhi (굴무키) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="pa"
+|-style="background:#333;color:#fff;" F
+|- 0A00
+|style="background:#666;"| ||style="background:rgb(244,164,96);"|ਁ||ਂ||style="background:rgb(244,164,96);"|ਃ||style="background:#666;"| ||ਅ||ਆ||ਇ||ਈ||ਉ||ਊ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ਏ
+|- 0A10
+|ਐ||style="background:#666;"| ||style="background:#666;"| ||ਓ||ਔ||ਕ||ਖ||ਗ||ਘ||ਙ||ਚ||ਛ||ਜ||ਝ||ਞ||ਟ
+|- 0A20
+|ਠ||ਡ||ਢ||ਣ||ਤ||ਥ||ਦ||ਧ||ਨ||style="background:#666;"| ||ਪ||ਫ||ਬ||ਭ||ਮ||ਯ
+|- 0A30
+|ਰ||style="background:#666;"| ||ਲ||&#2611;||style="background:#666;"| ||ਵ||&#2614;||style="background:#666;"| ||ਸ||ਹ||style="background:#666;"| ||style="background:#666;"| ||਼||style="background:#666;"| ||ਾ||ਿ
+|-style="background:#666;" 0A40
+|style="background:rgb(255,192,203);"|ੀ||style="background:rgb(255,192,203);"|ੁ||style="background:rgb(255,192,203);"|ੂ|| || || || ||style="background:rgb(255,192,203);"|ੇ||style="background:rgb(255,192,203);"|ੈ|| || ||style="background:rgb(255,192,203);"|ੋ||style="background:rgb(255,192,203);"|ੌ||style="background:rgb(255,20,147);"|੍|| || 
+|-style="background:#666;" 0A50
+| ||style="background:rgb(110,165,210);"|ੑ|| || || || || || || ||style="background:rgb(255,192,203);"|&#2649;||style="background:rgb(255,192,203);"|&#2650;||style="background:rgb(255,192,203);"|&#2651;||style="background:rgb(255,192,203);"|ੜ|| ||style="background:rgb(255,192,203);"|&#2654;|| 
+|-style="background:rgb(255,192,203);" 0A60
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||੦||੧||੨||੩||੪||੫||੬||੭||੮||੯
+|-style="background:#666;" 0A70
+|style="background:rgb(255,192,203);"|ੰ||style="background:rgb(255,192,203);"|ੱ||style="background:rgb(255,192,203);"|ੲ||style="background:rgb(255,192,203);"|ੳ||style="background:rgb(255,192,203);"|ੴ||style="background:rgb(110,165,210);"|ੵ|| || || || || || || || || || 
+|}
+
+==  Gujarati (구자라트 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="gu"
+|-style="background:#333;color:#fff;" F
+|- 0A80
+|style="background:#666;"| ||ઁ||ં||ઃ||style="background:#666;"| ||અ||આ||ઇ||ઈ||ઉ||ઊ||ઋ||style="background:rgb(244,164,96);"|ઌ||style="background:rgb(255,20,147);"|ઍ||style="background:#666;"| ||એ
+|- 0A90
+|ઐ||style="background:rgb(255,20,147);"|ઑ||style="background:#666;"| ||ઓ||ઔ||ક||ખ||ગ||ઘ||ઙ||ચ||છ||જ||ઝ||ઞ||ટ
+|- 0AA0
+|ઠ||ડ||ઢ||ણ||ત||થ||દ||ધ||ન||style="background:#666;"| ||પ||ફ||બ||ભ||મ||ય
+|- 0AB0
+|ર||style="background:#666;"| ||લ||ળ||style="background:#666;"| ||વ||શ||ષ||સ||હ||style="background:#666;"| ||style="background:#666;"| ||઼||ઽ||ા||િ
+|- 0AC0
+|ી||ુ||ૂ||ૃ||ૄ||ૅ||style="background:#666;"| ||ે||ૈ||style="background:rgb(255,20,147);"|ૉ||style="background:#666;"| ||ો||ૌ||્||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0AD0
+|style="background:rgb(255,192,203);"|ૐ|| || || || || || || || || || || || || || || 
+|-style="background:rgb(255,192,203);" 0AE0
+|ૠ||style="background:rgb(244,164,96);"|ૡ||style="background:rgb(244,164,96);"|ૢ||style="background:rgb(244,164,96);"|ૣ||style="background:#666;"| ||style="background:#666;"| ||૦||૧||૨||૩||૪||૫||૬||૭||૮||૯
+|-style="background:#666;" 0AF0
+|style="background:rgb(190,220,70);"|&#x0AF0;||style="background:rgb(244,164,96);"|૱|| || || || || || || ||style="background:rgb(212,127,0);"|&#x0AF9; || || || || || || 
+|}
+
+==  Oriya (오리야 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="or"
+|-style="background:#333;color:#fff;" F
+|- 0B00
+|style="background:#666;"| ||ଁ||ଂ||ଃ||style="background:#666;"| ||ଅ||ଆ||ଇ||ଈ||ଉ||ଊ||ଋ||ଌ||style="background:#666;"| ||style="background:#666;"| ||ଏ
+|- 0B10
+|ଐ||style="background:#666;"| ||style="background:#666;"| ||ଓ||ଔ||କ||ଖ||ଗ||ଘ||ଙ||ଚ||ଛ||ଜ||ଝ||ଞ||ଟ
+|- 0B20
+|ଠ||ଡ||ଢ||ଣ||ତ||ଥ||ଦ||ଧ||ନ||style="background:#666;"| ||ପ||ଫ||ବ||ଭ||ମ||ଯ
+|- 0B30
+|ର||style="background:#666;"| ||ଲ||ଳ||style="background:#666;"| ||style="background:rgb(244,164,96);"|ଵ||ଶ||ଷ||ସ||ହ||style="background:#666;"| ||style="background:#666;"| ||଼||ଽ||ା||ି
+|- 0B40
+|ୀ||ୁ||ୂ||ୃ||style="background:rgb(110,165,210);"|ୄ||style="background:#666;"| ||style="background:#666;"| ||େ||ୈ||style="background:#666;"| ||style="background:#666;"| ||ୋ||ୌ||୍||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0B50
+| || || || || || ||style="background:rgb(255,20,147);"|ୖ||style="background:rgb(255,192,203);"|ୗ|| || || || ||style="background:rgb(255,192,203);"|&#2908;||style="background:rgb(255,192,203);"|&#2909;|| ||style="background:rgb(255,192,203);"|ୟ
+|- 0B60
+|ୠ||ୡ||style="background:rgb(110,165,210);"|ୢ||style="background:rgb(110,165,210);"|ୣ||style="background:#666;"| ||style="background:#666;"| ||୦||୧||୨||୩||୪||୫||୬||୭||୮||୯
+|-style="background:#666;" 0B70
+|style="background:rgb(255,192,203);"|୰||style="background:rgb(244,164,96);"|ୱ||style="background:rgb(212,230,114);"|&#x0B72;||style="background:rgb(212,230,114);"|&#x0B73;||style="background:rgb(212,230,114);"|&#x0B74;||style="background:rgb(212,230,114);"|&#x0B75;||style="background:rgb(212,230,114);"|&#x0B76;||style="background:rgb(212,230,114);"|&#x0B77;|| || || || || || || || 
+|}
+
+==  Tamil (타밀 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="ta"
+|-style="background:#333;color:#fff;" F
+|- 0B80
+|style="background:#666;"| ||style="background:#666;"| ||ஂ||ஃ||style="background:#666;"| ||அ||ஆ||இ||ஈ||உ||ஊ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||எ||ஏ
+|- 0B90
+|ஐ||style="background:#666;"| ||ஒ||ஓ||ஔ||க||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ங||ச||style="background:#666;"| ||ஜ||style="background:#666;"| ||ஞ||ட
+|-style="background:#666;" 0BA0
+| || || ||style="background:rgb(255,192,203);"|ண||style="background:rgb(255,192,203);"|த|| || || ||style="background:rgb(255,192,203);"|ந||style="background:rgb(255,192,203);"|ன||style="background:rgb(255,192,203);"|ப|| || || ||style="background:rgb(255,192,203);"|ம||style="background:rgb(255,192,203);"|ய
+|- 0BB0
+|ர||ற||ல||ள||ழ||வ||style="background:rgb(210,105,30);"|ஶ||ஷ||ஸ||ஹ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ா||ி
+|- 0BC0
+|ீ||ு||ூ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ெ||ே||ை||style="background:#666;"| ||ொ||ோ||ௌ||்||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0BD0
+|style="background:rgb(110,165,210);"|ௐ|| || || || || || ||style="background:rgb(255,192,203);"|ௗ|| || || || || || || || 
+|- 0BE0
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(210,105,30);"|௦||௧||௨||௩||௪||௫||௬||௭||௮||௯
+|-style="background:rgb(244,164,96);" 0BF0
+|style="background:rgb(255,192,203);"|௰||style="background:rgb(255,192,203);"|௱||style="background:rgb(255,192,203);"|௲||௳||௴||௵||௶||௷||௸||௹||௺||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|}
+
+==  Telugu (텔루구 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="te"
+|-style="background:#333;color:#fff;" F
+|- 0C00
+|style="background:rgb(234,145,0);"|&#x0c00;||ఁ||ం||ః||style="background:#666;"| ||అ||ఆ||ఇ||ఈ||ఉ||ఊ||ఋ||ఌ||style="background:#666;"| ||ఎ||ఏ
+|- 0C10
+|ఐ||style="background:#666;"| ||ఒ||ఓ||ఔ||క||ఖ||గ||ఘ||ఙ||చ||ఛ||జ||ఝ||ఞ||ట
+|- 0C20
+|ఠ||డ||ఢ||ణ||త||థ||ద||ధ||న||style="background:#666;"| ||ప||ఫ||బ||భ||మ||య
+|- 0C30
+|ర||ఱ||ల||ళ||style="background:rgb(234,145,0);"|&#x0c34;||వ||శ||ష||స||హ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(110,165,210);"|ఽ||ా||ి
+|- 0C40
+|ీ||ు||ూ||ృ||ౄ||style="background:#666;"| ||ె||ే||ై||style="background:#666;"| ||ొ||ో||ౌ||్||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0C50
+| || || || || ||style="background:rgb(255,192,203);"|ౕ||style="background:rgb(255,192,203);"|ౖ|| ||style="background:rgb(110,165,210);"|ౘ||style="background:rgb(110,165,210);"|ౙ||style="background:rgb(212,127,0);"|&#x0C5A; || || || || || 
+|- 0C60
+|ౠ||ౡ||style="background:rgb(110,165,210);"|ౢ||style="background:rgb(110,165,210);"|ౣ||style="background:#666;"| ||style="background:#666;"| ||౦||౧||౨||౩||౪||౫||౬||౭||౮||౯
+|-style="background:rgb(110,165,210);" 0C70
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||౸||౹||౺||౻||౼||౽||౾||౿
+|}
+
+==  Kannada (칸나다 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="kn"
+|-style="background:#333;color:#fff;" F
+|- 0C80
+|style="background:#666;"| ||style="background:rgb(234,145,0);"|&#x0c81;||ಂ||ಃ||style="background:#666;"| ||ಅ||ಆ||ಇ||ಈ||ಉ||ಊ||ಋ||ಌ||style="background:#666;"| ||ಎ||ಏ
+|- 0C90
+|ಐ||style="background:#666;"| ||ಒ||ಓ||ಔ||ಕ||ಖ||ಗ||ಘ||ಙ||ಚ||ಛ||ಜ||ಝ||ಞ||ಟ
+|- 0CA0
+|ಠ||ಡ||ಢ||ಣ||ತ||ಥ||ದ||ಧ||ನ||style="background:#666;"| ||ಪ||ಫ||ಬ||ಭ||ಮ||ಯ
+|- 0CB0
+|ರ||ಱ||ಲ||ಳ||style="background:#666;"| ||ವ||ಶ||ಷ||ಸ||ಹ||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(244,164,96);"|಼||style="background:rgb(244,164,96);"|ಽ||ಾ||ಿ
+|- 0CC0
+|ೀ||ು||ೂ||ೃ||ೄ||style="background:#666;"| ||ೆ||ೇ||ೈ||style="background:#666;"| ||ೊ||ೋ||ೌ||್||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0CD0
+| || || || || ||style="background:rgb(255,192,203);"|ೕ||style="background:rgb(255,192,203);"|ೖ|| || || || || || || ||style="background:rgb(255,192,203);"|ೞ|| 
+|- 0CE0
+|ೠ||ೡ||style="background:rgb(135,206,235);"|ೢ||style="background:rgb(135,206,235);"|ೣ||style="background:#666;"| ||style="background:#666;"| ||೦||೧||೨||೩||೪||೫||೬||೭||೮||೯
+|-style="background:#666;" 0CF0
+| ||style="background:rgb(135,206,235);"|ೱ||style="background:rgb(135,206,235);"|ೲ|| || || || || || || || || || || || || 
+|}
+
+==  Malayalam (말라얄람 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="ml"
+|-style="background:#333;color:#fff;" F
+|- 0D00
+|style="background:#666;"| ||style="background:rgb(234,145,0);"|&#x0d01;||ം||ഃ||style="background:#666;"| ||അ||ആ||ഇ||ഈ||ഉ||ഊ||ഋ||ഌ||style="background:#666;"| ||എ||ഏ
+|- 0D10
+|ഐ||style="background:#666;"| ||ഒ||ഓ||ഔ||ക||ഖ||ഗ||ഘ||ങ||ച||ഛ||ജ||ഝ||ഞ||ട
+|- 0D20
+|ഠ||ഡ||ഢ||ണ||ത||ഥ||ദ||ധ||ന||style="background:rgb(212,230,114);"|&#x0D29;||പ||ഫ||ബ||ഭ||മ||യ
+|- 0D30
+|ര||റ||ല||ള||ഴ||വ||ശ||ഷ||സ||ഹ||style="background:rgb(212,230,114);"|&#x0D3A;||style="background:#666;"| ||style="background:#666;"| ||style="background:rgb(110,165,210);"|ഽ||ാ||ി
+|- 0D40
+|ീ||ു||ൂ||ൃ||style="background:rgb(110,165,210);"|ൄ||style="background:#666;"| ||െ||േ||ൈ||style="background:#666;"| ||ൊ||ോ||ൌ||്||style="background:rgb(212,230,114);"|&#x0D4E;||style="background:#666;"| 
+|-style="background:#666;" 0D50
+| || || || || || || ||style="background:rgb(255,192,203);"|ൗ|| || || || || || || ||style="background:rgb(212,127,0);"|&#x0D5F; 
+|- 0D60
+|ൠ||ൡ||style="background:rgb(110,165,210);"|ൢ||style="background:rgb(110,165,210);"|ൣ||style="background:#666;"| ||style="background:#666;"| ||൦||൧||൨||൩||൪||൫||൬||൭||൮||൯
+|-style="background:rgb(110,165,210);" 0D70
+|൰||൱||൲||൳||൴||൵||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||൹||ൺ||ൻ||ർ||ൽ||ൾ||ൿ
+|}
+
+==  Sinhala (싱할라 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(250, 128, 114); text-align: center; border-collapse:collapse;" lang="si"
+|-style="background:#333;color:#fff;" F
+|- 0D80
+|style="background:#666;"| ||style="background:#666;"| ||ං||ඃ||style="background:#666;"| ||අ||ආ||ඇ||ඈ||ඉ||ඊ||උ||ඌ||ඍ||ඎ||ඏ
+|- 0D90
+|ඐ||එ||ඒ||ඓ||ඔ||ඕ||ඖ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ක||ඛ||ග||ඝ||ඞ||ඟ
+|- 0DA0
+|ච||ඡ||ජ||ඣ||ඤ||ඥ||ඦ||ට||ඨ||ඩ||ඪ||ණ||ඬ||ත||ථ||ද
+|- 0DB0
+|ධ||න||style="background:#666;"| ||ඳ||ප||ඵ||බ||භ||ම||ඹ||ය||ර||style="background:#666;"| ||ල||style="background:#666;"| ||style="background:#666;"| 
+|- 0DC0
+|ව||ශ||ෂ||ස||හ||ළ||ෆ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||්||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ා
+|- 0DD0
+|ැ||ෑ||ි||ී||ු||style="background:#666;"| ||ූ||style="background:#666;"| ||ෘ||ෙ||ේ||ෛ||ො||ෝ||ෞ||ෟ
+|-style="background:rgb(234,145,0);" 0DE0
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||&#x0de6;||&#x0de7;||&#x0de8;||&#x0de9;||&#x0dea;||&#x0deb;||&#x0dec;||&#x0ded;||&#x0dee;||&#x0def;
+|-style="background:#666;" 0DF0
+| || ||style="background:rgb(250,128,114);"|ෲ||style="background:rgb(250,128,114);"|ෳ||style="background:rgb(250,128,114);"|෴|| || || || || || || || || || || 
+|}
+
+==  Thai (타이 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="th"
+|-style="background:#333;color:#fff;" F
+|- 0E00
+|style="background:#666;"| ||ก||ข||ฃ||ค||ฅ||ฆ||ง||จ||ฉ||ช||ซ||ฌ||ญ||ฎ||ฏ
+|- 0E10
+|ฐ||ฑ||ฒ||ณ||ด||ต||ถ||ท||ธ||น||บ||ป||ผ||ฝ||พ||ฟ
+|- 0E20
+|ภ||ม||ย||ร||ฤ||ล||ฦ||ว||ศ||ษ||ส||ห||ฬ||อ||ฮ||ฯ
+|- 0E30
+|ะ||ั||า||ำ||ิ||ี||ึ||ื||ุ||ู||ฺ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||฿
+|- 0E40
+|เ||แ||โ||ใ||ไ||ๅ||ๆ||็||่||้||๊||๋||์||ํ||๎||๏
+|- 0E50
+|๐||๑||๒||๓||๔||๕||๖||๗||๘||๙||๚||๛||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|-style="background:#666;" 0E60
+| || || || || || || || || || || || || || || || 
+|-style="background:#666;" 0E70
+| || || || || || || || || || || || || || || || 
+|}
+
+==  Lao (라오 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(255, 192, 203); text-align: center; border-collapse:collapse;" lang="lo"
+|-style="background:#333;color:#fff;" F
+|-style="background:#666;" 0E80
+| ||style="background:rgb(255,192,203);"|ກ||style="background:rgb(255,192,203);"|ຂ|| ||style="background:rgb(255,192,203);"|ຄ|| || ||style="background:rgb(255,192,203);"|ງ||style="background:rgb(255,192,203);"|ຈ|| ||style="background:rgb(255,192,203);"|ຊ|| || ||style="background:rgb(255,192,203);"|ຍ|| || 
+|- 0E90
+|style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| ||ດ||ຕ||ຖ||ທ||style="background:#666;"| ||ນ||ບ||ປ||ຜ||ຝ||ພ||ຟ
+|- 0EA0
+|style="background:#666;"| ||ມ||ຢ||ຣ||style="background:#666;"| ||ລ||style="background:#666;"| ||ວ||style="background:#666;"| ||style="background:#666;"| ||ສ||ຫ||style="background:#666;"| ||ອ||ຮ||ຯ
+|- 0EB0
+|ະ||ັ||າ||ຳ||ິ||ີ||ຶ||ື||ຸ||ູ||style="background:#666;"| ||ົ||ຼ||ຽ||style="background:#666;"| ||style="background:#666;"| 
+|- 0EC0
+|ເ||ແ||ໂ||ໃ||ໄ||style="background:#666;"| ||ໆ||style="background:#666;"| ||່||້||໊||໋||໌||ໍ||style="background:#666;"| ||style="background:#666;"| 
+|- 0ED0
+|໐||໑||໒||໓||໔||໕||໖||໗||໘||໙||style="background:#666;"| ||style="background:#666;"| ||ໜ||ໝ||style="background:rgb(190,220,70);"|&#x0EDE;||style="background:rgb(190,220,70);"|&#x0EDF;
+|-style="background:#666;" 0EE0
+| || || || || || || || || || || || || || || || 
+|-style="background:#666;" 0EF0
+| || || || || || || || || || || || || || || || 
+|}
+
+==  Tibetan (티베트 문자) ==
+{| class="unicode" border="1" cellpadding="2" cellspacing="0" style="background: rgb(173, 255, 47); text-align: center; border-collapse:collapse;" lang="bo"
+|-style="background:#333;color:#fff;" lang="en" F
+|- 0F00
+|ༀ||༁||༂||༃||༄||༅||༆||༇||༈||༉||༊||་||༌||།||༎||༏
+|- 0F10
+|༐||༑||༒||༓||༔||༕||༖||༗||༘||༙||༚||༛||༜||༝||༞||༟
+|- 0F20
+|༠||༡||༢||༣||༤||༥||༦||༧||༨||༩||༪||༫||༬||༭||༮||༯
+|- 0F30
+|༰||༱||༲||༳||༴||༵||༶||༷||༸||༹||༺||༻||༼||༽||༾||༿
+|- 0F40
+|ཀ||ཁ||ག||&#3907;||ང||ཅ||ཆ||ཇ||style="background:#666;"| ||ཉ||ཊ||ཋ||ཌ||&#3917;||ཎ||ཏ
+|- 0F50
+|ཐ||ད||&#3922;||ན||པ||ཕ||བ||&#3927;||མ||ཙ||ཚ||ཛ||&#3932;||ཝ||ཞ||ཟ
+|- 0F60
+|འ||ཡ||ར||ལ||ཤ||ཥ||ས||ཧ||ཨ||&#3945;||style="background:rgb(250,128,114);"|ཪ||style="background:rgb(110,165,210);"|ཫ||style="background:rgb(110,165,210);"|ཬ||style="background:#666;"| ||style="background:#666;"| ||style="background:#666;"| 
+|- 0F70
+|style="background:#666;"| ||ཱ||ི||&#3955;||ུ||&#3957;||&#3958;||ཷ||&#3960;||ཹ||ེ||ཻ||ོ||ཽ||ཾ||ཿ
+|- 0F80
+|ྀ||&#3969;||ྂ||ྃ||྄||྅||྆||྇||ྈ||ྉ||ྊ||ྋ||style="background:rgb(212,230,114);"|&#x0F8C;||style="background:rgb(212,230,114);"|&#x0F8D;||style="background:rgb(212,230,114);"|&#x0F8E;||style="background:rgb(212,230,114);"|&#x0F8F;
+|- 0F90
+|ྐ||ྑ||ྒ||&#3987;||ྔ||ྕ||style="background:rgb(250,128,114);"|ྖ||ྗ||style="background:#666;"| ||ྙ||ྚ||ྛ||ྜ||&#3997;||ྞ||ྟ
+|- 0FA0
+|ྠ||ྡ||&#4002;||ྣ||ྤ||ྥ||ྦ||&#4007;||ྨ||ྩ||ྪ||ྫ||&#4012;||ྭ||style="background:rgb(250,128,114);"|ྮ||style="background:rgb(250,128,114);"|ྯ
+|- 0FB0
+|style="background:rgb(250,128,114);"|ྰ||ྱ||ྲ||ླ||ྴ||ྵ||ྶ||ྷ||style="background:rgb(250,128,114);"|ྸ||&#4025;||style="background:rgb(250,128,114);"|ྺ||style="background:rgb(250,128,114);"|ྻ||style="background:rgb(250,128,114);"|ྼ||style="background:#666;"| ||style="background:rgb(250,128,114);"|྾||style="background:rgb(250,128,114);"|྿
+|-style="background:rgb(250,128,114);" 0FC0
+|࿀||࿁||࿂||࿃||࿄||࿅||࿆||࿇||࿈||࿉||࿊||࿋||࿌||style="background:#666;"| ||style="background:rgb(110,165,210);"|࿎||࿏
+|-style="background:#666;" 0FD0
+|style="background:rgb(210,105,30);"|࿐||style="background:rgb(210,105,30);"|࿑||style="background:rgb(110,165,210);"|࿒||style="background:rgb(110,165,210);"|࿓||style="background:rgb(110,165,210);"|࿔||style="background:rgb(90,90,147);"|&#x0FD5;||style="background:rgb(90,90,147);"|&#x0FD6;||style="background:rgb(90,90,147);"|&#x0FD7;||style="background:rgb(90,90,147);"|&#x0FD8;||style="background:rgb(212,230,114);"|&#x0FD9;||style="background:rgb(212,230,114);"|&#x0FDA;|| || || || || 
+|-style="background:#666;" 0FE0
+| || || || || || || || || || || || || || || || 
+|-style="background:#666;" 0FF0
+| || || || || || || || || || || || || || || || 
+|}
+ 

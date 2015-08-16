@@ -50,12 +50,16 @@ class LexiconDict {
     iterator.foreach { line =>
       try {
         val l = line.split(",")
-        terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size - 1).mkString(","))
+        // TODO: 사전에 이상한 문자가 있어서 trie이가 이상하게 돌아가는 듯.. 원인일 찾아봐야 함.
+        // 그래서 "흐라" 검색하니 "헬렌켈러"가 나옴.
+        if (! l(0).exists(ch => ch < '가'|| '힣' < ch)) {
+          terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size - 1).mkString(","))
+        }
       } catch {
         case NonFatal(exc) => println(exc)
       }
     }
-    build(terms.toIndexedSeq)
+    build(terms.toIndexedSeq.sortBy(_.surface))
   }
 
   private def build(terms: Seq[Term]): Unit = {
@@ -72,7 +76,7 @@ class LexiconDict {
   }
 
   def prefixSearch(keyword: String): Seq[Term] = {
-    val indexedLexiconDictPositions = trie.commonPrefixSearch(keyword, 0, 0, 0)
+    val indexedLexiconDictPositions = trie.commonPrefixSearch(keyword)
     indexedLexiconDictPositions.flatMap { indexLexiconDictPos =>
       surfaceIndexDict.get(indexLexiconDictPos)._2
     }

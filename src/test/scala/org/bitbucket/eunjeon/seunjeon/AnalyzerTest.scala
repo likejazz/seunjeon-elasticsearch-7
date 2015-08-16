@@ -9,4 +9,18 @@ class AnalyzerTest extends FunSuite {
       println(t)
     }
   }
+
+  test("number test") {
+    Analyzer.parse("1234567890").foreach { t: Term =>
+      println(t)
+    }
+  }
+
+  test("erorr test") {
+    val testString = "흐라"
+    //val testString = "헬렌켈러"
+    Analyzer.parse(testString).foreach { t: Term =>
+      println(t)
+    }
+  }
 }

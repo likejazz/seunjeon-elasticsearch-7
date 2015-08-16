@@ -1,16 +1,30 @@
 package org.bitbucket.eunjeon.seunjeon
 
+import scala.collection.mutable
+
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
 
   // TODO: 꼭 리팩토링하자
   def parseText(text:String): Seq[Term] = {
-    val lattice = buildLattice(text.split(" "))
-    lattice.getBestPath
+    var result: Seq[Term] = new mutable.ListBuffer()
+    text.split("\n").foreach{line =>
+      val lattice = buildLattice(line)
+      result ++= lattice.getBestPath
+    }
+    result
   }
 
-  def buildLattice(eojeols: Array[String]): Lattice = {
-    val lattice = new Lattice(eojeols.foldLeft(0)(_ + _.length), connectionCostDict)
+  def buildLattice(text: String): Lattice = {
+    val normedText = text.replaceAll("[^0-9|^a-z|^A-Z|^가-힣]+", " ")
+    val eojeols: Array[String] = normedText.split(" ")
+    val eojeolLength = eojeols.foldLeft(0)(_ + _.length)
+    val lattice = new Lattice(eojeolLength, connectionCostDict)
+    addKnownWords(eojeols, lattice)
+    lattice
+  }
+
+  private def addKnownWords(eojeols: Array[String], lattice: Lattice): Unit = {
     var eojeolOffset = 0
     eojeols.foreach { eojeol: String =>
       for (textIdx <- 0 to eojeol.length) {
@@ -30,7 +44,6 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       }
       eojeolOffset += eojeol.length
     }
-    lattice
   }
 
   def addTermsToLattice(lattice: Lattice, terms: Seq[Term], termOffset: Int): Unit = {

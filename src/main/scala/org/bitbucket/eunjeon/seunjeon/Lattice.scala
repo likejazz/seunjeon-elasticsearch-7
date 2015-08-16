@@ -21,15 +21,23 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   startingNodes.last += eos
   endingNodes.last += eos
 
+  private def build2DimNodes(length:Int)
+  : mutable.ArraySeq[mutable.MutableList[LatticeNode]] = {
+    val temp = new mutable.ArraySeq(length)
+    temp.map(l => new mutable.MutableList[LatticeNode])
+  }
+
+
   def add(term: Term, startPos:Int, endPos:Int): Unit = {
     val latticeNode = new LatticeNode(term)
     startingNodes(startPos+1) += latticeNode
     endingNodes(endPos+1) += latticeNode
   }
 
-  private def build2DimNodes(length:Int) = {
-    val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[LatticeNode])
+  def addUnknownWords(sentence: String): Unit = {
+    for ((nodes, i) <- sentence.view.zipWithIndex) {
+      this.add(Term.createUnknownTerm(sentence.substring(i, i+1)), i, i)
+    }
   }
 
   def getBestPath: Seq[Term] = {
@@ -49,11 +57,11 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
 
-  def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
+  private def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
     var minTotalCost:Int = 99999999
     endingNodes.foreach{ endingNode =>
       val connectingCost:Int = if (endingNode.term.rightId == -1 || startingNode.term.leftId == -1) {
-        0
+        1000
       } else {
         connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
       }

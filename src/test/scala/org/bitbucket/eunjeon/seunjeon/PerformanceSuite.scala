@@ -17,18 +17,6 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(result)
   }
 
-  test("performance") {
-    val times = 10000
-    val startTime = System.nanoTime()
-    for (i <- 0 until times) {
-      tokenizer.parseText("안녕하세요. 형태소분석기입니다. 서울에서 살고있습니다.")
-    }
-    val endTime = System.nanoTime()
-    val elapsedTime = (endTime - startTime) / times
-    println(elapsedTime)
-    println(s"$elapsedTime ns")
-  }
-
   test("performance long term") {
     val times = 10000
     val startTime = System.nanoTime()
@@ -41,5 +29,11 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(s"$elapsedTime ns")
   }
 
+  test("performance from file") {
+    println(tokenizer.parseText("dic loading"))
+    val source = scala.io.Source.fromFile("./src/test/resources/outofmemory.txt")
+    val lines = try source.mkString finally source.close()
+    println(tokenizer.parseText(lines))
+  }
 
 }
