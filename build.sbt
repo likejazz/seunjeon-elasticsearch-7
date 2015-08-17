@@ -9,6 +9,7 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "2.2.4",
   "com.google.guava" % "guava" % "18.0",
+  "com.github.takawitter" % "trie4j" % "0.9.1",
   "junit" % "junit" % "4.12" % "test"
 )
 

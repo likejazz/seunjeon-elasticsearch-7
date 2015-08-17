@@ -14,10 +14,10 @@ class LexiconDictTest extends FunSuite {
         |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*"""
     val saveLexiconDict = new LexiconDict
     saveLexiconDict.loadFromString(lexicons)
-    saveLexiconDict.save()
+    saveLexiconDict.save("." + LexiconDict.lexiconResourceFile, "." + LexiconDict.lexiconTrieResourceFile)
 
     val openLexiconDict = new LexiconDict
-    openLexiconDict.load()
+    openLexiconDict.load("." + LexiconDict.lexiconResourceFile, "." + LexiconDict.lexiconTrieResourceFile)
     val result = openLexiconDict.prefixSearch("고구마")
     result.foreach(t => println(t.surface))
   }
