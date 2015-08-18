@@ -16,15 +16,14 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   def buildLattice(text: String): Lattice = {
-    val normedText = text.replaceAll("[^0-9|^a-z|^A-Z|^가-힣]+", " ")
-    val eojeols: Array[String] = normedText.split(" ")
-    val eojeolLength = eojeols.foldLeft(0)(_ + _.length)
-    val lattice = new Lattice(eojeolLength, connectionCostDict)
-    addKnownWords(eojeols, lattice)
+    val charsets = CharSet.splitCharSet(text)
+    val charsetsLength = charsets.foldLeft(0)(_ + _.length)
+    val lattice = new Lattice(charsetsLength, connectionCostDict)
+    buildLattice(charsets, lattice)
     lattice
   }
 
-  private def addKnownWords(eojeols: Array[String], lattice: Lattice): Unit = {
+  private def buildLattice(eojeols: Seq[String], lattice: Lattice): Unit = {
     var eojeolOffset = 0
     eojeols.foreach { eojeol: String =>
       for (textIdx <- 0 to eojeol.length) {

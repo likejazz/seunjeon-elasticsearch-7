@@ -5,7 +5,7 @@ import org.scalatest.FunSuite
 
 class AnalyzerTest extends FunSuite {
   test("main test") {
-    Analyzer.parse("버카충했어? 형태소분석기입니다.").foreach { t: Term =>
+    Analyzer.parse("버카충했어? 형태소분석기입니다. 철수와 영희는 사랑합니다.").foreach { t: Term =>
       println(t)
     }
   }
