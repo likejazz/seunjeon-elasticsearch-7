@@ -86,6 +86,8 @@ object CharSet extends Enumeration {
           start = idx
           curCharSet = charSet
           if (charSet == CharSet.SPACE) {
+            // TODO: space 일때 한칸만 가도 되는가? 있는만큼 가야하지 않는가?
+            // 그리고 스페이스 자체도 노드에 추가하는건 어떤가?
             start += 1
           }
         }

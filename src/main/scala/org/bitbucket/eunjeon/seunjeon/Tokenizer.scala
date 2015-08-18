@@ -6,7 +6,10 @@ class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
 
   // TODO: 꼭 리팩토링하자
-  def parseText(text:String): Seq[Term] = {
+  def parseText(input:String): Seq[Term] = {
+    // TODO: 성능 향상을 위해 intern 잘 활용하도록 고민해보자.
+    val text = input.intern()
+    text.intern()
     var result: Seq[Term] = new mutable.ListBuffer()
     text.split("\n").foreach{line =>
       val lattice = buildLattice(line)
