@@ -75,16 +75,14 @@ object CharSet extends Enumeration {
     val result = new mutable.ListBuffer[String]
     var start = 0
     var curCharSet = CharSet.NOT
-    text.view.zipWithIndex.foreach { case (ch, idx) =>
+    val trimedText = text.trim
+    trimedText.view.zipWithIndex.foreach { case (ch, idx) =>
       val charSet = getCharSet(ch)
       if (charSet != curCharSet) {
         if (curCharSet == CharSet.NOT) {
           curCharSet = charSet
-          if (charSet == CharSet.SPACE) {
-            start += 1
-          }
         } else {
-          result.append(text.substring(start, idx))
+          result.append(trimedText.substring(start, idx))
           start = idx
           curCharSet = charSet
           if (charSet == CharSet.SPACE) {
@@ -93,14 +91,16 @@ object CharSet extends Enumeration {
         }
       }
     }
-    result.append(text.substring(start, text.length))
+    result.append(trimedText.substring(start, trimedText.length))
     result.filter(_.length > 0)
   }
 
   private def getCharSet(ch: Char): CharSet = {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
-    if (floor.getValue == ceiling.getValue) {
+    if (floor == null || ceiling == null) {
+      CharSet.UNKNOWN
+    } else if (floor.getValue == ceiling.getValue) {
       floor.getValue
     } else {
       CharSet.UNKNOWN
