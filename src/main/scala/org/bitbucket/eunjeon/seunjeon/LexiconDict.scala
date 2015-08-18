@@ -1,8 +1,24 @@
+/**
+ * Copyright 2015 youngho yu, yongwoon lee
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
 import com.google.common.collect.ImmutableList
+import org.bitbucket.eunjeon.seunjeon.Category.Category
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
@@ -14,8 +30,13 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object Term {
-  def createUnknownTerm(surface:String, category: String): Term = {
-    new Term(surface, -1, -1, 4000*surface.length, category)
+  def createUnknownTerm(surface:String, category: Category): Term = {
+    new Term(surface,
+      category.leftId,
+      category.rightId,
+    // TODO: unknown cost 어떻게 해야하나.. mecab or kuromoji 소스를 봐야할듯..
+      category.cost*surface.length,
+      category.feature)
   }
 }
 
@@ -53,9 +74,7 @@ class LexiconDict {
     iterator.foreach { line =>
       try {
         val l = line.split(",")
-        // TODO: 사전에 이상한 문자가 있어서 trie이가 이상하게 돌아가는 듯.. 원인일 찾아봐야 함.
-        // 그래서 "흐라" 검색하니 "헬렌켈러"가 나옴.
-        terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size - 1).mkString(","))
+        terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
       } catch {
         case NonFatal(exc) => println(exc)
       }
@@ -106,6 +125,8 @@ class LexiconDict {
     lexiconStore.writeObject(surfaceIndexDict)
     lexiconStore.close()
 
+    // TODO: writer 사용해서 직렬화하자.
+    // https://github.com/takawitter/trie4j/blob/master/trie4j/src/test/java/org/trie4j/io/TrieWriterTest.java
     val trieStore = new ObjectOutputStream(
       new BufferedOutputStream(
         new FileOutputStream(lexiconTriePath), 1024*16))

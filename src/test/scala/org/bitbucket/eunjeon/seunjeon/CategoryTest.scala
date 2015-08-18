@@ -3,9 +3,9 @@ package org.bitbucket.eunjeon.seunjeon
 import org.scalatest.FunSuite
 
 
-class CharSetTest extends FunSuite {
+class CategoryTest extends FunSuite {
   test("split charSet") {
-    println(CharSet.splitCharSet(" 123한1글 버카충 abc!@# "))
+    println(Category.splitCharSet(" 123한1글 버카충 abc!@# "))
 
   }
 

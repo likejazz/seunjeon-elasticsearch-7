@@ -10,9 +10,9 @@ import java.util.List;
 public class AnalyzerJavaTest {
     @Test
     public void testParse() {
-        List<Term> result = Analyzer.parseJava("버카충했어? 형태소분석기입니다.");
+        List<Term> result = Analyzer.parseJava("형태소분석기입니다. 사랑합니다.");
         for (Term term: result) {
-            System.out.println("term = " + term);
+            System.out.println(term);
 
         }
 
