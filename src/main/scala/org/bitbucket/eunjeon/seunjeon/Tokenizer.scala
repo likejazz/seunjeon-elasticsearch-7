@@ -20,18 +20,18 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def buildLattice(text: String): Lattice = {
     val charsets = CharSet.splitCharSet(text)
-    val charsetsLength = charsets.foldLeft(0)(_ + _.length)
+    val charsetsLength = charsets.foldLeft(0)(_ + _.str.length)
     val lattice = new Lattice(charsetsLength, connectionCostDict)
     buildLattice(charsets, lattice)
     lattice
   }
 
-  private def buildLattice(eojeols: Seq[String], lattice: Lattice): Unit = {
+  private def buildLattice(eojeols: Seq[CharSetCategory], lattice: Lattice): Unit = {
     var eojeolOffset = 0
-    eojeols.foreach { eojeol: String =>
-      for (textIdx <- 0 to eojeol.length) {
+    eojeols.foreach { eojeol: CharSetCategory =>
+      for (textIdx <- 0 to eojeol.str.length) {
         val termOffset = eojeolOffset + textIdx
-        val suffixSurface = eojeol.substring(textIdx)
+        val suffixSurface = eojeol.str.substring(textIdx)
         // 자바(1)/자바(2), 자바스크립트
         val searchedTerms = lexiconDict.prefixSearch(suffixSurface)
         addTermsToLattice(lattice, searchedTerms, termOffset)
@@ -40,11 +40,11 @@ class Tokenizer (lexiconDict: LexiconDict = null,
         // TODO: insert unknown-word to lattice
         // 자, 자바스, 자바스크, 자바스크립
         val unkownTerms = (1 to suffixSurface.length).toSet.diff(termLengthSet).
-          map( i => Term.createUnknownTerm(suffixSurface.substring(0, i)))
+          map( i => Term.createUnknownTerm(suffixSurface.substring(0, i), eojeol.category.toString))
         unkownTerms.foreach(unknownTerm =>
           lattice.add(unknownTerm, termOffset, termOffset + unknownTerm.surface.length - 1))
       }
-      eojeolOffset += eojeol.length
+      eojeolOffset += eojeol.str.length
     }
   }
 

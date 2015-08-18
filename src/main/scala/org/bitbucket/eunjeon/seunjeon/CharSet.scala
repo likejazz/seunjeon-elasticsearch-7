@@ -2,8 +2,13 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.util
 
+import org.bitbucket.eunjeon.seunjeon.CharSet.CharSet
+
 import scala.collection.mutable
 
+
+// TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
+case class CharSetCategory(str: String, category: CharSet)
 
 object CharSet extends Enumeration {
   /*
@@ -69,10 +74,11 @@ object CharSet extends Enumeration {
     charFinder.put('\u3130', CharSet.HANGUL)
     charFinder.put('\u318F', CharSet.HANGUL)  // Hangul Compatibility Jamo
 
-  def splitCharSet(text: String): Seq[String] = {
+  def splitCharSet(text: String): Seq[CharSetCategory] = {
     // TODO: 거지가 되었음. 꼭 리팩토링 하자.
 
-    val result = new mutable.ListBuffer[String]
+    // TODO: unk.def, char.def 보고 category 만들어야 함.
+    val result = new mutable.ListBuffer[CharSetCategory]
     var start = 0
     var curCharSet = CharSet.NOT
     val trimedText = text.trim
@@ -82,7 +88,8 @@ object CharSet extends Enumeration {
         if (curCharSet == CharSet.NOT) {
           curCharSet = charSet
         } else {
-          result.append(trimedText.substring(start, idx))
+          //result.append(trimedText.substring(start, idx))
+          result.append(CharSetCategory(trimedText.substring(start, idx), curCharSet))
           start = idx
           curCharSet = charSet
           if (charSet == CharSet.SPACE) {
@@ -93,8 +100,8 @@ object CharSet extends Enumeration {
         }
       }
     }
-    result.append(trimedText.substring(start, trimedText.length))
-    result.filter(_.length > 0)
+    result.append(CharSetCategory(trimedText.substring(start, trimedText.length), curCharSet))
+    result.filter(_.str.length > 0)
   }
 
   private def getCharSet(ch: Char): CharSet = {

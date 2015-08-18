@@ -14,8 +14,8 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object Term {
-  def createUnknownTerm(surface:String): Term = {
-    new Term(surface, -1, -1, 4000*surface.length, "UNKNOWN")
+  def createUnknownTerm(surface:String, category: String): Term = {
+    new Term(surface, -1, -1, 4000*surface.length, category)
   }
 }
 

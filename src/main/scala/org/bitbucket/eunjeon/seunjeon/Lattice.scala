@@ -34,11 +34,11 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     endingNodes(endPos+1) += latticeNode
   }
 
-  def addUnknownWords(sentence: String): Unit = {
-    for ((nodes, i) <- sentence.view.zipWithIndex) {
-      this.add(Term.createUnknownTerm(sentence.substring(i, i+1)), i, i)
-    }
-  }
+//  def addUnknownWords(sentence: String): Unit = {
+//    for ((nodes, i) <- sentence.view.zipWithIndex) {
+//      this.add(Term.createUnknownTerm(sentence.substring(i, i+1)), i, i)
+//    }
+//  }
 
   def getBestPath: Seq[Term] = {
     for (idx <- 1 until startingNodes.length) {
