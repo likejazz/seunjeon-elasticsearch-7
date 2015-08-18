@@ -42,7 +42,6 @@
 List<Term> result = Analyzer.parseJava("형태소분석기입니다. 사랑합니다.");
 for (Term term: result) {
     System.out.println(term);
-
 }
 ```
 ### scala
@@ -65,12 +64,14 @@ Term(EOS,0,0,0,EOS)
 ```
 
 ## Group
-https://groups.google.com/forum/#!forum/eunjeon
-질문과 공동 환영합니다.
+[https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 공동개발 환영합니다.
 
 ## 개발
+```
 BuildDic
 sbt package
+작성중
+```
 
 ## License
 Copyright 2015 유영호, 이용운. 아파치 라이센스 2.0에 따라 소프트웨어를 사용, 재배포 할 수 있습니다. 더 자세한 사항은 http://www.apache.org/licenses/LICENSE-2.0 을 참조하시기 바랍니다.
