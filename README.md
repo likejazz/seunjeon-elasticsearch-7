@@ -68,7 +68,7 @@ Term(EOS,0,0,0,EOS)
 ## 개발
 ```sh
 # 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
-sbt "run-main org.bitbucket.eunjeon.seunjeon.DicBuilder"
+sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DicBuilder"
 # jar 생성
 sbt package
 ```
