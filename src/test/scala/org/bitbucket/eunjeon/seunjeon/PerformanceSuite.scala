@@ -32,7 +32,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(result)
   }
 
-  test("performance long term") {
+  ignore("performance long term") {
     val times = 10000
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
@@ -44,11 +44,20 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(s"$elapsedTime ns")
   }
 
-  ignore("performance from file") {
+  test("performance from file") {
     println(tokenizer.parseText("dic loading"))
     val source = scala.io.Source.fromFile("./src/test/resources/outofmemory.txt")
     val lines = try source.mkString finally source.close()
-    println(tokenizer.parseText(lines))
+
+    val times = 1000
+    val startTime = System.nanoTime()
+    for (i <- 0 until times) {
+      tokenizer.parseText(lines)
+    }
+    val endTime = System.nanoTime()
+    val elapsedTime = (endTime - startTime) / times
+    println(elapsedTime)
+    println(s"$elapsedTime us")
   }
 
 }

@@ -99,18 +99,12 @@ class LexiconDict {
   }
 
   def prefixSearch(keyword: String): Seq[Term] = {
-    //val indexedLexiconDictPositions = trie.commonPrefixSearch(keyword)
     val indexedLexiconDictPositions = ListBuffer[Int]()
     val iter = trie.commonPrefixSearchEntries(keyword).iterator()
     while (iter.hasNext) {
       indexedLexiconDictPositions += iter.next().getValue
     }
 
-//    val indexedLexiconDictPositions = ListBuffer[Int]()
-//    for (idx <- 0 to keyword.length) {
-//      val subKeyword = keyword.substring(idx, idx+1)
-//      indexedLexiconDictPositions += trie.getValueForExactKey(subKeyword)
-//    }
     indexedLexiconDictPositions.flatMap { indexLexiconDictPos =>
       surfaceIndexDict.get(indexLexiconDictPos)._2
     }

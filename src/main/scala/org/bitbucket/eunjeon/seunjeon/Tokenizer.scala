@@ -16,6 +16,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
@@ -35,39 +36,87 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def buildLattice(text: String): Lattice = {
     val charsets = Category.splitCharSet(text)
+    buildLattice(charsets)
+  }
+
+  private def buildLattice(charsets: Seq[CharSet]): Lattice = {
     val charsetsLength = charsets.foldLeft(0)(_ + _.str.length)
     val lattice = new Lattice(charsetsLength, connectionCostDict)
-    buildLattice(charsets, lattice)
+
+    var charsetOffset = 0
+    charsets.foreach { charset: CharSet =>
+      addTerms(lattice, charsetOffset, charset)
+      charsetOffset += charset.str.length
+    }
     lattice
   }
 
-  private def buildLattice(eojeols: Seq[CharSet], lattice: Lattice): Unit = {
-    var eojeolOffset = 0
-    eojeols.foreach { eojeol: CharSet =>
-      for (textIdx <- 0 to eojeol.str.length) {
-        val termOffset = eojeolOffset + textIdx
-        val suffixSurface = eojeol.str.substring(textIdx)
-        // 자바(1)/자바(2), 자바스크립트
-        val searchedTerms = lexiconDict.prefixSearch(suffixSurface)
-        addTermsToLattice(lattice, searchedTerms, termOffset)
-        val termLengthSet = searchedTerms.map(term => term.surface.length).toSet
+  def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+    val searchedTerms = searchTerms(charset)
+    searchedTerms.foreach {
+      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
+    }
+    val uniqueTerms = searchedTerms.groupBy(t => (t._2, t._3)).map(_._2.head)
+    val unknownTerms = findUnknownTerms(charset, uniqueTerms)
+    unknownTerms.foreach {
+      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
+    }
+  }
 
-        // TODO: insert unknown-word to lattice
-        // 자, 자바스, 자바스크, 자바스크립
-        val unkownTerms = (1 to suffixSurface.length).toSet.diff(termLengthSet).
-          //map( i => Term.createUnknownTerm(suffixSurface.substring(0, i), eojeol.category.toString))
-          map( i => Term.createUnknownTerm(suffixSurface.substring(0, i), eojeol.category))
-        unkownTerms.foreach(unknownTerm =>
-          lattice.add(unknownTerm, termOffset, termOffset + unknownTerm.surface.length - 1))
+  def findUnknownTerms(charset: CharSet, searchedTerms: Iterable[(Term, Int, Int)])
+  : Seq[(Term, Int, Int)] = {
+    // TODO: searchedTerms에 이미 들어 있는 것은 빼자.
+    val unknownTerms = new ListBuffer[(Term, Int, Int)]()
+    searchedTerms.foreach { case (term, start, end) =>
+      if (start > 0) {
+        val unknownTerm = Term.createUnknownTerm(charset.str.substring(0, start), charset.category)
+        unknownTerms.append((unknownTerm, 0, start-1))
       }
-      eojeolOffset += eojeol.str.length
+      if (end < charset.str.length-1) {
+        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.category)
+        unknownTerms.append((tailUnknownTerm, end+1, charset.str.length-1))
+      }
+    }
+
+    if (searchedTerms.isEmpty) {
+      val unknownTerm = Term.createUnknownTerm(charset.str, charset.category)
+      unknownTerms.append((unknownTerm, 0, charset.str.length-1))
+    }
+    unknownTerms
+  }
+
+  def addTermsAndUnKnownTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet, searchedTerms: ListBuffer[(Term, Int, Int)]): Unit = {
+    searchedTerms.foreach { case (term, start, end) =>
+      if (start > 0) {
+        val headUnknownTerm = Term.createUnknownTerm(charset.str.substring(0, start - 1), charset.category)
+        lattice.add(headUnknownTerm, charsetOffset, charsetOffset + start - 1)
+      }
+      lattice.add(term, charsetOffset + start, charsetOffset + end)
+      if (end < charset.str.length) {
+        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.category)
+        lattice.add(tailUnknownTerm, charsetOffset + end + 1, charsetOffset + charset.str.length)
+      }
+    }
+
+    if (searchedTerms.isEmpty) {
+      lattice.add(Term.createUnknownTerm(charset.str, charset.category), charsetOffset, charsetOffset + charset.str.length - 1)
     }
   }
 
-  def addTermsToLattice(lattice: Lattice, terms: Seq[Term], termOffset: Int): Unit = {
-    terms.foreach { term =>
-      lattice.add(term, termOffset, termOffset + term.surface.length - 1)
+  def searchTerms(charset: CharSet): ListBuffer[(Term, Int, Int)] = {
+    var searchedTerms = new ListBuffer[(Term, Int, Int)]() // term, start, end,
+    for (textIdx <- 0 until charset.str.length) {
+      val termOffset = textIdx
+      val suffixSurface = charset.str.substring(textIdx)
+      // 자바(1)/자바(2), 자바스크립트
+      val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
+      suffixSearchedTerms.foreach(term =>
+        searchedTerms += ((term, termOffset, termOffset + term.surface.length - 1))
+      )
     }
+    searchedTerms
   }
+
+  //def searchSurface(charset: CharSet):
 }
 

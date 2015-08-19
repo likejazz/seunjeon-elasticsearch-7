@@ -11,7 +11,7 @@ class AnalyzerTest extends FunSuite {
   }
 
   test("number test") {
-    Analyzer.parse("1234567890").foreach { t: Term =>
+    Analyzer.parse("1234567890 !@# ABCD").foreach { t: Term =>
       println(t)
     }
   }
