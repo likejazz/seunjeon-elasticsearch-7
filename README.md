@@ -61,7 +61,7 @@ Term(합니다,2693,6,805,XSV+EF,*,F,합니다,Inflect,XSV,EF,하/XSV/*+ᄇ니�
 Term(.,1794,3555,3597,SF,*,*,*,*,*,*,*)
 Term(EOS,0,0,0,EOS)
 ```
-
+품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 ## Group
 [https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 공동개발 환영합니다.
 
