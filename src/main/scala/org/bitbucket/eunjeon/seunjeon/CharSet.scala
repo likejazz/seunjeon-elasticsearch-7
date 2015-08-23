@@ -24,6 +24,11 @@ import scala.collection.mutable
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
 case class CharSet(str: String, category: Category)
 
+// TODO
+object Unk {
+
+}
+
 object Category extends Enumeration {
   /*
    TODO: char.def 사용하자.

@@ -15,25 +15,47 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
+import java.nio.file.{Paths, Files}
+import java.nio.file.StandardCopyOption._
+
 
 object DicBuilder {
+  val RESOURCE_PATH = "src/main/resources"
+  
   def main(args: Array[String]): Unit = {
-    val resourcePath = "src/main/resources"
     println("compiling lexicon dictionary...")
-    val lexiconDict = new LexiconDict
-    lexiconDict.loadFromCsvFiles("mecab-ko-dic")
-    lexiconDict.save(
-      resourcePath  + LexiconDict.lexiconResourceFile,
-      resourcePath + LexiconDict.lexiconTrieResourceFile)
+    buildLexiconDict(RESOURCE_PATH)
 
     println("compiling connection-cost dictionary...")
-    val connectionCostDict = new ConnectionCostDict
-    connectionCostDict.loadFromFile("mecab-ko-dic/matrix.def")
-    connectionCostDict.save(
-      resourcePath + ConnectionCostDict.resourceConnDicFile)
+    buildConnectionCostDict(RESOURCE_PATH)
+
+    copyCharDef(RESOURCE_PATH)
+    copyUnkDef(RESOURCE_PATH)
 
     println("complete")
 
   }
 
+  private def copyCharDef(resourcePath: String): Unit = {
+    Files.copy(Paths.get("mecab-ko-dic/char.def"), Paths.get(RESOURCE_PATH + "/char.def"), REPLACE_EXISTING)
+  }
+
+  private def copyUnkDef(resourcePath: String): Unit = {
+    Files.copy(Paths.get("mecab-ko-dic/unk.def"), Paths.get(RESOURCE_PATH + "/unk.def"), REPLACE_EXISTING)
+  }
+
+  private def buildConnectionCostDict(resourcePath: String): Unit = {
+    val connectionCostDict = new ConnectionCostDict
+    connectionCostDict.loadFromFile("mecab-ko-dic/matrix.def")
+    connectionCostDict.save(
+      resourcePath + ConnectionCostDict.resourceConnDicFile)
+  }
+
+  private def buildLexiconDict(resourcePath: String): Unit = {
+    val lexiconDict = new LexiconDict
+    lexiconDict.loadFromCsvFiles("mecab-ko-dic")
+    lexiconDict.save(
+      resourcePath + LexiconDict.lexiconResourceFile,
+      resourcePath + LexiconDict.lexiconTrieResourceFile)
+  }
 }
