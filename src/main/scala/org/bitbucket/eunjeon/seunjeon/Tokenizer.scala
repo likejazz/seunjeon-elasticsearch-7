@@ -35,7 +35,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   def buildLattice(text: String): Lattice = {
-    val charsets = Category.splitCharSet(text)
+    val charsets = CharDef.splitCharSet(text)
     buildLattice(charsets)
   }
 
