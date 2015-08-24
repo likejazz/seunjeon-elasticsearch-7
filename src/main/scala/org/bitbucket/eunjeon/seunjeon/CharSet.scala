@@ -16,130 +16,114 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import java.util
-import org.bitbucket.eunjeon.seunjeon.Category.Category
 
 import scala.collection.mutable
+import scala.io.Source
+
 
 
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
-case class CharSet(str: String, category: Category)
+case class CharSet(str: String, category: Category, term: Term)
 
-object Category extends Enumeration {
-  /*
-   TODO: char.def 사용하자.
-   */
-  type Category = Term
-  val DEFAULT = Term(null, 1801, 3561, 3633, "SY")
-  val SPACE = Term(null, 1798, 3558, 917, "SP")
-  val ALPHA = Term(null, 1796, 3535, 850, "SL")
-  val CYRILLIC = Term(null, 1796, 3535, 850, "SL")
-  val GREEK = Term(null, 1796, 3535, 850, "SL")
-  val HANGUL = Term(null,1803, 3564, 9396, "UNKNOWN")
-  val HANJA = Term(null,1795, 3556, -887, "SH")
-  val HIRAGANA = Term(null, 1796, 3535, 850, "SL")
-  val KANJI = Term(null, 1796, 3535, 850, "SL")
-  val HANJANUMERIC = Term(null, 1795, 3556, -887, "SH")
-  val KATAKANA = Term(null, 1796, 3535, 850, "SL")
-  val NUMERIC = Term(null, 1797, 3557, 3757, "SN")
-  val SYMBOL = Term(null, 1801, 3561, 3633, "SY")
-  val NOT = null
+// TODO
+object UnkDef {
+  val terms = buildUnk
+  var defaultTerm: Term = null
 
-  val charFinder = new util.TreeMap[Char, Category]()
-  // SPACE
-  charFinder.put('\u0020', Category.SPACE)
-  charFinder.put('\u000D', Category.SPACE)
-  charFinder.put('\u0009', Category.SPACE)
-  charFinder.put('\u000B', Category.SPACE)
-  charFinder.put('\u000A', Category.SPACE)
+  def buildUnk: mutable.Map[String, Term] = {
+    val terms = mutable.Map[String, Term]()
+    Source.fromFile(DicBuilder.RESOURCE_PATH + "/unk.def", "utf-8").getLines().foreach { line =>
+      val l = line.split(",")
+      if (l(0) == "DEFAULT") {
+        defaultTerm =
+          Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
+      } else {
+        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
+      }
+    }
+    terms
+  }
 
-  // ASCII
-  charFinder.put('\u0021', Category.SYMBOL)
-  charFinder.put('\u002F', Category.SYMBOL)
+  def apply(name: String): Option[Term] = {
+    terms.get(name)
+  }
+}
 
-  charFinder.put('\u0030', Category.NUMERIC)
-  charFinder.put('\u0039', Category.NUMERIC)
+case class Category(invoke:Boolean, group:Boolean, length:Int)
 
-  charFinder.put('\u003A', Category.SYMBOL)
-  charFinder.put('\u0040', Category.SYMBOL)
+// TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
+object CharDef {
+  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
+  var defaultCategory:Category = null
 
-  charFinder.put('\u0041', Category.ALPHA)
-  charFinder.put('\u005A', Category.ALPHA)
-
-  charFinder.put('\u005B', Category.SYMBOL)
-  charFinder.put('\u0060', Category.SYMBOL)
-
-  charFinder.put('\u0061', Category.ALPHA)
-  charFinder.put('\u007A', Category.ALPHA)
-
-  charFinder.put('\u007B', Category.SYMBOL)
-  charFinder.put('\u007E', Category.SYMBOL)
-
-  // Latin
-  charFinder.put('\u00A1', Category.SYMBOL)
-  charFinder.put('\u00BF', Category.SYMBOL)
-
-  charFinder.put('\u00C0', Category.ALPHA)
-  charFinder.put('\u00FF', Category.ALPHA)
-
-  charFinder.put('\u0100', Category.ALPHA)
-  charFinder.put('\u017F', Category.ALPHA)
-
-  charFinder.put('\u0180', Category.ALPHA)
-  charFinder.put('\u0236', Category.ALPHA)
-
-  charFinder.put('\u1E00', Category.ALPHA)
-  charFinder.put('\u1EF9', Category.ALPHA)
-
-  // HANGUL
-  charFinder.put('\uAC00', Category.HANGUL)
-  charFinder.put('\uD7A3', Category.HANGUL)
-
-  charFinder.put('\u1100', Category.HANGUL)  // Hangul Jamo
-  charFinder.put('\u11FF', Category.HANGUL)
-
-  charFinder.put('\u3130', Category.HANGUL)
-  charFinder.put('\u318F', Category.HANGUL)  // Hangul Compatibility Jamo
-
-  def splitCharSet(text: String): Seq[CharSet] = {
-    // TODO: 거지가 되었음. 꼭 리팩토링 하자.
-
-    // TODO: unk.def, char.def 보고 category 만들어야 함.
-    val result = new mutable.ListBuffer[CharSet]
-    var start = 0
-    var curCategory: Category = Category.NOT
-    val trimedText = text.trim
-    trimedText.view.zipWithIndex.foreach { case (ch, idx) =>
-      val charSet: Category = getCharSet(ch)
-      if (charSet != curCategory) {
-        if (curCategory == Category.NOT) {
-          curCategory = charSet
+  def loadChar = {
+    val categories = mutable.Map[String, Category]()
+    val charMap = new util.TreeMap[Char, (Category, Term)]()
+    Source.fromFile(DicBuilder.RESOURCE_PATH + "/char.def", "utf-8").getLines().
+      filterNot(line => line.startsWith("#") || line.length == 0).
+      foreach { line =>
+        val l = line.split("\\s+")
+        // range
+        if (l(0).startsWith("0x")) {
+          val charRange = l(0).split("\\.\\.")
+          val name = l(1)
+          charRange.foreach { range =>
+            val term = UnkDef(name).orNull
+            if (term != null) {
+              charMap.put(Integer.parseInt(range.substring(2), 16).toChar, (categories(name), term))
+            }
+          }
+        // category
         } else {
-          //result.append(trimedText.substring(start, idx))
-          result.append(CharSet(trimedText.substring(start, idx), curCategory))
-          start = idx
-          curCategory = charSet
-          if (charSet == Category.SPACE) {
-            // TODO: space 일때 한칸만 가도 되는가? 있는만큼 가야하지 않는가?
-            // 그리고 스페이스 자체도 노드에 추가하는건 어떤가?
-            start += 1
+          val l = line.split("\\s+")
+          val name = l(0)
+          val invoke = if (l(1) == "1") true else false
+          val group = if (l(2) == "1") true else false
+          val length = l(3).toInt
+          if (name == "DEFAULT") {
+            defaultCategory = Category(invoke, group, length)
+          } else {
+            categories(name) = Category(invoke, group, length)
           }
         }
       }
-    }
-    result.append(CharSet(trimedText.substring(start, trimedText.length), curCategory))
-    result.filter(_.str.length > 0)
+    charMap
   }
 
-  private def getCharSet(ch: Char): Category = {
+  def splitCharSet(text: String): Seq[CharSet] = {
+    val result = new mutable.ListBuffer[CharSet]
+    if (text.length == 0) {
+      return result
+    }
+    var start = 0
+    var curCategoryTerm: (Category, Term) = null
+    text.view.zipWithIndex.foreach { case (ch, idx) =>
+      val categoryTerm: (Category, Term) = getCategoryTerm(ch)
+      if (categoryTerm != curCategoryTerm) {
+        // first loop
+        if (curCategoryTerm == null) {
+        } else {
+          result.append(CharSet(text.substring(start, idx), curCategoryTerm._1, curCategoryTerm._2))
+          start = idx
+        }
+        curCategoryTerm = categoryTerm
+      }
+    }
+    result.append(CharSet(text.substring(start, text.length), curCategoryTerm._1, curCategoryTerm._2))
+    // TODO: pos id 바꾸자 string 비교는 느릴것같음.
+    // remove space term
+    result.filterNot(_.term.surface == "SPACE")
+  }
+
+  private def getCategoryTerm(ch: Char): (Category, Term) = {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
     if (floor == null || ceiling == null) {
-      Category.DEFAULT
+      (CharDef.defaultCategory, UnkDef.defaultTerm)
     } else if (floor.getValue == ceiling.getValue) {
       floor.getValue
     } else {
-      Category.DEFAULT
+      (CharDef.defaultCategory, UnkDef.defaultTerm)
     }
   }
-
 }

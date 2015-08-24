@@ -18,7 +18,6 @@ package org.bitbucket.eunjeon.seunjeon
 import java.io.{File, _}
 
 import com.google.common.collect.ImmutableList
-import org.bitbucket.eunjeon.seunjeon.Category.Category
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
@@ -30,13 +29,13 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object Term {
-  def createUnknownTerm(surface:String, category: Category): Term = {
+  def createUnknownTerm(surface:String, term: Term): Term = {
     new Term(surface,
-      category.leftId,
-      category.rightId,
+      term.leftId,
+      term.rightId,
     // TODO: unknown cost 어떻게 해야하나.. mecab or kuromoji 소스를 봐야할듯..
-      category.cost*surface.length,
-      category.feature)
+      term.cost*surface.length,
+      term.feature)
   }
 }
 

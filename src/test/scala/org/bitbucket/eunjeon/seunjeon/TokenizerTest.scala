@@ -46,6 +46,7 @@ class TokenizerTest extends FunSuite with BeforeAndAfter {
       tokenizer.parseText("감자고 구마 오징어").map(_.surface).mkString(","))
   }
 
+  // TODO: "호박"을 찾아줄껀가말껀가..
   test("unknown word") {
     assert("BOS,감자,호박,오징어,EOS" ==
       tokenizer.parseText("감자호박오징어").map(_.surface).mkString(","))
