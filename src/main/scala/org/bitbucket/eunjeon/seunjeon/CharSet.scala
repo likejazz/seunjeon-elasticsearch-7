@@ -23,7 +23,7 @@ import scala.io.Source
 
 
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
-case class CharSet(str: String, category: Term)
+case class CharSet(str: String, category: Category, term: Term)
 
 // TODO
 object UnkDef {
@@ -49,77 +49,81 @@ object UnkDef {
   }
 }
 
-/* TODO: 해석해주자...
-DEFAULT         0 1 0  # DEFAULT is a mandatory category!
-SPACE           0 1 0
-HANJA           0 0 1
-KANJI           0 0 2
-SYMBOL          1 1 0
-NUMERIC         1 1 0
-ALPHA           1 1 0
-HANGUL          0 1 2 # Korean
-HIRAGANA        1 1 0
-KATAKANA        1 1 0
-HANJANUMERIC    1 1 0
-GREEK           1 1 0
-CYRILLIC        1 1 0
- */
+case class Category(invoke:Boolean, group:Boolean, length:Int)
 
+// TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
 object CharDef {
-  val charFinder = loadChar
+  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
+  var defaultCategory:Category = null
 
-  def loadChar: util.TreeMap[Char, Term] = {
-    val charMap = new util.TreeMap[Char, Term]()
-    Source.fromFile(DicBuilder.RESOURCE_PATH + "/char.def", "utf-8").getLines().foreach { line =>
-      val l = line.split("\\s+")
-      if (l(0).startsWith("0x")) {
-        val charRange = l(0).split("\\.\\.")
-        val name = l(1)
-        charRange.foreach { range =>
-          val term = UnkDef(name).orNull
-          if (term != null) {
-            charMap.put(Integer.parseInt(range.substring(2), 16).toChar, term)
+  def loadChar = {
+    val categories = mutable.Map[String, Category]()
+    val charMap = new util.TreeMap[Char, (Category, Term)]()
+    Source.fromFile(DicBuilder.RESOURCE_PATH + "/char.def", "utf-8").getLines().
+      filterNot(line => line.startsWith("#") || line.length == 0).
+      foreach { line =>
+        val l = line.split("\\s+")
+        // range
+        if (l(0).startsWith("0x")) {
+          val charRange = l(0).split("\\.\\.")
+          val name = l(1)
+          charRange.foreach { range =>
+            val term = UnkDef(name).orNull
+            if (term != null) {
+              charMap.put(Integer.parseInt(range.substring(2), 16).toChar, (categories(name), term))
+            }
+          }
+        // category
+        } else {
+          val l = line.split("\\s+")
+          val name = l(0)
+          val invoke = if (l(1) == "1") true else false
+          val group = if (l(2) == "1") true else false
+          val length = l(3).toInt
+          if (name == "DEFAULT") {
+            defaultCategory = Category(invoke, group, length)
+          } else {
+            categories(name) = Category(invoke, group, length)
           }
         }
       }
-    }
     charMap
   }
 
   def splitCharSet(text: String): Seq[CharSet] = {
     val result = new mutable.ListBuffer[CharSet]
     if (text.length == 0) {
-      return result;
+      return result
     }
     var start = 0
-    var curCategory: Term = null
+    var curCategoryTerm: (Category, Term) = null
     text.view.zipWithIndex.foreach { case (ch, idx) =>
-      val charSet: Term = getCharSet(ch)
-      if (charSet != curCategory) {
+      val categoryTerm: (Category, Term) = getCategoryTerm(ch)
+      if (categoryTerm != curCategoryTerm) {
         // first loop
-        if (curCategory == null) {
+        if (curCategoryTerm == null) {
         } else {
-          result.append(CharSet(text.substring(start, idx), curCategory))
+          result.append(CharSet(text.substring(start, idx), curCategoryTerm._1, curCategoryTerm._2))
           start = idx
         }
-        curCategory = charSet
+        curCategoryTerm = categoryTerm
       }
     }
-    result.append(CharSet(text.substring(start, text.length), curCategory))
+    result.append(CharSet(text.substring(start, text.length), curCategoryTerm._1, curCategoryTerm._2))
     // TODO: pos id 바꾸자 string 비교는 느릴것같음.
     // remove space term
-    result.filterNot(_.category.surface == "SPACE")
+    result.filterNot(_.term.surface == "SPACE")
   }
 
-  private def getCharSet(ch: Char): Term = {
+  private def getCategoryTerm(ch: Char): (Category, Term) = {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
     if (floor == null || ceiling == null) {
-      UnkDef.defaultTerm
+      (CharDef.defaultCategory, UnkDef.defaultTerm)
     } else if (floor.getValue == ceiling.getValue) {
       floor.getValue
     } else {
-      UnkDef.defaultTerm
+      (CharDef.defaultCategory, UnkDef.defaultTerm)
     }
   }
 }

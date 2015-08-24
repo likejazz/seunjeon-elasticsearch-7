@@ -69,17 +69,17 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     val unknownTerms = new ListBuffer[(Term, Int, Int)]()
     searchedTerms.foreach { case (term, start, end) =>
       if (start > 0) {
-        val unknownTerm = Term.createUnknownTerm(charset.str.substring(0, start), charset.category)
+        val unknownTerm = Term.createUnknownTerm(charset.str.substring(0, start), charset.term)
         unknownTerms.append((unknownTerm, 0, start-1))
       }
       if (end < charset.str.length-1) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.category)
+        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
         unknownTerms.append((tailUnknownTerm, end+1, charset.str.length-1))
       }
     }
 
     if (searchedTerms.isEmpty) {
-      val unknownTerm = Term.createUnknownTerm(charset.str, charset.category)
+      val unknownTerm = Term.createUnknownTerm(charset.str, charset.term)
       unknownTerms.append((unknownTerm, 0, charset.str.length-1))
     }
     unknownTerms
@@ -88,18 +88,18 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   def addTermsAndUnKnownTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet, searchedTerms: ListBuffer[(Term, Int, Int)]): Unit = {
     searchedTerms.foreach { case (term, start, end) =>
       if (start > 0) {
-        val headUnknownTerm = Term.createUnknownTerm(charset.str.substring(0, start - 1), charset.category)
+        val headUnknownTerm = Term.createUnknownTerm(charset.str.substring(0, start - 1), charset.term)
         lattice.add(headUnknownTerm, charsetOffset, charsetOffset + start - 1)
       }
       lattice.add(term, charsetOffset + start, charsetOffset + end)
       if (end < charset.str.length) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.category)
+        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
         lattice.add(tailUnknownTerm, charsetOffset + end + 1, charsetOffset + charset.str.length)
       }
     }
 
     if (searchedTerms.isEmpty) {
-      lattice.add(Term.createUnknownTerm(charset.str, charset.category), charsetOffset, charsetOffset + charset.str.length - 1)
+      lattice.add(Term.createUnknownTerm(charset.str, charset.term), charsetOffset, charsetOffset + charset.str.length - 1)
     }
   }
 

@@ -17,6 +17,6 @@ class CharDefTest extends FunSuite {
 
 object CharDefTest {
   def convString(sets: Seq[CharSet]): String = {
-    sets.map(charset => (charset.str, charset.category.surface)).mkString(",")
+    sets.map(charset => (charset.str, charset.term.surface)).mkString(",")
   }
 }
