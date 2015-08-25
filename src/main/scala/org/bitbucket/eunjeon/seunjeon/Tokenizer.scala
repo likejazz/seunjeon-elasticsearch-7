@@ -51,23 +51,25 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+    var latticeNodes:mutable.Set[LatticeNode] = new mutable.HashSet[LatticeNode]()
     for (idx <- 0 until charset.str.length) {
       val termOffset = idx
       val suffixSurface = charset.str.substring(idx)
       val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
       suffixSearchedTerms.foreach(term =>
-        lattice.add(term, charsetOffset+termOffset, charsetOffset+termOffset+term.surface.length-1)
+        latticeNodes += LatticeNode(term, charsetOffset+termOffset, charsetOffset+termOffset+term.surface.length-1)
       )
 
+      // FIXME: bug.. when length is 3
       val categoryLength = if (termOffset+charset.category.length > charset.str.length) charset.category.length-1 else charset.category.length
       for (unknownIdx <- 1 to categoryLength) {
         val unknownTerm = Term.createUnknownTerm(charset.str.substring(termOffset, termOffset+unknownIdx), charset.term)
-        lattice.add(unknownTerm, charsetOffset+termOffset, charsetOffset+termOffset+unknownTerm.surface.length-1)
+        latticeNodes += LatticeNode(unknownTerm, charsetOffset+termOffset, charsetOffset+termOffset+unknownTerm.surface.length-1)
       }
     }
-    // TODO: 심각한 성능문제가 있음.
     val fullLengthTerm = Term.createUnknownTerm(charset.str, charset.term)
-    lattice.add(fullLengthTerm, charsetOffset, charsetOffset+fullLengthTerm.surface.length-1)
+    latticeNodes += LatticeNode(fullLengthTerm, charsetOffset, charsetOffset+fullLengthTerm.surface.length-1)
+    lattice.addAll(latticeNodes)
   }
 }
 

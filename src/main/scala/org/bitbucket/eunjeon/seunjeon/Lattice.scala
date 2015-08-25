@@ -21,16 +21,23 @@ import scala.collection.mutable
  * Created by parallels on 7/28/15.
  */
 
-case class LatticeNode(term:Term, var accumulatedCost:Int = 9999) {
+case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
+
+  override def equals(o: Any) = o match {
+    case that:LatticeNode => (that.startPos == startPos) && (that.endPos == endPos)
+    case _ => false
+  }
+
+  override def hashCode = (startPos + endPos).hashCode()
 }
 
 // TODO: connectionCostDict 클래스로 빼자
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0)
-  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"))
+  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0, 0, 0)
+  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -43,10 +50,19 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
 
-  def add(term: Term, startPos:Int, endPos:Int): Unit = {
-    val latticeNode = new LatticeNode(term)
-    startingNodes(startPos+1) += latticeNode
-    endingNodes(endPos+1) += latticeNode
+//  def add(term: Term, startPos:Int, endPos:Int): Unit = {
+//    val latticeNode = new LatticeNode(term)
+//    startingNodes(startPos+1) += latticeNode
+//    endingNodes(endPos+1) += latticeNode
+//  }
+
+  def add(latticeNode:LatticeNode): Unit = {
+    startingNodes(latticeNode.startPos+1) += latticeNode
+    endingNodes(latticeNode.endPos+1) += latticeNode
+  }
+
+  def addAll(latticeNodes:mutable.Set[LatticeNode]): Unit = {
+    latticeNodes.foreach(node => add(node))
   }
 
 //  def addUnknownWords(sentence: String): Unit = {

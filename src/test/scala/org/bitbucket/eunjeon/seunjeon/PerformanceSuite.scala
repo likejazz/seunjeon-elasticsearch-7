@@ -52,7 +52,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     val source = scala.io.Source.fromFile("./src/test/resources/outofmemory.txt")
     val lines = try source.mkString finally source.close()
 
-    val times = 1000
+    val times = 100
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
       tokenizer.parseText(lines)
