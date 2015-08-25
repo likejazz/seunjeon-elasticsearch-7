@@ -47,20 +47,28 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(s"$elapsedTime ns")
   }
 
-  test("performance from file") {
+  ignore("performance too_many_special_chars") {
+    filetest("./src/test/resources/too_many_special_chars.txt")
+  }
+
+  ignore("performance long_sentence") {
+    filetest("./src/test/resources/long_sentence.txt")
+  }
+
+  def filetest(path:String): Unit = {
     println(tokenizer.parseText("dic loading"))
-    val source = scala.io.Source.fromFile("./src/test/resources/outofmemory.txt")
+    val source = scala.io.Source.fromFile(path)
     val lines = try source.mkString finally source.close()
 
     val times = 100
     val startTime = System.nanoTime()
+    var result:Seq[Term] = null
     for (i <- 0 until times) {
-      tokenizer.parseText(lines)
+      result = tokenizer.parseText(lines)
     }
     val endTime = System.nanoTime()
     val elapsedTime = (endTime - startTime) / times
-    println(elapsedTime)
+    result.foreach(println)
     println(s"$elapsedTime us")
   }
-
 }
