@@ -16,7 +16,6 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
@@ -52,71 +51,23 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
-    val searchedTerms = searchTerms(charset)
-    searchedTerms.foreach {
-      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
-    }
-    val uniqueTerms = searchedTerms.groupBy(t => (t._2, t._3)).map(_._2.head)
-    val unknownTerms = findUnknownTerms(charset, uniqueTerms)
-    unknownTerms.foreach {
-      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
-    }
-  }
-
-  def findUnknownTerms(charset: CharSet, searchedTerms: Iterable[(Term, Int, Int)])
-  : Seq[(Term, Int, Int)] = {
-    // TODO: searchedTerms에 이미 들어 있는 것은 빼자.
-    val unknownTerms = new ListBuffer[(Term, Int, Int)]()
-    searchedTerms.foreach { case (term, start, end) =>
-      if (start > 0) {
-        val unknownTerm = Term.createUnknownTerm(charset.str.substring(0, start), charset.term)
-        unknownTerms.append((unknownTerm, 0, start-1))
-      }
-      if (end < charset.str.length-1) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
-        unknownTerms.append((tailUnknownTerm, end+1, charset.str.length-1))
-      }
-    }
-
-    if (searchedTerms.isEmpty) {
-      val unknownTerm = Term.createUnknownTerm(charset.str, charset.term)
-      unknownTerms.append((unknownTerm, 0, charset.str.length-1))
-    }
-    unknownTerms
-  }
-
-  def addTermsAndUnKnownTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet, searchedTerms: ListBuffer[(Term, Int, Int)]): Unit = {
-    searchedTerms.foreach { case (term, start, end) =>
-      if (start > 0) {
-        val headUnknownTerm = Term.createUnknownTerm(charset.str.substring(0, start - 1), charset.term)
-        lattice.add(headUnknownTerm, charsetOffset, charsetOffset + start - 1)
-      }
-      lattice.add(term, charsetOffset + start, charsetOffset + end)
-      if (end < charset.str.length) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
-        lattice.add(tailUnknownTerm, charsetOffset + end + 1, charsetOffset + charset.str.length)
-      }
-    }
-
-    if (searchedTerms.isEmpty) {
-      lattice.add(Term.createUnknownTerm(charset.str, charset.term), charsetOffset, charsetOffset + charset.str.length - 1)
-    }
-  }
-
-  def searchTerms(charset: CharSet): ListBuffer[(Term, Int, Int)] = {
-    var searchedTerms = new ListBuffer[(Term, Int, Int)]() // term, start, end,
-    for (textIdx <- 0 until charset.str.length) {
-      val termOffset = textIdx
-      val suffixSurface = charset.str.substring(textIdx)
-      // 자바(1)/자바(2), 자바스크립트
+    for (idx <- 0 until charset.str.length) {
+      val termOffset = idx
+      val suffixSurface = charset.str.substring(idx)
       val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
       suffixSearchedTerms.foreach(term =>
-        searchedTerms += ((term, termOffset, termOffset + term.surface.length - 1))
+        lattice.add(term, charsetOffset+termOffset, charsetOffset+termOffset+term.surface.length-1)
       )
-    }
-    searchedTerms
-  }
 
-  //def searchSurface(charset: CharSet):
+      val categoryLength = if (termOffset+charset.category.length > charset.str.length) charset.category.length-1 else charset.category.length
+      for (unknownIdx <- 1 to categoryLength) {
+        val unknownTerm = Term.createUnknownTerm(charset.str.substring(termOffset, termOffset+unknownIdx), charset.term)
+        lattice.add(unknownTerm, charsetOffset+termOffset, charsetOffset+termOffset+unknownTerm.surface.length-1)
+      }
+    }
+    // TODO: 심각한 성능문제가 있음.
+    val fullLengthTerm = Term.createUnknownTerm(charset.str, charset.term)
+    lattice.add(fullLengthTerm, charsetOffset, charsetOffset+fullLengthTerm.surface.length-1)
+  }
 }
 

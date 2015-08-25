@@ -27,8 +27,9 @@ case class CharSet(str: String, category: Category, term: Term)
 
 // TODO
 object UnkDef {
-  val terms = buildUnk
+  // defaultTerm, terms 순서가 중요하다.. refactoring하자.
   var defaultTerm: Term = null
+  val terms = buildUnk
 
   def buildUnk: mutable.Map[String, Term] = {
     val terms = mutable.Map[String, Term]()
@@ -53,8 +54,8 @@ case class Category(invoke:Boolean, group:Boolean, length:Int)
 
 // TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
 object CharDef {
-  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
   var defaultCategory:Category = null
+  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
 
   def loadChar = {
     val categories = mutable.Map[String, Category]()

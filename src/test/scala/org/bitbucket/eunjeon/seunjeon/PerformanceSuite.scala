@@ -28,7 +28,10 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("sentence") {
-    val result = tokenizer.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
+    var result:String = null
+    result = tokenizer.parseText("ȷ".stripMargin).map(t => t.surface + ":" + t.feature(0)).mkString(",")
+    println(result)
+    result = tokenizer.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
     println(result)
   }
 
