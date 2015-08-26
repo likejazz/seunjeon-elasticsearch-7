@@ -33,7 +33,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     result
   }
 
-  def buildLattice(text: String): Lattice = {
+  private def buildLattice(text: String): Lattice = {
     val charsets = CharDef.splitCharSet(text)
     buildLattice(charsets)
   }
@@ -50,40 +50,73 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     lattice
   }
 
-  def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+  private def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+    val knownTerms:mutable.Set[LatticeNode] = new mutable.HashSet[LatticeNode]
+    val unknownTerms:mutable.Set[LatticeNode] = new mutable.HashSet[LatticeNode]
     for (idx <- 0 until charset.str.length) {
       val termOffset = idx
       val suffixSurface = charset.str.substring(idx)
       // TODO: 인자가 너무 많음. 리팩토링 필요함.
-      addKnownTerms(lattice, charsetOffset, termOffset, suffixSurface, charset)
-      // TODO: invoke 옵션 처리 해주자. 성능 향상이 기대 됨.
-      add1NLengthTerms(lattice, charsetOffset, termOffset, suffixSurface, charset)
+      addKnownTerms(knownTerms, charsetOffset, termOffset, suffixSurface, charset)
+      add1NLengthTerms(unknownTerms, knownTerms, charsetOffset, termOffset, suffixSurface, charset)
     }
-    addGroupChar(lattice, charsetOffset, charset)
+    addGroupTerm(unknownTerms, knownTerms, charsetOffset, charset)
+    lattice.addAll(knownTerms)
+    lattice.addAll(unknownTerms)
   }
 
-  def addKnownTerms(lattice:Lattice, charsetOffset: Int, termOffset: Int, suffixSurface: String, charset:CharSet): Unit = {
+  private def addKnownTerms(knownTerms:mutable.Set[LatticeNode],
+                    charsetOffset: Int,
+                    termOffset: Int,
+                    suffixSurface: String,
+                    charset:CharSet): Unit = {
     val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
     suffixSearchedTerms.foreach(term =>
-      lattice.add(LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1))
+      knownTerms += LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
     )
   }
 
-  def add1NLengthTerms(lattice:Lattice, charsetOffset: Int, termOffset: Int, suffixSurface: String, charset:CharSet): Unit = {
+  private def add1NLengthTerms(unknownTerms:mutable.Set[LatticeNode],
+                       knownTerms:mutable.Set[LatticeNode],
+                       charsetOffset: Int,
+                       termOffset: Int,
+                       suffixSurface: String,
+                       charset:CharSet): Unit = {
+    if (charset.category.group && charset.category.length == 0) {
+      return
+    }
     var categoryLength = if (suffixSurface.length < charset.category.length) suffixSurface.length else charset.category.length
     if (categoryLength == 0) {
       categoryLength = 1
     }
     for (unknownIdx <- 1 to categoryLength) {
       val unknownTerm = Term.createUnknownTerm(charset.str.substring(termOffset, termOffset + unknownIdx), charset.term)
-      lattice.add(LatticeNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1))
+      val newLatticeNode = LatticeNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
+      addUnknownLatticeNode(unknownTerms, knownTerms, charset, newLatticeNode)
     }
   }
 
-  def addGroupChar(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+  private def addGroupTerm(unknownTerms:mutable.Set[LatticeNode],
+                   knownTerms:mutable.Set[LatticeNode],
+                   charsetOffset: Int,
+                   charset: CharSet): Unit = {
     if (charset.category.group) {
       val fullLengthTerm = Term.createUnknownTerm(charset.str, charset.term)
-      lattice.add(LatticeNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1))
+      val newLatticeNode = LatticeNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
+      addUnknownLatticeNode(unknownTerms, knownTerms, charset, newLatticeNode)
+    }
+  }
+
+  private def addUnknownLatticeNode(unknownTerms: mutable.Set[LatticeNode],
+                            knownTerms: mutable.Set[LatticeNode],
+                            charset: CharSet,
+                            newLatticeNode: LatticeNode): Any = {
+    if (charset.category.invoke) {
+      unknownTerms += newLatticeNode
+    } else {
+      if (!knownTerms.contains(newLatticeNode)) {
+        unknownTerms += newLatticeNode
+      }
     }
   }
 }

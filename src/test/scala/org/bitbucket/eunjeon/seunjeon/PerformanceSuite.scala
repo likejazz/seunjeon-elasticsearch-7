@@ -47,11 +47,11 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(s"$elapsedTime ns")
   }
 
-  ignore("performance too_many_special_chars") {
+  test("performance too_many_special_chars") {
     filetest("./src/test/resources/too_many_special_chars.txt")
   }
 
-  ignore("performance long_sentence") {
+  test("performance long_sentence") {
     filetest("./src/test/resources/long_sentence.txt")
   }
 
