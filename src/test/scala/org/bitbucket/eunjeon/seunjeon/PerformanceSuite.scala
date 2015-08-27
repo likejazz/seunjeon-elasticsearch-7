@@ -35,14 +35,16 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     println(result)
   }
 
-  ignore("performance long term") {
-    val times = 10000
+  test("performance long term") {
+    var result:Seq[Term] = null
+    val times = 100
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
-      tokenizer.parseText("안녕하세요형태소분석기입니다서울에서살고있습니다.")
+      result = tokenizer.parseText("안녕하세요형태소분석기입니다.서울에서살고있습니다.")
     }
     val endTime = System.nanoTime()
     val elapsedTime = (endTime - startTime) / times
+    result.foreach(println)
     println(elapsedTime)
     println(s"$elapsedTime ns")
   }
