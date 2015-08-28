@@ -24,12 +24,15 @@ import scala.collection.mutable
 case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
 
-  override def equals(o: Any) = o match {
-    case that:LatticeNode => (that.startPos == startPos) && (that.endPos == endPos)
-    case _ => false
-  }
-
-  override def hashCode = (startPos + endPos).hashCode()
+//  override def equals(o: Any) = o match {
+//    case that:LatticeNode => (that.startPos == startPos) &&
+//      (that.endPos == endPos) &&
+//      (that.term.leftId == term.leftId) &&
+//      (that.term.rightId == term.rightId)
+//    case _ => false
+//  }
+//
+//  override def hashCode = (startPos.hashCode()<<1 + endPos.hashCode()<<2 + term.leftId<<3 + term.rightId<<4).hashCode()
 }
 
 // TODO: connectionCostDict 클래스로 빼자
@@ -76,42 +79,21 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
 
 
   private def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
-    var minTotalCost:Double = 99999999.0
+    var minTotalCost:Int = 2147483647
     endingNodes.foreach{ endingNode =>
-      val totalCost: Double = getCost(endingNode, startingNode)
+      val totalCost: Int = getCost(endingNode, startingNode)
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost
-        //startingNode.accumulatedCost = totalCost
+        startingNode.accumulatedCost = totalCost
         startingNode.leftNode = endingNode
       }
     }
   }
 
-  private def getCost(endingNode: LatticeNode, startingNode: LatticeNode): Double = {
-    //getConnectingCost(endingNode, startingNode) + endingNode.term.cost
-    var totalCost = 0.0
-    var iterCount = 1
-    var endNode = endingNode
-    var startNode = startingNode
-    while(endNode != null) {
-      val connectingCost = getConnectingCost(endNode, startNode)
-      totalCost += /*endingNode.accumulatedCost + */ (endNode.term.cost + connectingCost) / Math.pow(iterCount, 2)
-      val tempNode = endNode
-      endNode = endNode.leftNode
-      startNode = tempNode
-      iterCount += 1
-    }
-    totalCost
-  }
-
-  private def getConnectingCost(endingNode: LatticeNode, startingNode: LatticeNode): Int = {
-    val connectingCost: Int = if (endingNode.term.rightId == -1 || startingNode.term.leftId == -1) {
-      1000
-    } else {
+  private def getCost(endingNode: LatticeNode, startingNode: LatticeNode): Int = {
+    endingNode.accumulatedCost +
+      endingNode.term.cost +
       connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
-
-    }
-    connectingCost
   }
 }
 
