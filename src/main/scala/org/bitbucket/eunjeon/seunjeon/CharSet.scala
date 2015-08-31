@@ -33,7 +33,8 @@ object UnkDef {
 
   def buildUnk: mutable.Map[String, Term] = {
     val terms = mutable.Map[String, Term]()
-    Source.fromFile(DicBuilder.RESOURCE_PATH + "/unk.def", "utf-8").getLines().foreach { line =>
+    val inputStream = getClass.getResourceAsStream("/unk.def")
+    Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         defaultTerm =
@@ -60,7 +61,8 @@ object CharDef {
   def loadChar = {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Term)]()
-    Source.fromFile(DicBuilder.RESOURCE_PATH + "/char.def", "utf-8").getLines().
+    val inputStream = getClass.getResourceAsStream("/char.def")
+    Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>
         val l = line.split("\\s+")

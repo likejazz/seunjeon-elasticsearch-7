@@ -16,6 +16,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
@@ -51,39 +52,43 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   private def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
-    val knownTerms:mutable.Set[LatticeNode] = new mutable.HashSet[LatticeNode]
-    val unknownTerms:mutable.Set[LatticeNode] = new mutable.HashSet[LatticeNode]
+    val knownTerms = new ListBuffer[LatticeNode]
+    val knownTermSet = new mutable.HashSet[LatticeNode]
+    val unknownTerms = new ListBuffer[LatticeNode]
     for (idx <- 0 until charset.str.length) {
       val termOffset = idx
       val suffixSurface = charset.str.substring(idx)
       // TODO: 인자가 너무 많음. 리팩토링 필요함.
-      addKnownTerms(knownTerms, charsetOffset, termOffset, suffixSurface, charset)
-      add1NLengthTerms(unknownTerms, knownTerms, charsetOffset, termOffset, suffixSurface, charset)
+      knownTerms ++= addKnownTerms(charsetOffset, termOffset, suffixSurface, charset)
+      val knownTermsSet = knownTerms.toSet[LatticeNode]
+      unknownTerms ++= add1NLengthTerms(knownTermsSet, charsetOffset, termOffset, suffixSurface, charset)
+      knownTermSet ++= knownTermsSet
     }
-    addGroupTerm(unknownTerms, knownTerms, charsetOffset, charset)
+    addGroupTerm(unknownTerms, knownTermSet.toSet, charsetOffset, charset)
     lattice.addAll(knownTerms)
     lattice.addAll(unknownTerms)
   }
 
-  private def addKnownTerms(knownTerms:mutable.Set[LatticeNode],
-                    charsetOffset: Int,
-                    termOffset: Int,
-                    suffixSurface: String,
-                    charset:CharSet): Unit = {
+  private def addKnownTerms(charsetOffset: Int,
+                            termOffset: Int,
+                            suffixSurface: String,
+                            charset: CharSet): Seq[LatticeNode] = {
+    val terms = new ListBuffer[LatticeNode]()
     val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
     suffixSearchedTerms.foreach(term =>
-      knownTerms += LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
+      terms += LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
     )
+    terms
   }
 
-  private def add1NLengthTerms(unknownTerms:mutable.Set[LatticeNode],
-                       knownTerms:mutable.Set[LatticeNode],
-                       charsetOffset: Int,
-                       termOffset: Int,
-                       suffixSurface: String,
-                       charset:CharSet): Unit = {
+  private def add1NLengthTerms(knownTerms:Set[LatticeNode],
+                               charsetOffset: Int,
+                               termOffset: Int,
+                               suffixSurface: String,
+                               charset:CharSet): Seq[LatticeNode] = {
+    val unknownTerms = new ListBuffer[LatticeNode]
     if (charset.category.group && charset.category.length == 0) {
-      return
+      return Seq.empty[LatticeNode]
     }
     var categoryLength = if (suffixSurface.length < charset.category.length) suffixSurface.length else charset.category.length
     if (categoryLength == 0) {
@@ -94,10 +99,11 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       val newLatticeNode = LatticeNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
       addUnknownLatticeNode(unknownTerms, knownTerms, charset, newLatticeNode)
     }
+    unknownTerms
   }
 
-  private def addGroupTerm(unknownTerms:mutable.Set[LatticeNode],
-                   knownTerms:mutable.Set[LatticeNode],
+  private def addGroupTerm(unknownTerms:ListBuffer[LatticeNode],
+                   knownTerms:Set[LatticeNode],
                    charsetOffset: Int,
                    charset: CharSet): Unit = {
     if (charset.category.group) {
@@ -107,8 +113,8 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     }
   }
 
-  private def addUnknownLatticeNode(unknownTerms: mutable.Set[LatticeNode],
-                            knownTerms: mutable.Set[LatticeNode],
+  private def addUnknownLatticeNode(unknownTerms: ListBuffer[LatticeNode],
+                            knownTerms: Set[LatticeNode],
                             charset: CharSet,
                             newLatticeNode: LatticeNode): Any = {
     if (charset.category.invoke) {

@@ -24,15 +24,13 @@ import scala.collection.mutable
 case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
 
-//  override def equals(o: Any) = o match {
-//    case that:LatticeNode => (that.startPos == startPos) &&
-//      (that.endPos == endPos) &&
-//      (that.term.leftId == term.leftId) &&
-//      (that.term.rightId == term.rightId)
-//    case _ => false
-//  }
-//
-//  override def hashCode = (startPos.hashCode()<<1 + endPos.hashCode()<<2 + term.leftId<<3 + term.rightId<<4).hashCode()
+  // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
+  override def equals(o: Any) = o match {
+    case that:LatticeNode => (that.startPos == startPos) && (that.endPos == endPos)
+    case _ => false
+  }
+
+  override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
 }
 
 // TODO: connectionCostDict 클래스로 빼자
@@ -57,7 +55,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     endingNodes(latticeNode.endPos+1) += latticeNode
   }
 
-  def addAll(latticeNodes:mutable.Set[LatticeNode]): Unit = {
+  def addAll(latticeNodes:Seq[LatticeNode]): Unit = {
     latticeNodes.foreach(node => add(node))
   }
 
