@@ -21,16 +21,24 @@ import scala.collection.mutable
  * Created by parallels on 7/28/15.
  */
 
-case class LatticeNode(term:Term, var accumulatedCost:Int = 9999) {
+case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
+
+  // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
+  override def equals(o: Any) = o match {
+    case that:LatticeNode => (that.startPos == startPos) && (that.endPos == endPos)
+    case _ => false
+  }
+
+  override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
 }
 
 // TODO: connectionCostDict 클래스로 빼자
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0)
-  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"))
+  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0, 0, 0)
+  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -42,18 +50,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     temp.map(l => new mutable.MutableList[LatticeNode])
   }
 
-
-  def add(term: Term, startPos:Int, endPos:Int): Unit = {
-    val latticeNode = new LatticeNode(term)
-    startingNodes(startPos+1) += latticeNode
-    endingNodes(endPos+1) += latticeNode
+  def add(latticeNode:LatticeNode): Unit = {
+    startingNodes(latticeNode.startPos+1) += latticeNode
+    endingNodes(latticeNode.endPos+1) += latticeNode
   }
 
-//  def addUnknownWords(sentence: String): Unit = {
-//    for ((nodes, i) <- sentence.view.zipWithIndex) {
-//      this.add(Term.createUnknownTerm(sentence.substring(i, i+1)), i, i)
-//    }
-//  }
+  def addAll(latticeNodes:Seq[LatticeNode]): Unit = {
+    latticeNodes.foreach(node => add(node))
+  }
 
   def getBestPath: Seq[Term] = {
     for (idx <- 1 until startingNodes.length) {
@@ -73,14 +77,9 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
 
 
   private def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
-    var minTotalCost:Int = 99999999
+    var minTotalCost:Int = 2147483647
     endingNodes.foreach{ endingNode =>
-      val connectingCost:Int = if (endingNode.term.rightId == -1 || startingNode.term.leftId == -1) {
-        1000
-      } else {
-        connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
-      }
-      val totalCost = endingNode.accumulatedCost + endingNode.term.cost + connectingCost
+      val totalCost: Int = getCost(endingNode, startingNode)
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost
         startingNode.accumulatedCost = totalCost
@@ -89,5 +88,10 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     }
   }
 
+  private def getCost(endingNode: LatticeNode, startingNode: LatticeNode): Int = {
+    endingNode.accumulatedCost +
+      endingNode.term.cost +
+      connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
+  }
 }
 

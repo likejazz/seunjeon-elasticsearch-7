@@ -72,6 +72,7 @@ class LexiconDict {
     val terms = new mutable.MutableList[Term]()
     iterator.foreach { line =>
       try {
+        // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
         val l = line.split(",")
         terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
       } catch {

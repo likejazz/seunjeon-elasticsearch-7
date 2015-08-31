@@ -28,36 +28,49 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("sentence") {
-    val result = tokenizer.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
+    var result:String = null
+    result = tokenizer.parseText("ȷ".stripMargin).map(t => t.surface + ":" + t.feature(0)).mkString(",")
+    println(result)
+    result = tokenizer.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
     println(result)
   }
 
-  ignore("performance long term") {
-    val times = 10000
+  test("performance long term") {
+    var result:Seq[Term] = null
+    val times = 100
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
-      tokenizer.parseText("안녕하세요형태소분석기입니다서울에서살고있습니다.")
+      result = tokenizer.parseText("안녕하세요형태소분석기입니다.서울에서살고있습니다.")
     }
     val endTime = System.nanoTime()
     val elapsedTime = (endTime - startTime) / times
+    result.foreach(println)
     println(elapsedTime)
     println(s"$elapsedTime ns")
   }
 
-  test("performance from file") {
+  ignore("performance too_many_special_chars") {
+    filetest("./src/test/resources/too_many_special_chars.txt")
+  }
+
+  ignore("performance long_sentence") {
+    filetest("./src/test/resources/long_sentence.txt")
+  }
+
+  def filetest(path:String): Unit = {
     println(tokenizer.parseText("dic loading"))
-    val source = scala.io.Source.fromFile("./src/test/resources/outofmemory.txt")
+    val source = scala.io.Source.fromFile(path)
     val lines = try source.mkString finally source.close()
 
-    val times = 1000
+    val times = 100
     val startTime = System.nanoTime()
+    var result:Seq[Term] = null
     for (i <- 0 until times) {
-      tokenizer.parseText(lines)
+      result = tokenizer.parseText(lines)
     }
     val endTime = System.nanoTime()
     val elapsedTime = (endTime - startTime) / times
-    println(elapsedTime)
+    result.foreach(println)
     println(s"$elapsedTime us")
   }
-
 }

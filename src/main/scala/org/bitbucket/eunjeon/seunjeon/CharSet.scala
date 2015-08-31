@@ -27,12 +27,14 @@ case class CharSet(str: String, category: Category, term: Term)
 
 // TODO
 object UnkDef {
-  val terms = buildUnk
+  // defaultTerm, terms 순서가 중요하다.. refactoring하자.
   var defaultTerm: Term = null
+  val terms = buildUnk
 
   def buildUnk: mutable.Map[String, Term] = {
     val terms = mutable.Map[String, Term]()
-    Source.fromFile(DicBuilder.RESOURCE_PATH + "/unk.def", "utf-8").getLines().foreach { line =>
+    val inputStream = getClass.getResourceAsStream("/unk.def")
+    Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         defaultTerm =
@@ -53,13 +55,14 @@ case class Category(invoke:Boolean, group:Boolean, length:Int)
 
 // TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
 object CharDef {
-  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
   var defaultCategory:Category = null
+  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
 
   def loadChar = {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Term)]()
-    Source.fromFile(DicBuilder.RESOURCE_PATH + "/char.def", "utf-8").getLines().
+    val inputStream = getClass.getResourceAsStream("/char.def")
+    Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>
         val l = line.split("\\s+")

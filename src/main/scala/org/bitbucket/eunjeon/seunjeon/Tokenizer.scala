@@ -34,7 +34,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     result
   }
 
-  def buildLattice(text: String): Lattice = {
+  private def buildLattice(text: String): Lattice = {
     val charsets = CharDef.splitCharSet(text)
     buildLattice(charsets)
   }
@@ -51,72 +51,79 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     lattice
   }
 
-  def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
-    val searchedTerms = searchTerms(charset)
-    searchedTerms.foreach {
-      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
+  private def addTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet): Unit = {
+    val knownTerms = new ListBuffer[LatticeNode]
+    val knownTermSet = new mutable.HashSet[LatticeNode]
+    val unknownTerms = new ListBuffer[LatticeNode]
+    for (idx <- 0 until charset.str.length) {
+      val termOffset = idx
+      val suffixSurface = charset.str.substring(idx)
+      // TODO: 인자가 너무 많음. 리팩토링 필요함.
+      knownTerms ++= addKnownTerms(charsetOffset, termOffset, suffixSurface, charset)
+      val knownTermsSet = knownTerms.toSet[LatticeNode]
+      unknownTerms ++= add1NLengthTerms(knownTermsSet, charsetOffset, termOffset, suffixSurface, charset)
+      knownTermSet ++= knownTermsSet
     }
-    val uniqueTerms = searchedTerms.groupBy(t => (t._2, t._3)).map(_._2.head)
-    val unknownTerms = findUnknownTerms(charset, uniqueTerms)
-    unknownTerms.foreach {
-      case (term, start, end) => lattice.add(term, charsetOffset+start, charsetOffset+end)
-    }
+    addGroupTerm(unknownTerms, knownTermSet.toSet, charsetOffset, charset)
+    lattice.addAll(knownTerms)
+    lattice.addAll(unknownTerms)
   }
 
-  def findUnknownTerms(charset: CharSet, searchedTerms: Iterable[(Term, Int, Int)])
-  : Seq[(Term, Int, Int)] = {
-    // TODO: searchedTerms에 이미 들어 있는 것은 빼자.
-    val unknownTerms = new ListBuffer[(Term, Int, Int)]()
-    searchedTerms.foreach { case (term, start, end) =>
-      if (start > 0) {
-        val unknownTerm = Term.createUnknownTerm(charset.str.substring(0, start), charset.term)
-        unknownTerms.append((unknownTerm, 0, start-1))
-      }
-      if (end < charset.str.length-1) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
-        unknownTerms.append((tailUnknownTerm, end+1, charset.str.length-1))
-      }
-    }
+  private def addKnownTerms(charsetOffset: Int,
+                            termOffset: Int,
+                            suffixSurface: String,
+                            charset: CharSet): Seq[LatticeNode] = {
+    val terms = new ListBuffer[LatticeNode]()
+    val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
+    suffixSearchedTerms.foreach(term =>
+      terms += LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
+    )
+    terms
+  }
 
-    if (searchedTerms.isEmpty) {
-      val unknownTerm = Term.createUnknownTerm(charset.str, charset.term)
-      unknownTerms.append((unknownTerm, 0, charset.str.length-1))
+  private def add1NLengthTerms(knownTerms:Set[LatticeNode],
+                               charsetOffset: Int,
+                               termOffset: Int,
+                               suffixSurface: String,
+                               charset:CharSet): Seq[LatticeNode] = {
+    val unknownTerms = new ListBuffer[LatticeNode]
+    if (charset.category.group && charset.category.length == 0) {
+      return Seq.empty[LatticeNode]
+    }
+    var categoryLength = if (suffixSurface.length < charset.category.length) suffixSurface.length else charset.category.length
+    if (categoryLength == 0) {
+      categoryLength = 1
+    }
+    for (unknownIdx <- 1 to categoryLength) {
+      val unknownTerm = Term.createUnknownTerm(charset.str.substring(termOffset, termOffset + unknownIdx), charset.term)
+      val newLatticeNode = LatticeNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
+      addUnknownLatticeNode(unknownTerms, knownTerms, charset, newLatticeNode)
     }
     unknownTerms
   }
 
-  def addTermsAndUnKnownTerms(lattice: Lattice, charsetOffset: Int, charset: CharSet, searchedTerms: ListBuffer[(Term, Int, Int)]): Unit = {
-    searchedTerms.foreach { case (term, start, end) =>
-      if (start > 0) {
-        val headUnknownTerm = Term.createUnknownTerm(charset.str.substring(0, start - 1), charset.term)
-        lattice.add(headUnknownTerm, charsetOffset, charsetOffset + start - 1)
-      }
-      lattice.add(term, charsetOffset + start, charsetOffset + end)
-      if (end < charset.str.length) {
-        val tailUnknownTerm = Term.createUnknownTerm(charset.str.substring(end + 1), charset.term)
-        lattice.add(tailUnknownTerm, charsetOffset + end + 1, charsetOffset + charset.str.length)
-      }
-    }
-
-    if (searchedTerms.isEmpty) {
-      lattice.add(Term.createUnknownTerm(charset.str, charset.term), charsetOffset, charsetOffset + charset.str.length - 1)
+  private def addGroupTerm(unknownTerms:ListBuffer[LatticeNode],
+                   knownTerms:Set[LatticeNode],
+                   charsetOffset: Int,
+                   charset: CharSet): Unit = {
+    if (charset.category.group) {
+      val fullLengthTerm = Term.createUnknownTerm(charset.str, charset.term)
+      val newLatticeNode = LatticeNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
+      addUnknownLatticeNode(unknownTerms, knownTerms, charset, newLatticeNode)
     }
   }
 
-  def searchTerms(charset: CharSet): ListBuffer[(Term, Int, Int)] = {
-    var searchedTerms = new ListBuffer[(Term, Int, Int)]() // term, start, end,
-    for (textIdx <- 0 until charset.str.length) {
-      val termOffset = textIdx
-      val suffixSurface = charset.str.substring(textIdx)
-      // 자바(1)/자바(2), 자바스크립트
-      val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
-      suffixSearchedTerms.foreach(term =>
-        searchedTerms += ((term, termOffset, termOffset + term.surface.length - 1))
-      )
+  private def addUnknownLatticeNode(unknownTerms: ListBuffer[LatticeNode],
+                            knownTerms: Set[LatticeNode],
+                            charset: CharSet,
+                            newLatticeNode: LatticeNode): Any = {
+    if (charset.category.invoke) {
+      unknownTerms += newLatticeNode
+    } else {
+      if (!knownTerms.contains(newLatticeNode)) {
+        unknownTerms += newLatticeNode
+      }
     }
-    searchedTerms
   }
-
-  //def searchSurface(charset: CharSet):
 }
 
