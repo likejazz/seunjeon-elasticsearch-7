@@ -17,11 +17,9 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
-import com.google.common.collect.ImmutableList
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -33,7 +31,6 @@ object Term {
     new Term(surface,
       term.leftId,
       term.rightId,
-    // TODO: unknown cost 어떻게 해야하나.. mecab or kuromoji 소스를 봐야할듯..
       term.cost*surface.length,
       term.feature)
   }
@@ -47,19 +44,21 @@ case class Term(surface:String,
 }
 
 object LexiconDict {
-  val lexiconResourceFile = "/lexicon.dat"
-  val lexiconTrieResourceFile = "/lexicon_trie.dat"
+  val termDictResourceFile = "/termDict.dat"
+  val dictMapperResourceFile = "/dicMapper.dat"
+  val trieResourceFile = "/trie.dat"
 }
 
 class LexiconDict {
-  var surfaceIndexDict: ImmutableList[(String, ImmutableList[Term])] = null
+  var termDict: Array[Term] = null
+  var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
 
   def loadFromCsvFiles(dir: String): Unit = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
-    val totalIter:Iterator[String] = files.map(f => Source.fromFile(f, "utf-8").getLines()).reduceLeft(_ ++ _)
-    loadFromIterator(totalIter)
+    val totalIterator:Iterator[String] = files.map(f => Source.fromFile(f, "utf-8").getLines()).reduceLeft(_ ++ _)
+    loadFromIterator(totalIterator)
   }
 
   def loadFromString(str: String): Unit = {
@@ -68,6 +67,7 @@ class LexiconDict {
   }
 
   def loadFromIterator(iterator: Iterator[String]): Unit = {
+    val startTime = System.nanoTime()
     // TODO: Option 사용해보자.
     val terms = new mutable.MutableList[Term]()
     iterator.foreach { line =>
@@ -79,23 +79,58 @@ class LexiconDict {
         case NonFatal(exc) => println(exc)
       }
     }
-    build(terms.toIndexedSeq)
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+
+    build(terms.toIndexedSeq.sortBy(_.surface))
   }
 
-  private def build(terms: Seq[Term]): Unit = {
-    val surfaceIndexDictTemp = terms.groupBy(t => t.surface).toIndexedSeq.sortBy(t => t._1)
-    val surfaceIndexDictTemp2 = surfaceIndexDictTemp.map{it =>
-      val surface = it._1
-      val terms = ImmutableList.copyOf[Term](it._2)
-      (surface, terms)
-    }
-    surfaceIndexDict = ImmutableList.copyOf[(String, ImmutableList[Term])](surfaceIndexDictTemp2)
+  private def build(sortedTerms: Seq[Term]): Unit = {
+    termDict = sortedTerms.toArray
+    val startTime = System.nanoTime()
+    val surfaceIndexDict = buildSurfaceIndexDict(sortedTerms)
 
+    dictMapper = surfaceIndexDict.map(_._2)
+
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+
+    trie = buildTrie(surfaceIndexDict)
+  }
+
+  def buildTrie(dict:Array[(String, Array[Int])]): MapDoubleArray[Int] = {
+    var startTime = System.nanoTime()
     val patricia = new MapPatriciaTrie[Int]
-    for (idx <- 0 until surfaceIndexDict.size) {
-      patricia.insert(surfaceIndexDict.get(idx)._1, idx)
+    for (idx <- dict.indices) {
+      patricia.insert(dict(idx)._1, idx)
     }
-    trie = new MapDoubleArray(patricia)
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+
+    startTime = System.nanoTime()
+    val result = new MapDoubleArray(patricia)
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    result
+  }
+
+  def buildSurfaceIndexDict(sortedTerms: Seq[Term]):Array[(String, Array[Int])] = {
+    val groupedTerms:mutable.ListBuffer[(String, Array[Int])] = mutable.ListBuffer()
+    var curIndices:Array[Int] = null
+    var preSurface:String = null
+    sortedTerms.view.zipWithIndex.foreach { case (term:Term, idx) =>
+      if (preSurface != term.surface) {
+        if (preSurface != null) {
+          groupedTerms.append((preSurface, curIndices))
+        }
+        curIndices = Array[Int]()
+      }
+      curIndices = curIndices :+ idx
+      preSurface = term.surface
+    }
+    groupedTerms.append((preSurface, curIndices))
+    groupedTerms.toArray
+  }
+
+  def appendBuild(iterable: Iterable[String]): Unit = {
+    iterable.foreach(println)
+
   }
 
   def prefixSearch(keyword: String): Seq[Term] = {
@@ -105,54 +140,70 @@ class LexiconDict {
       indexedLexiconDictPositions += iter.next().getValue
     }
 
-    indexedLexiconDictPositions.flatMap { indexLexiconDictPos =>
-      surfaceIndexDict.get(indexLexiconDictPos)._2
-    }
+    indexedLexiconDictPositions.flatMap(mapPos => dictMapper(mapPos)).
+      map(termPos => termDict(termPos))
   }
 
-  def save(lexiconPath: String = LexiconDict.lexiconResourceFile,
-           lexiconTriePath: String = LexiconDict.lexiconTrieResourceFile): Unit = {
-    // TODO: Term 에서 surface 를 빼면 serialize deserialze하는데 더 빠를 것 같음.
-    val lexiconStore = new ObjectOutputStream(
-      new BufferedOutputStream(
-        new FileOutputStream(lexiconPath), 1024*16))
-    lexiconStore.writeObject(surfaceIndexDict)
-    lexiconStore.close()
+  def save(termDictPath: String = LexiconDict.termDictResourceFile,
+           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
+           triePath: String = LexiconDict.trieResourceFile): Unit = {
+
+    val termDictStore = new ObjectOutputStream(
+      new BufferedOutputStream(new FileOutputStream(termDictPath), 16*1024))
+    termDictStore.writeObject(termDict)
+    termDictStore.close()
+
+    val dictMapperStore = new ObjectOutputStream(
+      new BufferedOutputStream(new FileOutputStream(dictMapperPath), 16*1024))
+    dictMapperStore.writeObject(dictMapper)
+    dictMapperStore.close()
 
     // TODO: writer 사용해서 직렬화하자.
     // https://github.com/takawitter/trie4j/blob/master/trie4j/src/test/java/org/trie4j/io/TrieWriterTest.java
     val trieStore = new ObjectOutputStream(
-      new BufferedOutputStream(
-        new FileOutputStream(lexiconTriePath), 1024*16))
+      new BufferedOutputStream(new FileOutputStream(triePath), 16*1024))
     trieStore.writeObject(trie)
     trieStore.close()
   }
 
   def load(): LexiconDict = {
-    val lexiconStream = getClass.getResourceAsStream(LexiconDict.lexiconResourceFile)
-    val lexiconTrieStream = getClass.getResourceAsStream(LexiconDict.lexiconTrieResourceFile)
+    val termDictStream = getClass.getResourceAsStream(LexiconDict.termDictResourceFile)
+    val dictMapperStream = getClass.getResourceAsStream(LexiconDict.dictMapperResourceFile)
+    val trieStream = getClass.getResourceAsStream(LexiconDict.trieResourceFile)
 
-    load(lexiconStream, lexiconTrieStream)
+    load(termDictStream, dictMapperStream, trieStream)
     this
   }
 
-  def load(lexiconPath: String = LexiconDict.lexiconResourceFile,
-           lexiconTriePath: String = LexiconDict.lexiconTrieResourceFile): Unit = {
-    val lexiconStream = new FileInputStream(lexiconPath)
-    val lexiconTrieStream = new FileInputStream(lexiconTriePath)
-    load(lexiconStream, lexiconTrieStream)
+  def load(termDictPath: String = LexiconDict.termDictResourceFile,
+           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
+           lexiconTriePath: String = LexiconDict.trieResourceFile): Unit = {
+    val termDictStream = new FileInputStream(termDictPath)
+    val dictMapperStream = new FileInputStream(dictMapperPath)
+    val trieStream = new FileInputStream(lexiconTriePath)
+    load(termDictStream, dictMapperStream, trieStream)
   }
 
-  private def load(lexiconStream: InputStream, lexiconTrieStream: InputStream): Unit = {
-    val lexiconIn = new ObjectInputStream(
-      new BufferedInputStream(lexiconStream, 1024*16))
-    surfaceIndexDict = lexiconIn.readObject().asInstanceOf[ImmutableList[(String, ImmutableList[Term])]]
-    lexiconIn.close()
+  private def load(termDictStream: InputStream,
+                   dictMapperStream: InputStream,
+                   trieStream: InputStream): Unit = {
+    var startTime = System.nanoTime()
+    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
+    termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
+    termDictIn.close()
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+
+    startTime = System.nanoTime()
+    val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
+    dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
+    dictMapperIn.close()
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
 
-    val TrieIn = new ObjectInputStream(
-      new BufferedInputStream(lexiconTrieStream, 1024*16))
+    startTime = System.nanoTime()
+    val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
     trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
     TrieIn.close()
+    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
   }
 }

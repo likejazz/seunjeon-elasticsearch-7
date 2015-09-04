@@ -55,7 +55,8 @@ object DicBuilder {
     val lexiconDict = new LexiconDict
     lexiconDict.loadFromCsvFiles("mecab-ko-dic")
     lexiconDict.save(
-      resourcePath + LexiconDict.lexiconResourceFile,
-      resourcePath + LexiconDict.lexiconTrieResourceFile)
+      resourcePath + LexiconDict.termDictResourceFile,
+      resourcePath + LexiconDict.dictMapperResourceFile,
+      resourcePath + LexiconDict.trieResourceFile)
   }
 }

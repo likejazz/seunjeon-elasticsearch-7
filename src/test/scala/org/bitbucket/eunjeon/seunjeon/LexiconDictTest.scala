@@ -4,22 +4,37 @@ import org.scalatest.FunSuite
 
 
 class LexiconDictTest extends FunSuite {
+  test("userdic") {
+    val lexicons =
+      """오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*
+        |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*""".stripMargin
+    val lexiconDict = new LexiconDict
+    lexiconDict.loadFromString(lexicons)
+    val result = lexiconDict.prefixSearch("감자")
+    assert("" == result.mkString(","))
+    lexiconDict.appendBuild(Iterable("감자,1,2,100,NNG,*,F,감자,*,*,*,*,*"))
+
+  }
 
   test("save and open") {
-    val lexicons =
-      """감자,1,2,100,NNG,*,F,감자,*,*,*,*,*
+    val lexicons = """감자,1,2,100,NNG,*,F,감자,*,*,*,*,*
+        |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고,1,2,100,NNG,*,F,고,*,*,*,*,*
         |구마,1,2,100,NNG,*,F,구마,*,*,*,*,*
-        |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*"""
+        |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*""".stripMargin
     val saveLexiconDict = new LexiconDict
     saveLexiconDict.loadFromString(lexicons)
-    saveLexiconDict.save("." + LexiconDict.lexiconResourceFile, "." + LexiconDict.lexiconTrieResourceFile)
+    saveLexiconDict.save("." + LexiconDict.termDictResourceFile,
+                         "." + LexiconDict.dictMapperResourceFile,
+                         "." + LexiconDict.trieResourceFile)
 
     val openLexiconDict = new LexiconDict
-    openLexiconDict.load("." + LexiconDict.lexiconResourceFile, "." + LexiconDict.lexiconTrieResourceFile)
+    openLexiconDict.load("." + LexiconDict.termDictResourceFile,
+                         "." + LexiconDict.dictMapperResourceFile,
+                         "." + LexiconDict.trieResourceFile)
     val result = openLexiconDict.prefixSearch("고구마")
-    result.foreach(t => println(t.surface))
+    assert("Term(고,1,2,100,NNG,*,F,고,*,*,*,*,*),Term(고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*)" == result.mkString(","))
   }
 
   ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict load performance") {
