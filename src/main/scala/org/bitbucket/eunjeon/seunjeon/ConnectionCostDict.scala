@@ -26,6 +26,8 @@ object ConnectionCostDict {
 
 class ConnectionCostDict {
   var costDict: Array[Int] = null
+  var rightSize = 0
+  var leftSize = 0
 
   def loadFromString(str: String): Unit = {
     val iter = str.stripMargin.split("\n").toIterator
@@ -38,28 +40,43 @@ class ConnectionCostDict {
   }
 
   def loadFromIterator(costDictIter: Iterator[String]): Unit = {
+    /*
+    text cost dictionary info
+    3819 2694     : rightSize, leftSize (header)
+    1 1 0         : rightId, leftId, cost (rightId/leftId is from 0 to size - 1)
+    1 0 0
+    ...
+    3818 2689 864
+    3818 2690 863
+    3818 2691 864
+    3818 2692 864
+    3818 2693 569
+     */
     val costs_file = costDictIter.toSeq
     val sizes = costs_file.head.split(' ').map(v => v.toShort)
-    val rightSize = sizes(0)
-    val leftSize = sizes(1)
-    costDict = new Array[Int]((rightSize+1) * (leftSize+1))
+    rightSize = sizes(0)
+    leftSize = sizes(1)
+    //2 is to save rightSize & leftSize
+    costDict = new Array[Int](rightSize * leftSize + 2)
+    costDict(costDict.length - 2) = rightSize
+    costDict(costDict.length - 1) = leftSize
     val costs = costs_file.tail.foreach { line =>
       val v = line.split(' ').map(_.toShort)
       val rightId = v(0)
       val leftId = v(1)
       val cost = v(2)
-      costDict(rightId*leftId + leftId) = cost
+      costDict(leftId + leftSize * rightId) = cost
     }
   }
 
   def getCost(rightId: Short, leftId: Short ): Int = {
-    costDict(rightId*leftId + leftId)
+    costDict(leftId + leftSize * rightId)
   }
 
   def save(path: String): Unit = {
     val store = new ObjectOutputStream(
       new BufferedOutputStream(
-        new FileOutputStream(path), 1024*16))
+        new FileOutputStream(path), 1024 * 16))
     store.writeObject(costDict)
     store.close()
 
@@ -73,9 +90,15 @@ class ConnectionCostDict {
 
   private def load(inputStream: InputStream): Unit = {
     val in = new ObjectInputStream(
-      new BufferedInputStream(inputStream, 1024*16))
+      new BufferedInputStream(inputStream, 1024 * 16))
     costDict = in.readObject().asInstanceOf[Array[Int]]
+    rightSize = costDict(costDict.length - 2)
+    leftSize = costDict(costDict.length - 1)
+    println(getDictionaryInfo())
     in.close()
   }
 
+  def getDictionaryInfo(): String ={
+    "rightSize : %d, leftSize : %d, size : %d".format(rightSize, leftSize, costDict.length)
+  }
 }
