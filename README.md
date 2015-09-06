@@ -8,7 +8,7 @@
         <dependency>
             <groupId>org.bitbucket.eunjeon</groupId>
             <artifactId>seunjeon_2.11</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
         </dependency>
     </dependencies>
 ```
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.bitbucket.eunjeon</groupId>
             <artifactId>seunjeon_2.11</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.2.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -35,7 +35,7 @@
     </repositories>
 ```
 
-## Usage
+## 사용
 ### java
 ```java
 List<Term> result = Analyzer.parseJava("형태소분석기입니다. 사랑합니다.");
