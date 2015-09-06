@@ -47,8 +47,8 @@ object DicBuilder {
   private def buildConnectionCostDict(resourcePath: String): Unit = {
     val connectionCostDict = new ConnectionCostDict
     connectionCostDict.loadFromFile("mecab-ko-dic/matrix.def")
-    connectionCostDict.save(
-      resourcePath + ConnectionCostDict.resourceConnDicFile)
+    connectionCostDict.save(resourcePath + ConnectionCostDict.resourceConnDicFile)
+    printf("building connection cost dictionary OK. (%s)\n", connectionCostDict.getDictionaryInfo())
   }
 
   private def buildLexiconDict(resourcePath: String): Unit = {
