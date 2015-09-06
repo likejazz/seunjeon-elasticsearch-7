@@ -10,7 +10,7 @@ class LexiconDictTest extends FunSuite {
         |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*""".stripMargin
     val lexiconDict = new LexiconDict
     lexiconDict.loadFromString(lexicons)
-    val result = lexiconDict.prefixSearch("감자")
+    val result = lexiconDict.commonPrefixSearch("감자")
     assert("" == result.mkString(","))
     lexiconDict.appendBuild(Iterable("감자,1,2,100,NNG,*,F,감자,*,*,*,*,*"))
 
@@ -33,7 +33,7 @@ class LexiconDictTest extends FunSuite {
     openLexiconDict.load("." + LexiconDict.termDictResourceFile,
                          "." + LexiconDict.dictMapperResourceFile,
                          "." + LexiconDict.trieResourceFile)
-    val result = openLexiconDict.prefixSearch("고구마")
+    val result = openLexiconDict.commonPrefixSearch("고구마")
     assert("Term(고,1,2,100,NNG,*,F,고,*,*,*,*,*),Term(고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*)" == result.mkString(","))
   }
 

@@ -54,19 +54,19 @@ class LexiconDict {
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
 
-  def loadFromCsvFiles(dir: String): Unit = {
+  def loadFromCsvFiles(dir: String): LexiconDict = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
     val totalIterator:Iterator[String] = files.map(f => Source.fromFile(f, "utf-8").getLines()).reduceLeft(_ ++ _)
     loadFromIterator(totalIterator)
   }
 
-  def loadFromString(str: String): Unit = {
+  def loadFromString(str: String): LexiconDict = {
     val iterator = str.stripMargin.split("\n").toIterator
     loadFromIterator(iterator)
   }
 
-  def loadFromIterator(iterator: Iterator[String]): Unit = {
+  def loadFromIterator(iterator: Iterator[String]): LexiconDict = {
     val startTime = System.nanoTime()
     // TODO: Option 사용해보자.
     val terms = new mutable.MutableList[Term]()
@@ -84,7 +84,7 @@ class LexiconDict {
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
 
-  private def build(sortedTerms: Seq[Term]): Unit = {
+  private def build(sortedTerms: Seq[Term]): LexiconDict = {
     termDict = sortedTerms.toArray
     val startTime = System.nanoTime()
     val surfaceIndexDict = buildSurfaceIndexDict(sortedTerms)
@@ -94,6 +94,7 @@ class LexiconDict {
     println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     trie = buildTrie(surfaceIndexDict)
+    this
   }
 
   def buildTrie(dict:Array[(String, Array[Int])]): MapDoubleArray[Int] = {
@@ -133,11 +134,11 @@ class LexiconDict {
 
   }
 
-  def prefixSearch(keyword: String): Seq[Term] = {
+  def commonPrefixSearch(keyword: String): Seq[Term] = {
     val indexedLexiconDictPositions = ListBuffer[Int]()
-    val iter = trie.commonPrefixSearchEntries(keyword).iterator()
-    while (iter.hasNext) {
-      indexedLexiconDictPositions += iter.next().getValue
+    val iterator = trie.commonPrefixSearchEntries(keyword).iterator()
+    while (iterator.hasNext) {
+      indexedLexiconDictPositions += iterator.next().getValue
     }
 
     indexedLexiconDictPositions.flatMap(mapPos => dictMapper(mapPos)).
