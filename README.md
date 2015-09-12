@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.bitbucket.eunjeon</groupId>
             <artifactId>seunjeon_2.11</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
