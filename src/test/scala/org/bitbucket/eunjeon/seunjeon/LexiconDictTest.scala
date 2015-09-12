@@ -4,21 +4,9 @@ import org.scalatest.FunSuite
 
 
 class LexiconDictTest extends FunSuite {
-  test("userdic") {
-    val lexicons =
-      """오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*
-        |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*""".stripMargin
-    val lexiconDict = new LexiconDict
-    lexiconDict.loadFromString(lexicons)
-    val result = lexiconDict.commonPrefixSearch("감자")
-    assert("" == result.mkString(","))
-    lexiconDict.appendBuild(Iterable("감자,1,2,100,NNG,*,F,감자,*,*,*,*,*"))
-
-  }
 
   test("save and open") {
     val lexicons = """감자,1,2,100,NNG,*,F,감자,*,*,*,*,*
-        |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고,1,2,100,NNG,*,F,고,*,*,*,*,*
         |구마,1,2,100,NNG,*,F,구마,*,*,*,*,*
@@ -41,7 +29,7 @@ class LexiconDictTest extends FunSuite {
     {
       val startTime = System.nanoTime()
       val lexiconDict = new LexiconDict
-      lexiconDict.loadFromCsvFiles("mecab-ko-dic")
+      lexiconDict.loadFromDir("mecab-ko-dic")
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime)
       println(s"$elapsedTime ns")

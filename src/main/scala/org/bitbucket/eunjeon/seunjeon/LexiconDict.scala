@@ -54,7 +54,7 @@ class LexiconDict {
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
 
-  def loadFromCsvFiles(dir: String): LexiconDict = {
+  def loadFromDir(dir: String): LexiconDict = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
     val totalIterator:Iterator[String] = files.map(f => Source.fromFile(f, "utf-8").getLines()).reduceLeft(_ ++ _)
@@ -70,18 +70,49 @@ class LexiconDict {
     val startTime = System.nanoTime()
     // TODO: Option 사용해보자.
     val terms = new mutable.MutableList[Term]()
-    iterator.foreach { line =>
-      try {
-        // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
-        val l = line.split(",")
-        terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
-      } catch {
-        case NonFatal(exc) => println(exc)
-      }
+    iterator.map(_.split(",")).foreach {
+      case Array(surface) => terms += buildNNGTerm(surface)
+      case l:Array[String] => try {
+          // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
+          terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
+        } catch {
+          case NonFatal(exc) => println(exc)
+        }
     }
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     build(terms.toIndexedSeq.sortBy(_.surface))
+  }
+
+  private def buildNNGTerm(surface:String): Term = {
+    val lastChar = surface.last
+    if (isHangul(lastChar)) {
+      if (hasJongsung(lastChar)) {
+        Term(surface, 1748, 3537, 2000-(surface.length*100), "NNG,*,T")
+      } else {
+        Term(surface, 1748, 3536, 2000-(surface.length*100), "NNG,*,F")
+      }
+    } else {
+      Term(surface, 1748, 3535, 2000-(surface.length*100), "NNG,*,*")
+    }
+  }
+
+  private def hasJongsung(ch:Char): Boolean = {
+    if (((ch - 0xAC00) % 0x001C) == 0) {
+      false
+    } else {
+      true
+    }
+  }
+
+  private def isHangul(ch:Char): Boolean = {
+    if ((0x0AC00 <= ch && ch <= 0xD7A3)
+        || (0x1100 <= ch && ch <= 0x11FF)
+        || (0x3130 <= ch && ch <= 0x318F)) {
+      true
+    } else {
+      false
+    }
   }
 
   private def build(sortedTerms: Seq[Term]): LexiconDict = {
@@ -91,7 +122,7 @@ class LexiconDict {
 
     dictMapper = surfaceIndexDict.map(_._2)
 
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     trie = buildTrie(surfaceIndexDict)
     this
@@ -103,11 +134,11 @@ class LexiconDict {
     for (idx <- dict.indices) {
       patricia.insert(dict(idx)._1, idx)
     }
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     startTime = System.nanoTime()
     val result = new MapDoubleArray(patricia)
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
     result
   }
 
@@ -127,11 +158,6 @@ class LexiconDict {
     }
     groupedTerms.append((preSurface, curIndices))
     groupedTerms.toArray
-  }
-
-  def appendBuild(iterable: Iterable[String]): Unit = {
-    iterable.foreach(println)
-
   }
 
   def commonPrefixSearch(keyword: String): Seq[Term] = {
@@ -192,19 +218,19 @@ class LexiconDict {
     val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     startTime = System.nanoTime()
     val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
     dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
     dictMapperIn.close()
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
 
     startTime = System.nanoTime()
     val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
     trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
     TrieIn.close()
-    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
   }
 }

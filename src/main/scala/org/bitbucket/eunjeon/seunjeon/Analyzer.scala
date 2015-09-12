@@ -32,10 +32,18 @@ object Analyzer {
   }
 
   def parseJava(sentence: String): java.util.List[Term] = {
-    parse(sentence).asJava
+    tokenizer.parseText(sentence).asJava
   }
 
-  def setUserDict(path: String): Unit = {
-    tokenizer.setUserDict(new LexiconDict().loadFromCsvFiles(path))
+  def setUserDictDir(path: String): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromDir(path))
+  }
+
+  def setUserDict(iterator: Iterator[String]): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator))
+  }
+
+  def setUserDict(iterator: java.util.Iterator[String]): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
   }
 }

@@ -23,6 +23,7 @@ object DicBuilder {
   val RESOURCE_PATH = "src/main/resources"
   
   def main(args: Array[String]): Unit = {
+    // TODO: reset resource/dict directory.
     println("compiling lexicon dictionary...")
     buildLexiconDict(RESOURCE_PATH)
 
@@ -53,7 +54,7 @@ object DicBuilder {
 
   private def buildLexiconDict(resourcePath: String): Unit = {
     val lexiconDict = new LexiconDict
-    lexiconDict.loadFromCsvFiles("mecab-ko-dic")
+    lexiconDict.loadFromDir("mecab-ko-dic")
     lexiconDict.save(
       resourcePath + LexiconDict.termDictResourceFile,
       resourcePath + LexiconDict.dictMapperResourceFile,
