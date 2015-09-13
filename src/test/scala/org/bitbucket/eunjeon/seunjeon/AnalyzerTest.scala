@@ -29,9 +29,9 @@ class AnalyzerTest extends FunSuite {
   test("userdic-surface from iterator") {
     // TODO: assert...
     println("# BEFORE")
-    Analyzer.parse("버카충했어?").foreach(println)
-    Analyzer.setUserDict(Seq("버카충", "낄끼빠빠").toIterator)
+    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
+    Analyzer.setUserDict(Seq("어그로,-500", "갠소").toIterator)
     println("# AFTER ")
-    Analyzer.parse("버카충했어?").foreach(println)
+    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
   }
 }

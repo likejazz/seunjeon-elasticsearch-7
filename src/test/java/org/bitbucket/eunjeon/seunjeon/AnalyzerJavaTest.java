@@ -5,9 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by parallels on 8/12/15.
- */
+
 public class AnalyzerJavaTest {
     @Test
     public void testParse() {

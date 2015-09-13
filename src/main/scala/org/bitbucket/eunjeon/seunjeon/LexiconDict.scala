@@ -70,8 +70,9 @@ class LexiconDict {
     val startTime = System.nanoTime()
     // TODO: Option 사용해보자.
     val terms = new mutable.MutableList[Term]()
-    iterator.map(_.split(",")).foreach {
-      case Array(surface) => terms += buildNNGTerm(surface)
+    iterator.dropWhile(_.head == '#').map(_.split(",")).foreach {
+      case Array(surface) => terms += buildNNGTerm(surface, 1000-(surface.length*100))
+      case Array(surface, cost) => terms += buildNNGTerm(surface, cost.toShort)
       case l:Array[String] => try {
           // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
           terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
@@ -84,16 +85,16 @@ class LexiconDict {
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
 
-  private def buildNNGTerm(surface:String): Term = {
+  private def buildNNGTerm(surface:String, cost:Int): Term = {
     val lastChar = surface.last
     if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, 1748, 3537, 2000-(surface.length*100), "NNG,*,T")
+        Term(surface, 1748, 3537, cost, "NNG,*,T")
       } else {
-        Term(surface, 1748, 3536, 2000-(surface.length*100), "NNG,*,F")
+        Term(surface, 1748, 3536, cost, "NNG,*,F")
       }
     } else {
-      Term(surface, 1748, 3535, 2000-(surface.length*100), "NNG,*,*")
+      Term(surface, 1748, 3535, cost, "NNG,*,*")
     }
   }
 

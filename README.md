@@ -68,8 +68,11 @@ Term(EOS,0,0,0,EOS)
 #### 파일에서 읽기
 특정 디렉토리에 csv 확장자로 파일들을 만듭니다. (*.csv)
 ```text
-버카충
-낄끼빠빠
+# surface,cost
+#   surface: 단어
+#   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
+버카충,-100
+어그로
 ```
 ```scala
 println("# BEFORE")
@@ -83,7 +86,7 @@ csv 파일이 있는 디렉토리를 명시하여 로딩합니다.
 ```scala
 println("# BEFORE")
 Analyzer.parse("버카충했어?").foreach(println)
-Analyzer.setUserDict(Seq("버카충", "낄끼빠빠").toIterator)
+Analyzer.setUserDict(Seq("버카충,-100", "낄끼빠빠").toIterator)
 println("# AFTER ")
 Analyzer.parse("버카충했어?").foreach(println)
 ```
@@ -92,8 +95,11 @@ Analyzer.parse("버카충했어?").foreach(println)
 #### 파일에서 읽기
 특정 디렉토리에 csv 확장자로 파일들을 만듭니다. (*.csv)
 ```text
-버카충
-낄끼빠빠
+# surface,cost
+#   surface: 단어
+#   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
+버카충,-100
+어그로
 ```
 ```java
 List<Term> result = Analyzer.parseJava("버카충했어?");
@@ -112,7 +118,7 @@ List<Term> result = Analyzer.parseJava("버카충했어?");
 for (Term term: result) {
     System.out.println(term);
 }
-Analyzer.setUserDict(Arrays.asList("버카충", "낄끼빠빠").iterator());
+Analyzer.setUserDict(Arrays.asList("버카충,-100", "낄끼빠빠").iterator());
 result = Analyzer.parseJava("버카충했어?");
 for (Term term: result) {
     System.out.println(term);
@@ -132,7 +138,7 @@ Term(?,1794,3555,3597,SF,*,*,*,*,*,*,*)
 Term(EOS,0,0,0,EOS)
 # AFTER 
 Term(BOS,0,0,0,BOS)
-Term(버카충,1748,3537,1700,NNG,*,T)
+Term(버카충,1748,3537,-100,NNG,*,T)
 Term(했,2693,9,-26,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*)
 Term(어,4,6,2372,EF,*,F,어,*,*,*,*)
 Term(?,1794,3555,3597,SF,*,*,*,*,*,*,*)
@@ -141,7 +147,7 @@ Term(EOS,0,0,0,EOS)
 
 
 ## Group
-[https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 공동개발 환영합니다.
+[https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 개발 참여 환영합니다.
 
 ## 개발
 ```sh

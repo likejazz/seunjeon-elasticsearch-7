@@ -94,7 +94,7 @@ class ConnectionCostDict {
     costDict = in.readObject().asInstanceOf[Array[Int]]
     rightSize = costDict(costDict.length - 2)
     leftSize = costDict(costDict.length - 1)
-    println(getDictionaryInfo())
+//    println(getDictionaryInfo())
     in.close()
   }
 
