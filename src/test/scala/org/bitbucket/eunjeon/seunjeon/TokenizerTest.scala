@@ -13,16 +13,18 @@ class TokenizerTest extends FunSuite with BeforeAndAfter {
         |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
-        |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*"""
+        |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*""".stripMargin
 
+    // HANGUL,1803,3564,9396,UNKNOWN,*,*,*,*,*,*,*
     connectionCosts =
-      """3564 1804
+      """3565 1804
         |0 1 10
-        |0 1803 5
         |2 1 20
         |2 0 30
-        |1803 0 268
-        |3564 1803 0"""
+        |0 1803 100
+        |2 1803 100
+        |3564 1 100
+        |3564 0 100""".stripMargin
     // TODO: apply factory function
     val lexiconDict = new LexiconDict
     lexiconDict.loadFromString(lexicons)

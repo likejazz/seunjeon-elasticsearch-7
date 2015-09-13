@@ -65,12 +65,12 @@ class ConnectionCostDict {
       val rightId = v(0)
       val leftId = v(1)
       val cost = v(2)
-      costDict(leftId + leftSize * rightId) = cost
+      costDict(rightId*leftSize + leftId) = cost
     }
   }
 
   def getCost(rightId: Short, leftId: Short ): Int = {
-    costDict(leftId + leftSize * rightId)
+    costDict(rightId*leftSize + leftId)
   }
 
   def save(path: String): Unit = {
@@ -94,7 +94,7 @@ class ConnectionCostDict {
     costDict = in.readObject().asInstanceOf[Array[Int]]
     rightSize = costDict(costDict.length - 2)
     leftSize = costDict(costDict.length - 1)
-    println(getDictionaryInfo())
+//    println(getDictionaryInfo())
     in.close()
   }
 

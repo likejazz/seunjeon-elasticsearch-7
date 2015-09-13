@@ -18,7 +18,9 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.JavaConverters._
 
 object Analyzer {
-  val tokenizer = {
+  val tokenizer:Tokenizer = initTokenizer()
+
+  private def initTokenizer(): Tokenizer = {
     val lexiconDict = new LexiconDict().load()
     val connectionCostDict = new ConnectionCostDict().load()
 
@@ -30,7 +32,18 @@ object Analyzer {
   }
 
   def parseJava(sentence: String): java.util.List[Term] = {
-    parse(sentence).asJava
+    tokenizer.parseText(sentence).asJava
+  }
 
+  def setUserDictDir(path: String): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromDir(path))
+  }
+
+  def setUserDict(iterator: Iterator[String]): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator))
+  }
+
+  def setUserDict(iterator: java.util.Iterator[String]): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
   }
 }

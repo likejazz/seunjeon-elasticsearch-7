@@ -16,4 +16,22 @@ class AnalyzerTest extends FunSuite {
       println(t)
     }
   }
+
+  test("userdic-surface from file") {
+    // TODO: assert...
+    println("# BEFORE")
+    Analyzer.parse("버카충했어?").foreach(println)
+    Analyzer.setUserDictDir("src/test/resources/userdict/")
+    println("# AFTER ")
+    Analyzer.parse("버카충했어?").foreach(println)
+  }
+
+  test("userdic-surface from iterator") {
+    // TODO: assert...
+    println("# BEFORE")
+    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
+    Analyzer.setUserDict(Seq("어그로,-500", "갠소").toIterator)
+    println("# AFTER ")
+    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
+  }
 }

@@ -20,6 +20,11 @@ import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
+  var userDict:LexiconDict = null
+
+  def setUserDict(dict:LexiconDict): Unit = {
+    userDict = dict
+  }
 
   // TODO: 꼭 리팩토링하자
   def parseText(input:String): Seq[Term] = {
@@ -74,8 +79,12 @@ class Tokenizer (lexiconDict: LexiconDict = null,
                             suffixSurface: String,
                             charset: CharSet): Seq[LatticeNode] = {
     val terms = new ListBuffer[LatticeNode]()
-    val suffixSearchedTerms = lexiconDict.prefixSearch(suffixSurface)
-    suffixSearchedTerms.foreach(term =>
+    var searchedTerms = lexiconDict.commonPrefixSearch(suffixSurface)
+    if (userDict != null) {
+      // TODO: mutable 로 하면 더 빨라지는가?
+      searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
+    }
+    searchedTerms.foreach(term =>
       terms += LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
     )
     terms

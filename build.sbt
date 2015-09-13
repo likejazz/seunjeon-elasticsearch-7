@@ -2,12 +2,11 @@ organization := "org.bitbucket.eunjeon"
 
 name := "seunjeon"
 
-version := "0.2.1"
+version := "0.3.0"
 
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
-  "com.google.guava" % "guava" % "18.0",
   "com.github.takawitter" % "trie4j" % "0.9.1",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
   "junit" % "junit" % "4.12" % "test"

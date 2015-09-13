@@ -17,9 +17,6 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-/**
- * Created by parallels on 7/28/15.
- */
 
 case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:LatticeNode = null
