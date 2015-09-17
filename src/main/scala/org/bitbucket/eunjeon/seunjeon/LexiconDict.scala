@@ -17,6 +17,8 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
@@ -50,6 +52,8 @@ object LexiconDict {
 }
 
 class LexiconDict {
+  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+
   var termDict: Array[Term] = null
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
@@ -80,7 +84,7 @@ class LexiconDict {
           case NonFatal(exc) => println(exc)
         }
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
@@ -123,7 +127,7 @@ class LexiconDict {
 
     dictMapper = surfaceIndexDict.map(_._2)
 
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     trie = buildTrie(surfaceIndexDict)
     this
@@ -135,11 +139,11 @@ class LexiconDict {
     for (idx <- dict.indices) {
       patricia.insert(dict(idx)._1, idx)
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     startTime = System.nanoTime()
     val result = new MapDoubleArray(patricia)
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
     result
   }
 
@@ -219,19 +223,19 @@ class LexiconDict {
     val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
     startTime = System.nanoTime()
     val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
     dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
     dictMapperIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
 
 
     startTime = System.nanoTime()
     val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
     trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
     TrieIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    logger.info((System.nanoTime() - startTime) / (1000*1000) + " ms")
   }
 }

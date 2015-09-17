@@ -8,6 +8,8 @@ scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
   "com.github.takawitter" % "trie4j" % "0.9.1",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
   "junit" % "junit" % "4.12" % "test"
 )
