@@ -17,6 +17,9 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
 
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
+
 import scala.io.Source
 
 
@@ -25,6 +28,8 @@ object ConnectionCostDict {
 }
 
 class ConnectionCostDict {
+  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+
   var costDict: Array[Int] = null
   var rightSize = 0
   var leftSize = 0
@@ -40,6 +45,7 @@ class ConnectionCostDict {
   }
 
   def loadFromIterator(costDictIter: Iterator[String]): Unit = {
+    val startTime = System.nanoTime()
     /*
     text cost dictionary info
     3819 2694     : rightSize, leftSize (header)
@@ -67,6 +73,9 @@ class ConnectionCostDict {
       val cost = v(2)
       costDict(rightId*leftSize + leftId) = cost
     }
+
+    def elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"connectionDict loading is completed. ($elapsedTime ms)")
   }
 
   def getCost(rightId: Short, leftId: Short ): Int = {
@@ -98,7 +107,7 @@ class ConnectionCostDict {
     in.close()
   }
 
-  def getDictionaryInfo(): String ={
-    "rightSize : %d, leftSize : %d, size : %d".format(rightSize, leftSize, costDict.length)
+  def getDictionaryInfo(): String = {
+    s"rightSize : $rightSize, leftSize : $leftSize, size : ${costDict.length}"
   }
 }
