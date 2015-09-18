@@ -17,6 +17,8 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
@@ -50,6 +52,8 @@ object LexiconDict {
 }
 
 class LexiconDict {
+  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+
   var termDict: Array[Term] = null
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
@@ -77,10 +81,11 @@ class LexiconDict {
           // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
           terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
         } catch {
-          case NonFatal(exc) => println(exc)
+          case NonFatal(exc) => logger.warn(exc.toString)
         }
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
@@ -123,7 +128,8 @@ class LexiconDict {
 
     dictMapper = surfaceIndexDict.map(_._2)
 
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"terms & mapper building is completed. ($elapsedTime ms)")
 
     trie = buildTrie(surfaceIndexDict)
     this
@@ -135,11 +141,13 @@ class LexiconDict {
     for (idx <- dict.indices) {
       patricia.insert(dict(idx)._1, idx)
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"patricia trie building is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
     val result = new MapDoubleArray(patricia)
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"double-array trie building is completed. ($elapsedTime ms)")
     result
   }
 
@@ -219,19 +227,22 @@ class LexiconDict {
     val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"terms loading is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
     val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
     dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
     dictMapperIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"mapper loading is completed. ($elapsedTime ms)")
 
 
     startTime = System.nanoTime()
     val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
     trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
     TrieIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"double-array trie loading is completed. ($elapsedTime ms)")
   }
 }
