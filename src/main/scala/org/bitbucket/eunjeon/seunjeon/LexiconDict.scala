@@ -45,12 +45,6 @@ case class Term(surface:String,
                 feature:String) {
 }
 
-object LexiconDict {
-  val termDictResourceFile = "/termDict.dat"
-  val dictMapperResourceFile = "/dicMapper.dat"
-  val trieResourceFile = "/trie.dat"
-}
-
 class LexiconDict {
   val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
 
@@ -180,9 +174,7 @@ class LexiconDict {
       map(termPos => termDict(termPos))
   }
 
-  def save(termDictPath: String = LexiconDict.termDictResourceFile,
-           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
-           triePath: String = LexiconDict.trieResourceFile): Unit = {
+  def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
 
     val termDictStore = new ObjectOutputStream(
       new BufferedOutputStream(new FileOutputStream(termDictPath), 16*1024))
@@ -203,17 +195,20 @@ class LexiconDict {
   }
 
   def load(): LexiconDict = {
-    val termDictStream = getClass.getResourceAsStream(LexiconDict.termDictResourceFile)
-    val dictMapperStream = getClass.getResourceAsStream(LexiconDict.dictMapperResourceFile)
-    val trieStream = getClass.getResourceAsStream(LexiconDict.trieResourceFile)
+    val termDictStream = getClass.getResourceAsStream(
+      DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_DICT)
+    val dictMapperStream = getClass.getResourceAsStream(
+      DictBuilder.DICT_PATH + File.separator + DictBuilder.DICT_MAPPER)
+    val trieStream = getClass.getResourceAsStream(
+      DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_TRIE)
 
     load(termDictStream, dictMapperStream, trieStream)
     this
   }
 
-  def load(termDictPath: String = LexiconDict.termDictResourceFile,
-           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
-           lexiconTriePath: String = LexiconDict.trieResourceFile): Unit = {
+  def load(termDictPath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_DICT,
+           dictMapperPath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.DICT_MAPPER,
+           lexiconTriePath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_TRIE): Unit = {
     val termDictStream = new FileInputStream(termDictPath)
     val dictMapperStream = new FileInputStream(dictMapperPath)
     val trieStream = new FileInputStream(lexiconTriePath)
@@ -224,7 +219,8 @@ class LexiconDict {
                    dictMapperStream: InputStream,
                    trieStream: InputStream): Unit = {
     var startTime = System.nanoTime()
-    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
+    val termDictIn = new ObjectInputStream(
+      new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
