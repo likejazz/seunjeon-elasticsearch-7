@@ -195,20 +195,17 @@ class LexiconDict {
   }
 
   def load(): LexiconDict = {
-    val termDictStream = getClass.getResourceAsStream(
-      DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_DICT)
-    val dictMapperStream = getClass.getResourceAsStream(
-      DictBuilder.DICT_PATH + File.separator + DictBuilder.DICT_MAPPER)
-    val trieStream = getClass.getResourceAsStream(
-      DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_TRIE)
+    val termDictStream = getClass.getResourceAsStream(DictBuilder.TERM_DICT)
+    val dictMapperStream = getClass.getResourceAsStream(DictBuilder.DICT_MAPPER)
+    val trieStream = getClass.getResourceAsStream(DictBuilder.TERM_TRIE)
 
     load(termDictStream, dictMapperStream, trieStream)
     this
   }
 
-  def load(termDictPath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_DICT,
-           dictMapperPath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.DICT_MAPPER,
-           lexiconTriePath: String = DictBuilder.DICT_PATH + File.separator + DictBuilder.TERM_TRIE): Unit = {
+  def load(termDictPath: String = DictBuilder.TERM_DICT,
+           dictMapperPath: String = DictBuilder.DICT_MAPPER,
+           lexiconTriePath: String = DictBuilder.TERM_TRIE): Unit = {
     val termDictStream = new FileInputStream(termDictPath)
     val dictMapperStream = new FileInputStream(dictMapperPath)
     val trieStream = new FileInputStream(lexiconTriePath)

@@ -13,14 +13,14 @@ class LexiconDictTest extends FunSuite {
         |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*""".stripMargin
     val saveLexiconDict = new LexiconDict
     saveLexiconDict.loadFromString(lexicons)
-    saveLexiconDict.save("." + DictBuilder.TERM_DICT,
-                         "." + DictBuilder.DICT_MAPPER,
-                         "." + DictBuilder.TERM_TRIE)
+    saveLexiconDict.save("." + DictBuilder.TERM_DICT_FILENAME,
+                         "." + DictBuilder.DICT_MAPPER_FILENAME,
+                         "." + DictBuilder.TERM_TRIE_FILENAME)
 
     val openLexiconDict = new LexiconDict
-    openLexiconDict.load(TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_DICT,
-                         TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER,
-                         TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE)
+    openLexiconDict.load(TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_DICT_FILENAME,
+                         TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER_FILENAME,
+                         TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE_FILENAME)
     val result = openLexiconDict.commonPrefixSearch("고구마")
     assert("Term(고,1,2,100,NNG,*,F,고,*,*,*,*,*),Term(고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*)" == result.mkString(","))
   }
@@ -33,9 +33,9 @@ class LexiconDictTest extends FunSuite {
       val endTime = System.nanoTime()
       val elapsedTime = (endTime - startTime)
       println(s"$elapsedTime ns")
-      lexiconDict.save(TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_DICT,
-        TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER,
-        TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE)
+      lexiconDict.save(TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_DICT_FILENAME,
+        TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER_FILENAME,
+        TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE_FILENAME)
     }
     {
       val startTime = System.nanoTime()
