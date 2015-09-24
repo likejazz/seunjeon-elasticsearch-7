@@ -88,12 +88,12 @@ class LexiconDict {
     val lastChar = surface.last
     if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, 1748, 3537, cost, "NNG,*,T")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, "NNG,*,T")
       } else {
-        Term(surface, 1748, 3536, cost, "NNG,*,F")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, "NNG,*,F")
       }
     } else {
-      Term(surface, 1748, 3535, cost, "NNG,*,*")
+      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, "NNG,*,*")
     }
   }
 

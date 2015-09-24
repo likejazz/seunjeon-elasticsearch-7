@@ -18,6 +18,7 @@ class AnalyzerTest extends FunSuite {
   }
 
   test("userdic-surface from file") {
+    // TODO: 테스트용 connection-cost dict 를 넣을수있게해서 unit test 을 가능하게 하자
     // TODO: assert...
     println("# BEFORE")
     Analyzer.parse("버카충했어?").foreach(println)

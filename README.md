@@ -149,10 +149,14 @@ Term(EOS,0,0,0,EOS)
 ## Group
 [https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 개발 참여 환영합니다.
 
-## 개발
+## 형태소분석기 개발
 ```sh
+# 사전 다운로드
+./scripts/download-dict.sh mecab-ko-dic-2.0.1-20150920
+
 # 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
 sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DictBuilder"
+
 # jar 생성
 sbt package
 ```

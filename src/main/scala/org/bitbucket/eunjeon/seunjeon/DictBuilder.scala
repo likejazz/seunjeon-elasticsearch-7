@@ -15,10 +15,10 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
-import java.nio.file.{Paths, Files}
 import java.nio.file.StandardCopyOption._
+import java.nio.file.{Files, Paths}
 
-import scala.reflect.io.{Path, File}
+import scala.reflect.io.{File, Path}
 
 
 object DictBuilder {
@@ -48,10 +48,8 @@ object DictBuilder {
   val RIGHT_ID_DEF = DICT_PATH + File.separator + RIGHT_ID_DEF_FILENAME
 
   def main(args: Array[String]): Unit = {
-
-    // TODO: reset resource/dict directory.
-    println("compiling lexicon dictionary...")
     clear()
+    println("compiling lexicon dictionary...")
     buildLexiconDict()
 
     println("compiling connection-cost dictionary...")
