@@ -23,10 +23,6 @@ import org.slf4j.LoggerFactory
 import scala.io.Source
 
 
-object ConnectionCostDict {
-  val resourceConnDicFile = "/connection_cost.dat"
-}
-
 class ConnectionCostDict {
   val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
 
@@ -92,7 +88,8 @@ class ConnectionCostDict {
   }
 
   def load(): ConnectionCostDict = {
-    val inputStream = getClass.getResourceAsStream(ConnectionCostDict.resourceConnDicFile)
+    val connectionCostFile = DictBuilder.DICT_PATH + File.separator + DictBuilder.CONNECTION_COST_FILENAME
+    val inputStream = getClass.getResourceAsStream(connectionCostFile)
     load(inputStream)
     this
   }
