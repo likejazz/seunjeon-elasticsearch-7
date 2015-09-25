@@ -38,28 +38,27 @@
 ## 형태소분석하기
 ### java
 ```java
-List<Term> result = Analyzer.parseJava("형태소분석기입니다. 사랑합니다.");
-for (Term term: result) {
+List<LatticeNode> result = Analyzer.parseJava("아버지가방에들어가신다.");
+for (LatticeNode term: result) {
     System.out.println(term);
 }
+
 ```
 ### scala
 ```scala
-Analyzer.parse("형태소분석기입니다. 사랑합니다.").foreach { term: Term =>
-  println(term)
-}
+Analyzer.parse("아버지가방에들어가신다.").foreach(println)
 ```
 ### 결과
 ```text
-Term(BOS,0,0,0,BOS)
-Term(형태소,1784,3536,2574,NNG,*,F,형태소,Compound,*,*,형태/NNG/*+소/NNG/*)
-Term(분석기,1784,3536,2897,NNG,*,F,분석기,Compound,*,*,분석/NNG/*+기/NNG/*)
-Term(입니다,2370,6,-288,VCP+EF,*,F,입니다,Inflect,VCP,EF,이/VCP/*+ᄇ니다/EF/*)
-Term(.,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(사랑,1784,3537,1089,NNG,*,T,사랑,*,*,*,*)
-Term(합니다,2693,6,805,XSV+EF,*,F,합니다,Inflect,XSV,EF,하/XSV/*+ᄇ니다/EF/*)
-Term(.,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(EOS,0,0,0,EOS)
+LatticeNode(Term(BOS,0,0,0,BOS),0,0,0)
+LatticeNode(Term(아버지,1784,3536,2818,NNG,*,F,아버지,*,*,*,*),0,2,-1135)
+LatticeNode(Term(가,490,1044,1501,JKS,*,F,가,*,*,*,*),3,3,-738)
+LatticeNode(Term(방,1784,3537,2975,NNG,*,T,방,*,*,*,*),4,4,660)
+LatticeNode(Term(에,356,307,1248,JKB,*,F,에,*,*,*,*),5,5,203)
+LatticeNode(Term(들어가,2421,3574,1648,VV,*,F,들어가,*,*,*,*),6,8,583)
+LatticeNode(Term(신다,5,6,3600,EP+EF,*,F,신다,Inflect,EP,EF,시/EP/*+ᆫ다/EF/*),9,10,-1256)
+LatticeNode(Term(.,1794,3555,3559,SF,*,*,*,*,*,*,*),11,11,325)
+LatticeNode(Term(EOS,0,0,0,EOS),12,12,2102)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -102,25 +101,25 @@ Analyzer.parse("버카충했어?").foreach(println)
 어그로
 ```
 ```java
-List<Term> result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+List<LatticeNode> result = Analyzer.parseJava("버카충했어?");
+for (LatticeNode term: result) {
     System.out.println(term);
 }
 Analyzer.setUserDictDir("src/test/resources/userdict/");
 result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+for (LatticeNode term: result) {
     System.out.println(term);
 }
 ```
 #### iterator에서 읽기
 ```java
-List<Term> result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+List<LatticeNode> result = Analyzer.parseJava("버카충했어?");
+for (LatticeNode term: result) {
     System.out.println(term);
 }
-Analyzer.setUserDict(Arrays.asList("버카충,-100", "낄끼빠빠").iterator());
+Analyzer.setUserDict(Arrays.asList("버카충", "낄끼빠빠").iterator());
 result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+for (LatticeNode term: result) {
     System.out.println(term);
 }
 ```
