@@ -9,10 +9,12 @@ class AnalyzerTest extends FunSuite {
 
     // FIXME: 분석이 이상하게 나옴.
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
+    Analyzer.parse("아버지 가방에 들어가신다.").foreach(println)
+    Analyzer.parse("하늘을 나는 자동차.").foreach(println)
   }
 
   test("number test") {
-    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: Term =>
+    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LatticeNode =>
       println(t)
     }
   }

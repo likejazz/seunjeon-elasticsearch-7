@@ -27,16 +27,8 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     tokenizer = new Tokenizer(lexiconDict, connectionCostDict)
   }
 
-  test("sentence") {
-    var result:String = null
-    result = tokenizer.parseText("ȷ".stripMargin).map(t => t.surface + ":" + t.feature(0)).mkString(",")
-    println(result)
-    result = tokenizer.parseText("어제 앵꼬되었잖아. 버카충했어?").map(t => t.surface + ":" + t.feature(0)).mkString(",")
-    println(result)
-  }
-
   test("performance long term") {
-    var result:Seq[Term] = null
+    var result:Seq[LatticeNode] = null
     val times = 100
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
@@ -53,7 +45,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     filetest("./src/test/resources/too_many_special_chars.txt")
   }
 
-  ignore("performance long_sentence") {
+  test("performance long_sentence") {
     filetest("./src/test/resources/long_sentence.txt")
   }
 
@@ -64,7 +56,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
 
     val times = 100
     val startTime = System.nanoTime()
-    var result:Seq[Term] = null
+    var result:Seq[LatticeNode] = null
     for (i <- 0 until times) {
       result = tokenizer.parseText(lines)
     }

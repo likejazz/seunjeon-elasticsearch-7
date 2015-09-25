@@ -56,17 +56,17 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     latticeNodes.foreach(node => add(node))
   }
 
-  def getBestPath: Seq[Term] = {
+  def getBestPath: Seq[LatticeNode] = {
     for (idx <- 1 until startingNodes.length) {
       startingNodes(idx).foreach{ startingNode:LatticeNode =>
         updateCost(endingNodes(idx-1), startingNode)
       }
     }
 
-    var result = new mutable.ListBuffer[Term]
+    var result = new mutable.ListBuffer[LatticeNode]
     var node = eos
     while (node != null) {
-      result += node.term
+      result += node
       node = node.leftNode
     }
     result.reverse
