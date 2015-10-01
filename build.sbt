@@ -2,7 +2,7 @@ organization := "org.bitbucket.eunjeon"
 
 name := "seunjeon"
 
-version := "0.3.1-SNAPSHOT"
+version := "0.4.0"
 
 scalaVersion := "2.11.7"
 
