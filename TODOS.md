@@ -1,3 +1,5 @@
+* offset 정보 넣어주자
+* csv 사전 읽을때 "," 문자 읽게 하자
 * 사용자사전
   * surface + 품사 입력
   * surface + 품사 + cost 입력
