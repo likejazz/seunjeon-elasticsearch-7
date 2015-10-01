@@ -4,62 +4,61 @@
 ## Maven
 ### 배포버전
 ```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.bitbucket.eunjeon</groupId>
-            <artifactId>seunjeon_2.11</artifactId>
-            <version>0.3.0</version>
-        </dependency>
-    </dependencies>
+<dependencies>
+    <dependency>
+        <groupId>org.bitbucket.eunjeon</groupId>
+        <artifactId>seunjeon_2.11</artifactId>
+        <version>0.4.0</version>
+    </dependency>
+</dependencies>
 ```
 
 ### 개발버전
 ```xml
-    <dependencies>
-        <dependency>
-            <groupId>org.bitbucket.eunjeon</groupId>
-            <artifactId>seunjeon_2.11</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+<dependencies>
+    <dependency>
+        <groupId>org.bitbucket.eunjeon</groupId>
+        <artifactId>seunjeon_2.11</artifactId>
+        <version>0.4.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 
-    <repositories>
-        <repository>
-            <id>oss-sonatype</id>
-            <name>oss-sonatype</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+<repositories>
+    <repository>
+        <id>oss-sonatype</id>
+        <name>oss-sonatype</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```
 
 ## 형태소분석하기
 ### java
 ```java
-List<Term> result = Analyzer.parseJava("형태소분석기입니다. 사랑합니다.");
-for (Term term: result) {
+List<TermNode> result = Analyzer.parseJava("아버지가방에들어가신다.");
+for (TermNode term: result) {
     System.out.println(term);
 }
+
 ```
 ### scala
 ```scala
-Analyzer.parse("형태소분석기입니다. 사랑합니다.").foreach { term: Term =>
-  println(term)
-}
+Analyzer.parse("아버지가방에들어가신다.").foreach(println)
 ```
 ### 결과
-```text
-Term(BOS,0,0,0,BOS)
-Term(형태소,1784,3536,2574,NNG,*,F,형태소,Compound,*,*,형태/NNG/*+소/NNG/*)
-Term(분석기,1784,3536,2897,NNG,*,F,분석기,Compound,*,*,분석/NNG/*+기/NNG/*)
-Term(입니다,2370,6,-288,VCP+EF,*,F,입니다,Inflect,VCP,EF,이/VCP/*+ᄇ니다/EF/*)
-Term(.,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(사랑,1784,3537,1089,NNG,*,T,사랑,*,*,*,*)
-Term(합니다,2693,6,805,XSV+EF,*,F,합니다,Inflect,XSV,EF,하/XSV/*+ᄇ니다/EF/*)
-Term(.,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(EOS,0,0,0,EOS)
+```bash
+TermNode(Term(BOS,0,0,0,BOS),0,0,0)
+TermNode(Term(아버지,1784,3536,2818,NNG,*,F,아버지,*,*,*,*),0,2,-1135)
+TermNode(Term(가,490,1044,1501,JKS,*,F,가,*,*,*,*),3,3,-738)
+TermNode(Term(방,1784,3537,2975,NNG,*,T,방,*,*,*,*),4,4,660)
+TermNode(Term(에,356,307,1248,JKB,*,F,에,*,*,*,*),5,5,203)
+TermNode(Term(들어가,2421,3574,1648,VV,*,F,들어가,*,*,*,*),6,8,583)
+TermNode(Term(신다,5,6,3600,EP+EF,*,F,신다,Inflect,EP,EF,시/EP/*+ᆫ다/EF/*),9,10,-1256)
+TermNode(Term(.,1794,3555,3559,SF,*,*,*,*,*,*,*),11,11,325)
+TermNode(Term(EOS,0,0,0,EOS),12,12,2102)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -102,57 +101,65 @@ Analyzer.parse("버카충했어?").foreach(println)
 어그로
 ```
 ```java
-List<Term> result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+System.out.println("# BEFORE");
+List<TermNode> result = Analyzer.parseJava("버카충했어?");
+for (TermNode term: result) {
     System.out.println(term);
 }
+System.out.println("# BEFORE");
 Analyzer.setUserDictDir("src/test/resources/userdict/");
 result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+for (TermNode term: result) {
     System.out.println(term);
 }
 ```
 #### iterator에서 읽기
 ```java
-List<Term> result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+System.out.println("# BEFORE");
+List<TermNode> result = Analyzer.parseJava("버카충했어?");
+for (TermNode term: result) {
     System.out.println(term);
 }
-Analyzer.setUserDict(Arrays.asList("버카충,-100", "낄끼빠빠").iterator());
+System.out.println("# BEFORE");
+Analyzer.setUserDict(Arrays.asList("버카충", "낄끼빠빠").iterator());
 result = Analyzer.parseJava("버카충했어?");
-for (Term term: result) {
+for (TermNode term: result) {
     System.out.println(term);
 }
 ```
 
 ### 결과
-```text
+```bash
 # BEFORE
-Term(BOS,0,0,0,BOS)
-Term(버,1788,3544,6708,NNP,인명,F,버,*,*,*,*)
-Term(카,1784,3536,4624,NNG,*,F,카,*,*,*,*)
-Term(충,1784,3537,4398,NNG,*,T,충,*,*,*,*)
-Term(했,2693,9,-26,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*)
-Term(어,4,6,2372,EF,*,F,어,*,*,*,*)
-Term(?,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(EOS,0,0,0,EOS)
-# AFTER 
-Term(BOS,0,0,0,BOS)
-Term(버카충,1748,3537,-100,NNG,*,T)
-Term(했,2693,9,-26,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*)
-Term(어,4,6,2372,EF,*,F,어,*,*,*,*)
-Term(?,1794,3555,3597,SF,*,*,*,*,*,*,*)
-Term(EOS,0,0,0,EOS)
+TermNode(Term(BOS,0,0,0,BOS),0,0,0)
+TermNode(Term(버,1788,3544,6797,NNP,인명,F,버,*,*,*,*),0,0,-2213)
+TermNode(Term(카,1784,3536,4644,NNG,*,F,카,*,*,*,*),1,1,4669)
+TermNode(Term(충,1784,3537,4422,NNG,*,T,충,*,*,*,*),2,2,9509)
+TermNode(Term(했,2693,9,-30,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*),3,3,11409)
+TermNode(Term(어,4,6,2409,EF,*,F,어,*,*,*,*),4,4,8935)
+TermNode(Term(?,1794,3555,3559,SF,*,*,*,*,*,*,*),5,5,9325)
+TermNode(Term(EOS,0,0,0,EOS),6,6,11102)
+# AFTER
+TermNode(Term(BOS,0,0,0,BOS),0,0,0)
+TermNode(Term(버카충,1784,3537,700,NNG,*,T),0,2,-1135)
+TermNode(Term(했,2693,9,-30,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*),3,3,-2957)
+TermNode(Term(어,4,6,2409,EF,*,F,어,*,*,*,*),4,4,-5431)
+TermNode(Term(?,1794,3555,3559,SF,*,*,*,*,*,*,*),5,5,-5041)
+TermNode(Term(EOS,0,0,0,EOS),6,6,-3264)
 ```
 
 
 ## Group
 [https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 개발 참여 환영합니다.
 
-## 개발
+## 형태소분석기 개발
 ```sh
+# 사전 다운로드
+./scripts/download-dict.sh mecab-ko-dic-2.0.1-20150920
+
 # 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
-sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DicBuilder"
+sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DictBuilder"
+
 # jar 생성
 sbt package
 ```

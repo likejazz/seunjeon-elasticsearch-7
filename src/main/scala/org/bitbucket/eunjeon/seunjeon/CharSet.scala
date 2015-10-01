@@ -23,7 +23,7 @@ import scala.io.Source
 
 
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
-case class CharSet(str: String, category: Category, term: Term)
+case class CharSet(str: String, rlength: Int, category: Category, term: Term)
 
 // TODO
 object UnkDef {
@@ -33,7 +33,7 @@ object UnkDef {
 
   def buildUnk: mutable.Map[String, Term] = {
     val terms = mutable.Map[String, Term]()
-    val inputStream = getClass.getResourceAsStream("/unk.def")
+    val inputStream = getClass.getResourceAsStream(DictBuilder.UNK_DEF)
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
@@ -61,7 +61,7 @@ object CharDef {
   def loadChar = {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Term)]()
-    val inputStream = getClass.getResourceAsStream("/char.def")
+    val inputStream = getClass.getResourceAsStream(DictBuilder.CHAR_DEF)
     Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>
@@ -106,16 +106,17 @@ object CharDef {
         // first loop
         if (curCategoryTerm == null) {
         } else {
-          result.append(CharSet(text.substring(start, idx), curCategoryTerm._1, curCategoryTerm._2))
+          val charsetString = text.substring(start, idx)
+          result.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
           start = idx
         }
         curCategoryTerm = categoryTerm
       }
     }
-    result.append(CharSet(text.substring(start, text.length), curCategoryTerm._1, curCategoryTerm._2))
-    // TODO: pos id 바꾸자 string 비교는 느릴것같음.
-    // remove space term
-    result.filterNot(_.term.surface == "SPACE")
+    val charsetString = text.substring(start, text.length)
+    result.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
+
+    result
   }
 
   private def getCategoryTerm(ch: Char): (Category, Term) = {

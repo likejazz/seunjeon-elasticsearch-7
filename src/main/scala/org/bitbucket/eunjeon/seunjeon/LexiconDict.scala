@@ -17,6 +17,8 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
 
@@ -43,13 +45,9 @@ case class Term(surface:String,
                 feature:String) {
 }
 
-object LexiconDict {
-  val termDictResourceFile = "/termDict.dat"
-  val dictMapperResourceFile = "/dicMapper.dat"
-  val trieResourceFile = "/trie.dat"
-}
-
 class LexiconDict {
+  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+
   var termDict: Array[Term] = null
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
@@ -77,10 +75,11 @@ class LexiconDict {
           // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
           terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
         } catch {
-          case NonFatal(exc) => println(exc)
+          case NonFatal(exc) => logger.warn(exc.toString)
         }
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
@@ -89,12 +88,12 @@ class LexiconDict {
     val lastChar = surface.last
     if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, 1748, 3537, cost, "NNG,*,T")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, "NNG,*,T")
       } else {
-        Term(surface, 1748, 3536, cost, "NNG,*,F")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, "NNG,*,F")
       }
     } else {
-      Term(surface, 1748, 3535, cost, "NNG,*,*")
+      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, "NNG,*,*")
     }
   }
 
@@ -123,7 +122,8 @@ class LexiconDict {
 
     dictMapper = surfaceIndexDict.map(_._2)
 
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"terms & mapper building is completed. ($elapsedTime ms)")
 
     trie = buildTrie(surfaceIndexDict)
     this
@@ -135,11 +135,13 @@ class LexiconDict {
     for (idx <- dict.indices) {
       patricia.insert(dict(idx)._1, idx)
     }
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"patricia trie building is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
     val result = new MapDoubleArray(patricia)
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"double-array trie building is completed. ($elapsedTime ms)")
     result
   }
 
@@ -172,9 +174,7 @@ class LexiconDict {
       map(termPos => termDict(termPos))
   }
 
-  def save(termDictPath: String = LexiconDict.termDictResourceFile,
-           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
-           triePath: String = LexiconDict.trieResourceFile): Unit = {
+  def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
 
     val termDictStore = new ObjectOutputStream(
       new BufferedOutputStream(new FileOutputStream(termDictPath), 16*1024))
@@ -195,17 +195,17 @@ class LexiconDict {
   }
 
   def load(): LexiconDict = {
-    val termDictStream = getClass.getResourceAsStream(LexiconDict.termDictResourceFile)
-    val dictMapperStream = getClass.getResourceAsStream(LexiconDict.dictMapperResourceFile)
-    val trieStream = getClass.getResourceAsStream(LexiconDict.trieResourceFile)
+    val termDictStream = getClass.getResourceAsStream(DictBuilder.TERM_DICT)
+    val dictMapperStream = getClass.getResourceAsStream(DictBuilder.DICT_MAPPER)
+    val trieStream = getClass.getResourceAsStream(DictBuilder.TERM_TRIE)
 
     load(termDictStream, dictMapperStream, trieStream)
     this
   }
 
-  def load(termDictPath: String = LexiconDict.termDictResourceFile,
-           dictMapperPath: String = LexiconDict.dictMapperResourceFile,
-           lexiconTriePath: String = LexiconDict.trieResourceFile): Unit = {
+  def load(termDictPath: String = DictBuilder.TERM_DICT,
+           dictMapperPath: String = DictBuilder.DICT_MAPPER,
+           lexiconTriePath: String = DictBuilder.TERM_TRIE): Unit = {
     val termDictStream = new FileInputStream(termDictPath)
     val dictMapperStream = new FileInputStream(dictMapperPath)
     val trieStream = new FileInputStream(lexiconTriePath)
@@ -216,22 +216,26 @@ class LexiconDict {
                    dictMapperStream: InputStream,
                    trieStream: InputStream): Unit = {
     var startTime = System.nanoTime()
-    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
+    val termDictIn = new ObjectInputStream(
+      new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"terms loading is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
     val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
     dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
     dictMapperIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"mapper loading is completed. ($elapsedTime ms)")
 
 
     startTime = System.nanoTime()
     val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
     trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
     TrieIn.close()
-//    println((System.nanoTime() - startTime) / (1000*1000) + " ms")
+    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    logger.info(s"double-array trie loading is completed. ($elapsedTime ms)")
   }
 }

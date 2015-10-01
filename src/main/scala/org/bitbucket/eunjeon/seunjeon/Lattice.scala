@@ -18,12 +18,12 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.mutable
 
 
-case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
-  var leftNode:LatticeNode = null
+case class TermNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
+  var leftNode:TermNode = null
 
   // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
   override def equals(o: Any) = o match {
-    case that:LatticeNode => (that.startPos == startPos) && (that.endPos == endPos)
+    case that:TermNode => (that.startPos == startPos) && (that.endPos == endPos)
     case _ => false
   }
 
@@ -34,46 +34,46 @@ case class LatticeNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Term("BOS", 0, 0, 0, "BOS"), 0, 0, 0)
-  var eos = new LatticeNode(new Term("EOS", 0, 0, 0, "EOS"), length, length)
+  var bos = new TermNode(new Term("BOS", 0, 0, 0, "BOS"), 0, 0, 0)
+  var eos = new TermNode(new Term("EOS", 0, 0, 0, "EOS"), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
   endingNodes.last += eos
 
   private def build2DimNodes(length:Int)
-  : mutable.ArraySeq[mutable.MutableList[LatticeNode]] = {
+  : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
     val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[LatticeNode])
+    temp.map(l => new mutable.MutableList[TermNode])
   }
 
-  def add(latticeNode:LatticeNode): Unit = {
+  def add(latticeNode:TermNode): Unit = {
     startingNodes(latticeNode.startPos+1) += latticeNode
     endingNodes(latticeNode.endPos+1) += latticeNode
   }
 
-  def addAll(latticeNodes:Seq[LatticeNode]): Unit = {
+  def addAll(latticeNodes:Seq[TermNode]): Unit = {
     latticeNodes.foreach(node => add(node))
   }
 
-  def getBestPath: Seq[Term] = {
+  def getBestPath: Seq[TermNode] = {
     for (idx <- 1 until startingNodes.length) {
-      startingNodes(idx).foreach{ startingNode:LatticeNode =>
+      startingNodes(idx).foreach{ startingNode:TermNode =>
         updateCost(endingNodes(idx-1), startingNode)
       }
     }
 
-    var result = new mutable.ListBuffer[Term]
+    var result = new mutable.ListBuffer[TermNode]
     var node = eos
     while (node != null) {
-      result += node.term
+      result += node
       node = node.leftNode
     }
     result.reverse
   }
 
 
-  private def updateCost(endingNodes:Seq[LatticeNode], startingNode:LatticeNode): Unit = {
+  private def updateCost(endingNodes:Seq[TermNode], startingNode:TermNode): Unit = {
     var minTotalCost:Int = 2147483647
     endingNodes.foreach{ endingNode =>
       val totalCost: Int = getCost(endingNode, startingNode)
@@ -85,7 +85,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     }
   }
 
-  private def getCost(endingNode: LatticeNode, startingNode: LatticeNode): Int = {
+  private def getCost(endingNode: TermNode, startingNode: TermNode): Int = {
     endingNode.accumulatedCost +
       endingNode.term.cost +
       connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
