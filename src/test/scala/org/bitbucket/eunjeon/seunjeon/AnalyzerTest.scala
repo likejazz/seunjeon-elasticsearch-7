@@ -14,7 +14,7 @@ class AnalyzerTest extends FunSuite {
   }
 
   test("number test") {
-    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LatticeNode =>
+    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: TermNode =>
       println(t)
     }
   }

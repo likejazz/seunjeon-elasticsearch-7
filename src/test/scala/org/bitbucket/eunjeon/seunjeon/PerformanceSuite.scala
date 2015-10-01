@@ -28,7 +28,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("performance long term") {
-    var result:Seq[LatticeNode] = null
+    var result:Seq[TermNode] = null
     val times = 100
     val startTime = System.nanoTime()
     for (i <- 0 until times) {
@@ -56,7 +56,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
 
     val times = 100
     val startTime = System.nanoTime()
-    var result:Seq[LatticeNode] = null
+    var result:Seq[TermNode] = null
     for (i <- 0 until times) {
       result = tokenizer.parseText(lines)
     }

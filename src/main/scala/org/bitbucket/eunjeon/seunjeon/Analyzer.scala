@@ -27,11 +27,11 @@ object Analyzer {
     new Tokenizer(lexiconDict, connectionCostDict)
   }
 
-  def parse(sentence: String): Seq[LatticeNode] = {
+  def parse(sentence: String): Seq[TermNode] = {
     tokenizer.parseText(sentence)
   }
 
-  def parseJava(sentence: String): java.util.List[LatticeNode] = {
+  def parseJava(sentence: String): java.util.List[TermNode] = {
     tokenizer.parseText(sentence).asJava
   }
 
