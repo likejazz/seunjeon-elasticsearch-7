@@ -26,7 +26,6 @@ import org.trie4j.patricia.MapPatriciaTrie
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
-import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object Term {
@@ -43,7 +42,7 @@ case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
                 cost:Int,
-                feature:String) {
+                feature:Seq[String]) {
 }
 
 class LexiconDict {
@@ -70,14 +69,18 @@ class LexiconDict {
     val terms = new mutable.MutableList[Term]()
     // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
-    iterator.map(line => CSVParser.parse(line, '#', ',', '"')).foreach {
-      case Some(List(surface)) => terms += buildNNGTerm(surface, 1000-(surface.length*100))
-      case Some(List(surface, cost)) => terms += buildNNGTerm(surface, cost.toShort)
-      case l:Some[List[String]] => try {
-          terms += Term(l.get(0), l.get(1).toShort, l.get(2).toShort, l.get(3).toShort, l.slice(4, l.size).mkString(","))
-        } catch {
-          case NonFatal(exc) => logger.warn(exc.toString)
-        }
+    iterator.dropWhile(_.head == '#').
+      map(line => CSVParser.parse(line, '"', ',', '"')).foreach {
+      case Some(List(surface)) =>
+        terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
+      case Some(List(surface, cost)) =>
+        terms += buildNNGTerm(surface, cost.toShort)
+      case Some(List(surface, cost, leftId, rightId, feature @ _*)) =>
+        terms += Term(surface,
+          cost.toShort,
+          leftId.toShort,
+          rightId.toShort,
+          feature)
     }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
@@ -89,12 +92,12 @@ class LexiconDict {
     val lastChar = surface.last
     if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, "NNG,*,T")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, Seq("NNG","*","T"))
       } else {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, "NNG,*,F")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, Seq("NNG","*","F"))
       }
     } else {
-      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, "NNG,*,*")
+      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, Seq("NNG","*","*"))
     }
   }
 

@@ -38,9 +38,9 @@ object UnkDef {
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         defaultTerm =
-          Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
+          Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size))
       } else {
-        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
+        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size))
       }
     }
     terms

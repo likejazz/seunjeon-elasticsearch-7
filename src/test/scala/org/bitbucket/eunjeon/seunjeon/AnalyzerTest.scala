@@ -5,7 +5,6 @@ import org.scalatest.FunSuite
 
 class AnalyzerTest extends FunSuite {
   test("main test") {
-    //Analyzer.parse("붹붹붹이다.").foreach(println)
 
     // FIXME: 분석이 이상하게 나옴.
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
@@ -20,21 +19,53 @@ class AnalyzerTest extends FunSuite {
   }
 
   test("userdic-surface from file") {
-    // TODO: 테스트용 connection-cost dict 를 넣을수있게해서 unit test 을 가능하게 하자
-    // TODO: assert...
-    println("# BEFORE")
-    Analyzer.parse("버카충했어?").foreach(println)
+    assert(Seq(
+      "BOS:BOS",
+      "버:NNP",
+      "카:NNG",
+      "충:NNG",
+      "했:XSV+EP",
+      "어:EF","?:SF",
+      "EOS:EOS") == Analyzer.parse("버카충했어?").map(getSurfacePos))
     Analyzer.setUserDictDir("src/test/resources/userdict/")
-    println("# AFTER ")
-    Analyzer.parse("버카충했어?").foreach(println)
+    assert(Seq(
+      "BOS:BOS",
+      "버카충:NNG",
+      "했:XSV+EP",
+      "어:EF",
+      "?:SF",
+      "EOS:EOS") == Analyzer.parse("버카충했어?").map(getSurfacePos))
   }
 
   test("userdic-surface from iterator") {
-    // TODO: assert...
-    println("# BEFORE")
-    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
+    assert(Seq(
+      "BOS:BOS",
+      "어:IC",
+      "그:NP",
+      "로:JKB",
+      "좀:MAG",
+      "끌:VV",
+      "고:EC",
+      "있:VX",
+      "어:EC",
+      "봐:VX+EF",
+      ".:SF",
+      "EOS:EOS") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
     Analyzer.setUserDict(Seq("어그로,-500", "갠소").toIterator)
-    println("# AFTER ")
-    Analyzer.parse("어그로좀끌고있어봐.").foreach(println)
+    assert(Seq(
+      "BOS:BOS",
+      "어그로:NNG",
+      "좀:MAG",
+      "끌:VV",
+      "고:EC",
+      "있:VX",
+      "어:EC",
+      "봐:VX+EF",
+      ".:SF",
+      "EOS:EOS") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
+  }
+
+  def getSurfacePos(termNode:TermNode): String = {
+    s"${termNode.term.surface}:${termNode.term.feature.head}"
   }
 }
