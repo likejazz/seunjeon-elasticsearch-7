@@ -41,10 +41,10 @@ class TokenizerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("testParseMultipleEojeol") {
-    assert("BOS,감자,고구마,오징어,EOS" ==
+    assert("BOS,감자,고구마, ,오징어,EOS" ==
       tokenizer.parseText("감자고구마 오징어").map(_.term.surface).mkString(","))
 
-    assert("BOS,감자,고,구마,오징어,EOS" ==
+    assert("BOS,감자,고, ,구마, ,오징어,EOS" ==
       tokenizer.parseText("감자고 구마 오징어").map(_.term.surface).mkString(","))
   }
 
