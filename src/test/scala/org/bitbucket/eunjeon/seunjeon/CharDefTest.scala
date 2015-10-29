@@ -4,13 +4,13 @@ import org.scalatest.FunSuite
 
 class CharDefTest extends FunSuite {
   test("splitChar") {
-    assert("(abc,ALPHA),(123,NUMERIC),(한글,HANGUL),(@#$,SYMBOL)" ==
+    assert("(  ,SPACE),(abc,ALPHA),(123,NUMERIC),( ,SPACE),(한글,HANGUL),(@#$,SYMBOL),( ,SPACE)" ==
       CharDefTest.convString(CharDef.splitCharSet("  abc123 한글@#$ ")))
   }
 
   test("emptyString") {
     assert("" == CharDefTest.convString(CharDef.splitCharSet("")))
-    assert("" == CharDefTest.convString(CharDef.splitCharSet("  ")))
+    assert("(  ,SPACE)" == CharDefTest.convString(CharDef.splitCharSet("  ")))
   }
 
 }
