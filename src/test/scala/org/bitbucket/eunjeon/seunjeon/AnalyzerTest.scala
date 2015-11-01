@@ -68,11 +68,15 @@ class AnalyzerTest extends FunSuite {
   }
 
   test("multi-char-dict") {
-    Analyzer.setUserDict(Seq("삼성SDS").toIterator)
+    Analyzer.setUserDict(Seq("삼성SDS", "LG CNS").toIterator)
     assert(Seq(
       "BOS:BOS",
       "삼성SDS:NNG",
       "EOS:EOS") == Analyzer.parse("삼성SDS").map(getSurfacePos))
+    assert(Seq(
+      "BOS:BOS",
+      "LG CNS:NNG",
+      "EOS:EOS") == Analyzer.parse("LG CNS").map(getSurfacePos))
   }
 
   def getSurfacePos(termNode:TermNode): String = {
