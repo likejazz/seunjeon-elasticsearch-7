@@ -22,8 +22,8 @@ public class AnalyzerJavaTest {
         for (TermNode term: result) {
             System.out.println(term);
         }
-        System.out.println("# BEFORE");
         Analyzer.setUserDictDir("src/test/resources/userdict/");
+        System.out.println("# AFTER");
         result = Analyzer.parseJava("버카충했어?");
         for (TermNode term: result) {
             System.out.println(term);

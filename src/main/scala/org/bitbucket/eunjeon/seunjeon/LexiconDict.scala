@@ -17,6 +17,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
+import com.github.tototoshi.csv.CSVParser
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
@@ -25,7 +26,6 @@ import org.trie4j.patricia.MapPatriciaTrie
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
-import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object Term {
@@ -42,7 +42,7 @@ case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
                 cost:Int,
-                feature:String) {
+                feature:Seq[String]) {
 }
 
 class LexiconDict {
@@ -66,17 +66,21 @@ class LexiconDict {
 
   def loadFromIterator(iterator: Iterator[String]): LexiconDict = {
     val startTime = System.nanoTime()
-    // TODO: Option 사용해보자.
     val terms = new mutable.MutableList[Term]()
-    iterator.dropWhile(_.head == '#').map(_.split(",")).foreach {
-      case Array(surface) => terms += buildNNGTerm(surface, 1000-(surface.length*100))
-      case Array(surface, cost) => terms += buildNNGTerm(surface, cost.toShort)
-      case l:Array[String] => try {
-          // FIXME: "," 쉼표 자체는 쌍따옴표로 감싸있음 잘 읽어들이자.
-          terms += Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size).mkString(","))
-        } catch {
-          case NonFatal(exc) => logger.warn(exc.toString)
-        }
+    // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
+    // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
+    iterator.dropWhile(_.head == '#').
+      map(line => CSVParser.parse(line, '"', ',', '"')).foreach {
+      case Some(List(surface)) =>
+        terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
+      case Some(List(surface, cost)) =>
+        terms += buildNNGTerm(surface, cost.toShort)
+      case Some(List(surface, cost, leftId, rightId, feature @ _*)) =>
+        terms += Term(surface,
+          cost.toShort,
+          leftId.toShort,
+          rightId.toShort,
+          feature)
     }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
@@ -88,12 +92,12 @@ class LexiconDict {
     val lastChar = surface.last
     if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, "NNG,*,T")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, Seq("NNG","*","T"))
       } else {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, "NNG,*,F")
+        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, Seq("NNG","*","F"))
       }
     } else {
-      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, "NNG,*,*")
+      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, Seq("NNG","*","*"))
     }
   }
 
@@ -170,7 +174,8 @@ class LexiconDict {
       indexedLexiconDictPositions += iterator.next().getValue
     }
 
-    indexedLexiconDictPositions.flatMap(mapPos => dictMapper(mapPos)).
+    indexedLexiconDictPositions.
+      flatMap(mapPos => dictMapper(mapPos)).
       map(termPos => termDict(termPos))
   }
 

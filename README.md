@@ -8,7 +8,7 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
@@ -19,7 +19,7 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>0.4.0-SNAPSHOT</version>
+        <version>0.5.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 
@@ -50,15 +50,15 @@ Analyzer.parse("아버지가방에들어가신다.").foreach(println)
 ```
 ### 결과
 ```bash
-TermNode(Term(BOS,0,0,0,BOS),0,0,0)
-TermNode(Term(아버지,1784,3536,2818,NNG,*,F,아버지,*,*,*,*),0,2,-1135)
-TermNode(Term(가,490,1044,1501,JKS,*,F,가,*,*,*,*),3,3,-738)
-TermNode(Term(방,1784,3537,2975,NNG,*,T,방,*,*,*,*),4,4,660)
-TermNode(Term(에,356,307,1248,JKB,*,F,에,*,*,*,*),5,5,203)
-TermNode(Term(들어가,2421,3574,1648,VV,*,F,들어가,*,*,*,*),6,8,583)
-TermNode(Term(신다,5,6,3600,EP+EF,*,F,신다,Inflect,EP,EF,시/EP/*+ᆫ다/EF/*),9,10,-1256)
-TermNode(Term(.,1794,3555,3559,SF,*,*,*,*,*,*,*),11,11,325)
-TermNode(Term(EOS,0,0,0,EOS),12,12,2102)
+TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
+TermNode(Term(아버지,1784,3536,2818,List(NNG, *, F, 아버지, *, *, *, *)),0,2,-1135)
+TermNode(Term(가,490,1044,1501,List(JKS, *, F, 가, *, *, *, *)),3,3,-738)
+TermNode(Term(방,1784,3537,2975,List(NNG, *, T, 방, *, *, *, *)),4,4,660)
+TermNode(Term(에,356,307,1248,List(JKB, *, F, 에, *, *, *, *)),5,5,203)
+TermNode(Term(들어가,2421,3574,1648,List(VV, *, F, 들어가, *, *, *, *)),6,8,583)
+TermNode(Term(신다,5,6,3600,List(EP+EF, *, F, 신다, Inflect, EP, EF, 시/EP/*+ᆫ다/EF/*)),9,10,-1256)
+TermNode(Term(.,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),11,11,325)
+TermNode(Term(EOS,0,0,0,List(EOS)),12,12,2102)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -131,21 +131,21 @@ for (TermNode term: result) {
 ### 결과
 ```bash
 # BEFORE
-TermNode(Term(BOS,0,0,0,BOS),0,0,0)
-TermNode(Term(버,1788,3544,6797,NNP,인명,F,버,*,*,*,*),0,0,-2213)
-TermNode(Term(카,1784,3536,4644,NNG,*,F,카,*,*,*,*),1,1,4669)
-TermNode(Term(충,1784,3537,4422,NNG,*,T,충,*,*,*,*),2,2,9509)
-TermNode(Term(했,2693,9,-30,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*),3,3,11409)
-TermNode(Term(어,4,6,2409,EF,*,F,어,*,*,*,*),4,4,8935)
-TermNode(Term(?,1794,3555,3559,SF,*,*,*,*,*,*,*),5,5,9325)
-TermNode(Term(EOS,0,0,0,EOS),6,6,11102)
+TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
+TermNode(Term(버,1788,3544,6797,List(NNP, 인명, F, 버, *, *, *, *)),0,0,-2213)
+TermNode(Term(카,1784,3536,4644,List(NNG, *, F, 카, *, *, *, *)),1,1,4669)
+TermNode(Term(충,1784,3537,4422,List(NNG, *, T, 충, *, *, *, *)),2,2,9509)
+TermNode(Term(했,2693,9,-30,List(XSV+EP, *, T, 했, Inflect, XSV, EP, 하/XSV/*+았/EP/*)),3,3,11409)
+TermNode(Term(어,4,6,2409,List(EF, *, F, 어, *, *, *, *)),4,4,8935)
+TermNode(Term(?,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),5,5,9325)
+TermNode(Term(EOS,0,0,0,List(EOS)),6,6,11102)
 # AFTER
-TermNode(Term(BOS,0,0,0,BOS),0,0,0)
-TermNode(Term(버카충,1784,3537,700,NNG,*,T),0,2,-1135)
-TermNode(Term(했,2693,9,-30,XSV+EP,*,T,했,Inflect,XSV,EP,하/XSV/*+았/EP/*),3,3,-2957)
-TermNode(Term(어,4,6,2409,EF,*,F,어,*,*,*,*),4,4,-5431)
-TermNode(Term(?,1794,3555,3559,SF,*,*,*,*,*,*,*),5,5,-5041)
-TermNode(Term(EOS,0,0,0,EOS),6,6,-3264)
+TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
+TermNode(Term(버카충,1784,3537,-100,List(NNG, *, T)),0,2,-1135)
+TermNode(Term(했,2693,9,-30,List(XSV+EP, *, T, 했, Inflect, XSV, EP, 하/XSV/*+았/EP/*)),3,3,-3757)
+TermNode(Term(어,4,6,2409,List(EF, *, F, 어, *, *, *, *)),4,4,-6231)
+TermNode(Term(?,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),5,5,-5841)
+TermNode(Term(EOS,0,0,0,List(EOS)),6,6,-4064)
 ```
 
 

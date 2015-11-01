@@ -30,30 +30,35 @@ case class TermNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int
   override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
 }
 
+object Lattice {
+  def apply(length:Int, connectingCostDict:ConnectionCostDict) = new Lattice(length, connectingCostDict)
+}
+
 // TODO: connectionCostDict 클래스로 빼자
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new TermNode(new Term("BOS", 0, 0, 0, "BOS"), 0, 0, 0)
-  var eos = new TermNode(new Term("EOS", 0, 0, 0, "EOS"), length, length)
+  var bos = new TermNode(new Term("BOS", 0, 0, 0, Seq("BOS")), 0, 0, 0)
+  var eos = new TermNode(new Term("EOS", 0, 0, 0, Seq("EOS")), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
   endingNodes.last += eos
 
-  private def build2DimNodes(length:Int)
-  : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
+  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
     val temp = new mutable.ArraySeq(length)
     temp.map(l => new mutable.MutableList[TermNode])
   }
 
-  def add(latticeNode:TermNode): Unit = {
+  def add(latticeNode:TermNode): Lattice = {
     startingNodes(latticeNode.startPos+1) += latticeNode
     endingNodes(latticeNode.endPos+1) += latticeNode
+    this
   }
 
-  def addAll(latticeNodes:Seq[TermNode]): Unit = {
+  def addAll(latticeNodes:Seq[TermNode]): Lattice = {
     latticeNodes.foreach(node => add(node))
+    this
   }
 
   def getBestPath: Seq[TermNode] = {
