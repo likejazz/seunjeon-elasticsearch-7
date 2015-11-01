@@ -80,6 +80,7 @@ class AnalyzerTest extends FunSuite {
   }
 
   def getSurfacePos(termNode:TermNode): String = {
+    println(termNode)
     s"${termNode.term.surface}:${termNode.term.feature.head}"
   }
 }
