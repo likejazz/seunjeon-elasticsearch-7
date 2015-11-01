@@ -6,3 +6,4 @@
 * elasticsearch plugin -- 별도의 프로젝트로 해야할 듯
 * libMeCab.so 연동
 * debug logging log4j?
+* SPACE 를 넘어서서 연접비용 계산하자. (품질 관련..)

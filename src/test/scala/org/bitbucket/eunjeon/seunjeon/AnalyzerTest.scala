@@ -67,6 +67,14 @@ class AnalyzerTest extends FunSuite {
       "EOS:EOS") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
   }
 
+  test("multi-char-dict") {
+    Analyzer.setUserDict(Seq("삼성SDS").toIterator)
+    assert(Seq(
+      "BOS:BOS",
+      "삼성SDS:NNG",
+      "EOS:EOS") == Analyzer.parse("삼성SDS").map(getSurfacePos))
+  }
+
   def getSurfacePos(termNode:TermNode): String = {
     s"${termNode.term.surface}:${termNode.term.feature.head}"
   }

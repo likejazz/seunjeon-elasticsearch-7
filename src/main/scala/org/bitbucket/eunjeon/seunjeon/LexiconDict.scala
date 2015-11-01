@@ -174,7 +174,8 @@ class LexiconDict {
       indexedLexiconDictPositions += iterator.next().getValue
     }
 
-    indexedLexiconDictPositions.flatMap(mapPos => dictMapper(mapPos)).
+    indexedLexiconDictPositions.
+      flatMap(mapPos => dictMapper(mapPos)).
       map(termPos => termDict(termPos))
   }
 
