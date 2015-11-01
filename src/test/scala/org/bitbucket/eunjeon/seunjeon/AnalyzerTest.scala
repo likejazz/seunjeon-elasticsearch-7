@@ -10,6 +10,8 @@ class AnalyzerTest extends FunSuite {
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
     Analyzer.parse("아버지 가방에 들어가신다.").foreach(println)
     Analyzer.parse("하늘을 나는 자동차.").foreach(println)
+    Analyzer.parse("존속하며,그직무를행한다.").foreach(println)
+    Analyzer.parse("존속하며, 그 직무를 행한다.").foreach(println)
   }
 
   test("number test") {
