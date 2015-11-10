@@ -4,14 +4,16 @@ import org.scalatest.FunSuite
 
 
 class AnalyzerTest extends FunSuite {
-  test("main test") {
 
+  test("main test") {
     // FIXME: 분석이 이상하게 나옴.
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
     Analyzer.parse("아버지 가방에 들어가신다.").foreach(println)
     Analyzer.parse("하늘을 나는 자동차.").foreach(println)
     Analyzer.parse("존속하며,그직무를행한다.").foreach(println)
     Analyzer.parse("존속하며, 그 직무를 행한다.").foreach(println)
+    // TODO: double-array-trie library bug.
+//    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
   }
 
   test("number test") {

@@ -61,6 +61,15 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     this
   }
 
+  def removeSpace(): Lattice = {
+    startingNodes = startingNodes.filter(termNodes =>
+      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+    endingNodes = endingNodes.filter(termNodes =>
+      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+    this
+  }
+
+  // FIXME: space 패널티 cost 계산해줘야 함.
   def getBestPath: Seq[TermNode] = {
     for (idx <- 1 until startingNodes.length) {
       startingNodes(idx).foreach{ startingNode:TermNode =>

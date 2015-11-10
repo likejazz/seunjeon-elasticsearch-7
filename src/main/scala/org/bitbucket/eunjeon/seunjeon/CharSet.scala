@@ -94,9 +94,9 @@ object CharDef {
   }
 
   def splitCharSet(text: String): Seq[CharSet] = {
-    val result = new mutable.ListBuffer[CharSet]
+    val charsets = new mutable.ListBuffer[CharSet]
     if (text.length == 0) {
-      return result
+      return charsets
     }
     var start = 0
     var curCategoryTerm: (Category, Term) = null
@@ -107,16 +107,16 @@ object CharDef {
         if (curCategoryTerm == null) {
         } else {
           val charsetString = text.substring(start, idx)
-          result.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
+          charsets.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
           start = idx
         }
         curCategoryTerm = categoryTerm
       }
     }
     val charsetString = text.substring(start, text.length)
-    result.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
+    charsets.append(CharSet(charsetString, charsetString.length, curCategoryTerm._1, curCategoryTerm._2))
 
-    result
+    charsets
   }
 
   private def getCategoryTerm(ch: Char): (Category, Term) = {

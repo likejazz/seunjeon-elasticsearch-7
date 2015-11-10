@@ -38,7 +38,8 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     val charsetsLength = charsets.foldLeft(0)(_ + _.str.length)
     Lattice(charsetsLength, connectionCostDict).
       addAll(getKnownTerms(text)).
-      addAll(getUnknownTerms(charsets))
+      addAll(getUnknownTerms(charsets)).
+      removeSpace()
   }
 
   private def getUnknownTerms(charsets: Seq[CharSet]): Seq[TermNode] = {
