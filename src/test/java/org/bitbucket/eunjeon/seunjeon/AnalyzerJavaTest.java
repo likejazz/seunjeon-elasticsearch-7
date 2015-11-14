@@ -1,5 +1,6 @@
 package org.bitbucket.eunjeon.seunjeon;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,16 +16,21 @@ public class AnalyzerJavaTest {
         }
     }
 
+    @Before
+    public void setUp() {
+        Analyzer.resetUserDict();
+    }
+
     @Test
     public void testUserDictDir() {
         System.out.println("# BEFORE");
-        List<TermNode> result = Analyzer.parseJava("버카충했어?");
+        List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
         for (TermNode term: result) {
             System.out.println(term);
         }
+        System.out.println("# BEFORE");
         Analyzer.setUserDictDir("src/test/resources/userdict/");
-        System.out.println("# AFTER");
-        result = Analyzer.parseJava("버카충했어?");
+        result = Analyzer.parseJava("덕후냄새가 난다.");
         for (TermNode term: result) {
             System.out.println(term);
         }
@@ -33,13 +39,13 @@ public class AnalyzerJavaTest {
     @Test
     public void testUserDict() {
         System.out.println("# BEFORE");
-        List<TermNode> result = Analyzer.parseJava("버카충했어?");
+        List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
         for (TermNode term: result) {
             System.out.println(term);
         }
-        System.out.println("# AFTER");
-        Analyzer.setUserDict(Arrays.asList("버카충", "낄끼빠빠").iterator());
-        result = Analyzer.parseJava("버카충했어?");
+        System.out.println("# BEFORE");
+        Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼빠빠").iterator());
+        result = Analyzer.parseJava("덕후냄새가 난다.");
         for (TermNode term: result) {
             System.out.println(term);
         }

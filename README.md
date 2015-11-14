@@ -50,15 +50,15 @@ Analyzer.parse("아버지가방에들어가신다.").foreach(println)
 ```
 ### 결과
 ```bash
-TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
-TermNode(Term(아버지,1784,3536,2818,List(NNG, *, F, 아버지, *, *, *, *)),0,2,-1135)
-TermNode(Term(가,490,1044,1501,List(JKS, *, F, 가, *, *, *, *)),3,3,-738)
-TermNode(Term(방,1784,3537,2975,List(NNG, *, T, 방, *, *, *, *)),4,4,660)
-TermNode(Term(에,356,307,1248,List(JKB, *, F, 에, *, *, *, *)),5,5,203)
-TermNode(Term(들어가,2421,3574,1648,List(VV, *, F, 들어가, *, *, *, *)),6,8,583)
-TermNode(Term(신다,5,6,3600,List(EP+EF, *, F, 신다, Inflect, EP, EF, 시/EP/*+ᆫ다/EF/*)),9,10,-1256)
-TermNode(Term(.,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),11,11,325)
-TermNode(Term(EOS,0,0,0,List(EOS)),12,12,2102)
+TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
+TermNode(Term(아버지,1784,3536,2818,Vector(NNG, *, F, 아버지, *, *, *, *),150),0,2,-1135)
+TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),3,3,-738)
+TermNode(Term(방,1784,3537,2975,Vector(NNG, *, T, 방, *, *, *, *),150),4,4,660)
+TermNode(Term(에,356,307,1248,Vector(JKB, *, F, 에, *, *, *, *),120),5,5,203)
+TermNode(Term(들어가,2421,3574,1648,Vector(VV, *, F, 들어가, *, *, *, *),173),6,8,583)
+TermNode(Term(신다,5,6,3600,Vector(EP+EF, *, F, 신다, Inflect, EP, EF, 시/EP/*+ᆫ다/EF/*),200),9,10,-1256)
+TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),11,11,325)
+TermNode(Term(EOS,0,0,0,Vector(EOS),0),12,12,2102)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -70,24 +70,25 @@ TermNode(Term(EOS,0,0,0,List(EOS)),12,12,2102)
 # surface,cost
 #   surface: 단어
 #   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
+덕후
 버카충,-100
 어그로
 ```
 ```scala
 println("# BEFORE")
-Analyzer.parse("버카충했어?").foreach(println)
+Analyzer.parse("덕후냄새가 난다.").foreach(println)
 Analyzer.setUserDictDir("userdict/")
 println("# AFTER ")
-Analyzer.parse("버카충했어?").foreach(println)
+Analyzer.parse("덕후냄새가 난다.").foreach(println)
 ```
 csv 파일이 있는 디렉토리를 명시하여 로딩합니다.
 #### iterator 에서 읽기
 ```scala
 println("# BEFORE")
-Analyzer.parse("버카충했어?").foreach(println)
-Analyzer.setUserDict(Seq("버카충,-100", "낄끼빠빠").toIterator)
+Analyzer.parse("").foreach(println)
+Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
 println("# AFTER ")
-Analyzer.parse("버카충했어?").foreach(println)
+Analyzer.parse("").foreach(println)
 ```
 
 ### java
@@ -97,18 +98,19 @@ Analyzer.parse("버카충했어?").foreach(println)
 # surface,cost
 #   surface: 단어
 #   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
+덕후
 버카충,-100
 어그로
 ```
 ```java
 System.out.println("# BEFORE");
-List<TermNode> result = Analyzer.parseJava("버카충했어?");
+List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
 for (TermNode term: result) {
     System.out.println(term);
 }
 System.out.println("# BEFORE");
 Analyzer.setUserDictDir("src/test/resources/userdict/");
-result = Analyzer.parseJava("버카충했어?");
+result = Analyzer.parseJava("덕후냄새가 난다.");
 for (TermNode term: result) {
     System.out.println(term);
 }
@@ -116,13 +118,13 @@ for (TermNode term: result) {
 #### iterator에서 읽기
 ```java
 System.out.println("# BEFORE");
-List<TermNode> result = Analyzer.parseJava("버카충했어?");
+List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
 for (TermNode term: result) {
     System.out.println(term);
 }
 System.out.println("# BEFORE");
-Analyzer.setUserDict(Arrays.asList("버카충", "낄끼빠빠").iterator());
-result = Analyzer.parseJava("버카충했어?");
+Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼빠빠").iterator());
+result = Analyzer.parseJava("덕후냄새가 난다.");
 for (TermNode term: result) {
     System.out.println(term);
 }
@@ -131,21 +133,23 @@ for (TermNode term: result) {
 ### 결과
 ```bash
 # BEFORE
-TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
-TermNode(Term(버,1788,3544,6797,List(NNP, 인명, F, 버, *, *, *, *)),0,0,-2213)
-TermNode(Term(카,1784,3536,4644,List(NNG, *, F, 카, *, *, *, *)),1,1,4669)
-TermNode(Term(충,1784,3537,4422,List(NNG, *, T, 충, *, *, *, *)),2,2,9509)
-TermNode(Term(했,2693,9,-30,List(XSV+EP, *, T, 했, Inflect, XSV, EP, 하/XSV/*+았/EP/*)),3,3,11409)
-TermNode(Term(어,4,6,2409,List(EF, *, F, 어, *, *, *, *)),4,4,8935)
-TermNode(Term(?,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),5,5,9325)
-TermNode(Term(EOS,0,0,0,List(EOS)),6,6,11102)
+TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
+TermNode(Term(덕,1784,3537,3128,Vector(NNG, *, T, 덕, *, *, *, *),150),0,0,-1135)
+TermNode(Term(후,1784,3536,2200,Vector(NNG, *, F, 후, *, *, *, *),150),1,1,2189)
+TermNode(Term(냄새,1784,3536,2123,Vector(NNG, *, F, 냄새, *, *, *, *),150),2,3,4585)
+TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),4,4,4287)
+TermNode(Term(난다,2421,6,1277,Vector(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),2),6,7,5072)
+TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),8,8,4330)
+TermNode(Term(EOS,0,0,0,Vector(EOS),0),9,9,6107)
 # AFTER
-TermNode(Term(BOS,0,0,0,List(BOS)),0,0,0)
-TermNode(Term(버카충,1784,3537,-100,List(NNG, *, T)),0,2,-1135)
-TermNode(Term(했,2693,9,-30,List(XSV+EP, *, T, 했, Inflect, XSV, EP, 하/XSV/*+았/EP/*)),3,3,-3757)
-TermNode(Term(어,4,6,2409,List(EF, *, F, 어, *, *, *, *)),4,4,-6231)
-TermNode(Term(?,1794,3555,3559,List(SF, *, *, *, *, *, *, *)),5,5,-5841)
-TermNode(Term(EOS,0,0,0,List(EOS)),6,6,-4064)
+TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
+TermNode(Term(덕후,1784,3535,800,Vector(NNG, *, F, 덕후, *, *, *, *),150),0,1,-1135)
+TermNode(Term(냄새,1784,3536,2123,Vector(NNG, *, F, 냄새, *, *, *, *),150),2,3,-139)
+TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),4,4,-437)
+TermNode(Term(난다,2421,6,1277,Vector(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),2),6,7,348)
+TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),8,8,-394)
+TermNode(Term(EOS,0,0,0,Vector(EOS),0),9,9,1383)
+
 ```
 
 
