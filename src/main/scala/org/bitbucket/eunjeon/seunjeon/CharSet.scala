@@ -37,10 +37,11 @@ object UnkDef {
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
-        defaultTerm =
-          Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size))
+        val feature = l.slice(4, l.size).toIndexedSeq
+        defaultTerm = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
       } else {
-        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, l.slice(4, l.size))
+        val feature = l.slice(4, l.size).toIndexedSeq
+        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
       }
     }
     terms

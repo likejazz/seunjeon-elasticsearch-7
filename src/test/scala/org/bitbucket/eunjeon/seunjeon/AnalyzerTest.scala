@@ -1,19 +1,25 @@
 package org.bitbucket.eunjeon.seunjeon
 
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfter, FunSuite}
 
 
-class AnalyzerTest extends FunSuite {
+class AnalyzerTest extends FunSuite with BeforeAndAfter {
+  before {
+    Analyzer.resetUserDict()
+  }
 
   test("main test") {
     // FIXME: 분석이 이상하게 나옴.
-    Analyzer.parse("아버지가방에들어가신다.").foreach(println)
-    Analyzer.parse("아버지 가방에 들어가신다.").foreach(println)
     Analyzer.parse("하늘을 나는 자동차.").foreach(println)
-    Analyzer.parse("존속하며,그직무를행한다.").foreach(println)
-    Analyzer.parse("존속하며, 그 직무를 행한다.").foreach(println)
     // TODO: double-array-trie library bug.
 //    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
+  }
+
+  test("penalty cost") {
+    assert("BOS,아버지,가,방,에,들어가,신다,.,EOS" ==
+      Analyzer.parse("아버지가방에들어가신다.").map(_.term.surface).mkString(","))
+    assert("BOS,아버지,가방,에,들어가,신다,.,EOS" ==
+      Analyzer.parse("아버지 가방에 들어가신다.").map(_.term.surface).mkString(","))
   }
 
   test("number test") {
@@ -79,6 +85,27 @@ class AnalyzerTest extends FunSuite {
       "BOS:BOS",
       "LG CNS:NNG",
       "EOS:EOS") == Analyzer.parse("LG CNS").map(getSurfacePos))
+  }
+
+  test("README example1") {
+    Analyzer.parse("아버지가방에들어가신다.").foreach(println)
+  }
+
+  test("READ example2") {
+    println("# BEFORE")
+    Analyzer.parse("덕후냄새가 난다.").foreach(println)
+    Analyzer.setUserDictDir("src/test/resources/userdict/")
+    println("# AFTER ")
+    Analyzer.parse("덕후냄새가 난다.").foreach(println)
+  }
+
+  test("README example3") {
+    println("# BEFORE")
+    Analyzer.parse("덕후냄새가 난다.").foreach(println)
+    Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
+    println("# AFTER ")
+    Analyzer.parse("덕후냄새가 난다.").foreach(println)
+
   }
 
   def getSurfacePos(termNode:TermNode): String = {

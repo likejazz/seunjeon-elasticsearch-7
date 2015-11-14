@@ -48,20 +48,24 @@ object DictBuilder {
   val RIGHT_ID_DEF = DICT_PATH + File.separator + RIGHT_ID_DEF_FILENAME
   val DICRC_FILENAME = "dicrc"
   val DICRC = DICT_PATH + File.separator + DICRC_FILENAME
+  val POS_ID_DEF_FILENAME = "pos-id.def"
+  val POS_ID_DEF = DICT_PATH + File.separator + POS_ID_DEF_FILENAME
 
   def main(args: Array[String]): Unit = {
     clear()
-    println("compiling lexicon dictionary...")
-    buildLexiconDict()
-
-    println("compiling connection-cost dictionary...")
-    buildConnectionCostDict()
 
     copyCharDef()
     copyUnkDef()
     copyLeftIdDef()
     copyRightIdDef()
     copyDicrc()
+    copyPosidDef()
+
+    println("compiling lexicon dictionary...")
+    buildLexiconDict()
+
+    println("compiling connection-cost dictionary...")
+    buildConnectionCostDict()
 
     println("complete")
   }
@@ -86,8 +90,11 @@ object DictBuilder {
     copyDefFile(DICRC_FILENAME)
   }
 
+  private def copyPosidDef(): Unit = {
+    copyDefFile(POS_ID_DEF_FILENAME)
+  }
+
   private def copyDefFile(defFileName: String): Unit = {
-    val destPath =
     Files.copy(Paths.get(MECAB_KO_DIC_PATH + File.separator + defFileName),
       Paths.get(RESOURCE_PATH + File.separator +
         DICT_PATHNAME + File.separator + defFileName), REPLACE_EXISTING)
@@ -103,19 +110,19 @@ object DictBuilder {
   }
 
   private def buildLexiconDict(): Unit = {
-    val destPath = RESOURCE_PATH + File.separator + DICT_PATHNAME
-    val dictPath = new java.io.File(destPath)
-    dictPath.mkdirs()
+    val dictPath = RESOURCE_PATH + File.separator + DICT_PATHNAME
 
     val lexiconDict = new LexiconDict
     lexiconDict.loadFromDir(MECAB_KO_DIC_PATH)
-    lexiconDict.save(destPath + File.separator + TERM_DICT_FILENAME,
-                     destPath + File.separator + DICT_MAPPER_FILENAME,
-                     destPath + File.separator + TERM_TRIE_FILENAME)
+    lexiconDict.save(dictPath + File.separator + TERM_DICT_FILENAME,
+                     dictPath + File.separator + DICT_MAPPER_FILENAME,
+                     dictPath + File.separator + TERM_TRIE_FILENAME)
   }
 
   private def clear(): Unit = {
-    val dictPath = Path(RESOURCE_PATH + File.separator + DICT_PATHNAME)
-    dictPath.deleteRecursively()
+    val dictPath = RESOURCE_PATH + File.separator + DICT_PATHNAME
+
+    Path(dictPath).deleteRecursively()
+    new java.io.File(dictPath).mkdirs()
   }
 }
