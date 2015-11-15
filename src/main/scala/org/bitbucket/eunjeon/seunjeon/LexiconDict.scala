@@ -35,7 +35,7 @@ object Term {
       term.rightId,
       term.cost*surface.length,
       term.feature,
-      PosId(term.feature))
+      Dicrc.UNKNOWN_POS_ID)
   }
 }
 

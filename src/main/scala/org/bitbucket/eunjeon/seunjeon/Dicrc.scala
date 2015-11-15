@@ -2,15 +2,16 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.io.Source
 
-import scala.collection.mutable
-
 /**
   * Created by parallels on 11/11/15.
   */
 object Dicrc {
+  val MAX_POS_ID = 999
+  // TODO: pos-id.def 에서 읽어오자.
+  val UNKNOWN_POS_ID = MAX_POS_ID
   val leftSpacePenaltyFactors = getLeftSpacePenaltyFactors()
 
-  private def getLeftSpacePenaltyFactors(): mutable.HashMap[Int, Int] = {
+  private def getLeftSpacePenaltyFactors(): Array[Int] = {
     val inputStream = getClass.getResourceAsStream(DictBuilder.DICRC)
     val values = Source.fromInputStream(inputStream).getLines().
       map(_.split("=").map(_.trim)).
@@ -19,15 +20,14 @@ object Dicrc {
       split(",")
 
       val valuesIter = values.iterator
-      val penaltyCosts = new mutable.HashMap[Int, Int]
+      val penaltyCosts = Array.fill(MAX_POS_ID + 1){0}
       while (valuesIter.hasNext) {
         val id = valuesIter.next.toInt
         val cost = valuesIter.next.toInt
-        penaltyCosts.put(id, cost)
+        penaltyCosts.update(id, cost)
       }
       penaltyCosts
   }
 
-  def getPenaltyCost(posid: Int) = leftSpacePenaltyFactors.getOrElse(posid, 0)
-
+  def getPenaltyCost(posid: Int) = leftSpacePenaltyFactors(posid)
 }

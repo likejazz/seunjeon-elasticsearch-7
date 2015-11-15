@@ -46,6 +46,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   endingNodes.last += eos
 
   private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
+    // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
     temp.map(l => new mutable.MutableList[TermNode])
   }
