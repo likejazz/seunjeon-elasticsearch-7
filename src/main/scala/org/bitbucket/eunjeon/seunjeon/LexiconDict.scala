@@ -34,7 +34,8 @@ object Term {
       term.leftId,
       term.rightId,
       term.cost*surface.length,
-      term.feature)
+      term.feature,
+      Dicrc.UNKNOWN_POS_ID)
   }
 }
 
@@ -42,7 +43,8 @@ case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
                 cost:Int,
-                feature:Seq[String]) {
+                feature:IndexedSeq[String],
+                posid:Int) {
 }
 
 class LexiconDict {
@@ -69,8 +71,9 @@ class LexiconDict {
     val terms = new mutable.MutableList[Term]()
     // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
+    // TODO: yield 사용하는 것으로 바꿔보자.
     iterator.dropWhile(_.head == '#').
-      map(line => CSVParser.parse(line, '"', ',', '"')).foreach {
+      map(CSVParser.parse(_, '"', ',', '"')).foreach {
       case Some(List(surface)) =>
         terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
       case Some(List(surface, cost)) =>
@@ -80,7 +83,8 @@ class LexiconDict {
           cost.toShort,
           leftId.toShort,
           rightId.toShort,
-          feature)
+          feature.toIndexedSeq,
+          PosId(feature))
     }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
@@ -90,15 +94,16 @@ class LexiconDict {
 
   private def buildNNGTerm(surface:String, cost:Int): Term = {
     val lastChar = surface.last
-    if (isHangul(lastChar)) {
+    val feature = if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngTRightId, cost, Seq("NNG","*","T"))
+        IndexedSeq("NNG","*","T", surface, "*", "*", "*", "*")
       } else {
-        Term(surface, NngUtil.nngLeftId, NngUtil.nngFRightId, cost, Seq("NNG","*","F"))
+        IndexedSeq("NNG","*","F", surface, "*", "*", "*", "*")
       }
     } else {
-      Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, Seq("NNG","*","*"))
+      IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
     }
+    Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, PosId(feature))
   }
 
   private def hasJongsung(ch:Char): Boolean = {
@@ -151,6 +156,10 @@ class LexiconDict {
 
   def buildSurfaceIndexDict(sortedTerms: Seq[Term]):Array[(String, Array[Int])] = {
     val groupedTerms:mutable.ListBuffer[(String, Array[Int])] = mutable.ListBuffer()
+    if (sortedTerms.isEmpty) {
+      return groupedTerms.toArray
+    }
+
     var curIndices:Array[Int] = null
     var preSurface:String = null
     sortedTerms.view.zipWithIndex.foreach { case (term:Term, idx) =>
@@ -220,9 +229,9 @@ class LexiconDict {
   private def load(termDictStream: InputStream,
                    dictMapperStream: InputStream,
                    trieStream: InputStream): Unit = {
+    // FIXME: 사전 로딩이 3초에서 9초로 느려짐... posid 추가하면서 느려짐..
     var startTime = System.nanoTime()
-    val termDictIn = new ObjectInputStream(
-      new BufferedInputStream(termDictStream, 16*1024))
+    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
     termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
     termDictIn.close()
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)

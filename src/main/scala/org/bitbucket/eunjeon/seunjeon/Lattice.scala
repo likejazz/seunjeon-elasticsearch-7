@@ -38,14 +38,15 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new TermNode(new Term("BOS", 0, 0, 0, Seq("BOS")), 0, 0, 0)
-  var eos = new TermNode(new Term("EOS", 0, 0, 0, Seq("EOS")), length, length)
+  var bos = new TermNode(new Term("BOS", 0, 0, 0, IndexedSeq("BOS"), 0), 0, 0, 0)
+  var eos = new TermNode(new Term("EOS", 0, 0, 0, IndexedSeq("EOS"), 0), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
   endingNodes.last += eos
 
   private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
+    // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
     temp.map(l => new mutable.MutableList[TermNode])
   }
@@ -61,11 +62,18 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     this
   }
 
+  def removeSpace(): Lattice = {
+    startingNodes = startingNodes.filter(termNodes =>
+      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+    endingNodes = endingNodes.filter(termNodes =>
+      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+    this
+  }
+
+  // FIXME: space 패널티 cost 계산해줘야 함.
   def getBestPath: Seq[TermNode] = {
     for (idx <- 1 until startingNodes.length) {
-      startingNodes(idx).foreach{ startingNode:TermNode =>
-        updateCost(endingNodes(idx-1), startingNode)
-      }
+      startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
     }
 
     var result = new mutable.ListBuffer[TermNode]
@@ -91,9 +99,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: TermNode, startingNode: TermNode): Int = {
+    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
+      Dicrc.getPenaltyCost(startingNode.term.posid)
+    } else 0
+
     endingNode.accumulatedCost +
       endingNode.term.cost +
-      connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId)
+      connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId) +
+      penaltyCost
   }
 }
 

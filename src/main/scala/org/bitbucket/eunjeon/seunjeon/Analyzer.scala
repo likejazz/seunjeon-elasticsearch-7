@@ -46,4 +46,8 @@ object Analyzer {
   def setUserDict(iterator: java.util.Iterator[String]): Unit = {
     tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
   }
+
+  def resetUserDict(): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(Seq[String]().toIterator))
+  }
 }
