@@ -18,6 +18,13 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.mutable
 
 
+/**
+  * Lattice 노드
+  * @param term   Term
+  * @param startPos  시작 offset
+  * @param endPos   끝 offset
+  * @param accumulatedCost  누적비용
+  */
 case class TermNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
   var leftNode:TermNode = null
 

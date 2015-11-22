@@ -39,6 +39,15 @@ object Term {
   }
 }
 
+/**
+  * 형태소
+  * @param surface  표현층
+  * @param leftId   좌문맥ID
+  * @param rightId  우문맥ID
+  * @param cost     Term 비용
+  * @param feature  feature
+  * @param posid    품사ID  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
+  */
 case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
