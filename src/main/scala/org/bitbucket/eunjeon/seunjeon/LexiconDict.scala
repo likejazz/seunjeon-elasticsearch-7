@@ -19,6 +19,7 @@ import java.io.{File, _}
 
 import com.github.tototoshi.csv.CSVParser
 import com.typesafe.scalalogging.Logger
+import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
@@ -35,7 +36,7 @@ object Term {
       term.rightId,
       term.cost*surface.length,
       term.feature,
-      Dicrc.UNKNOWN_POS_ID)
+      Pos.UNKNOWN)
   }
 }
 
@@ -46,14 +47,14 @@ object Term {
   * @param rightId  우문맥ID
   * @param cost     Term 비용
   * @param feature  feature
-  * @param posid    품사ID  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
+  * @param pos    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
   */
 case class Term(surface:String,
                 leftId:Short,
                 rightId:Short,
                 cost:Int,
                 feature:IndexedSeq[String],
-                posid:Int) {
+                pos:Pos) {
 }
 
 class LexiconDict {
@@ -93,7 +94,7 @@ class LexiconDict {
           leftId.toShort,
           rightId.toShort,
           feature.toIndexedSeq,
-          PosId(feature))
+          Pos(feature))
     }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
@@ -112,7 +113,7 @@ class LexiconDict {
     } else {
       IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, PosId(feature))
+    Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature))
   }
 
   private def hasJongsung(ch:Char): Boolean = {

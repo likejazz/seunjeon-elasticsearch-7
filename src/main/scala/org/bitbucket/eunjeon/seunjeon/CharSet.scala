@@ -38,10 +38,10 @@ object UnkDef {
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         val feature = l.slice(4, l.size).toIndexedSeq
-        defaultTerm = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
+        defaultTerm = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos(feature))
       } else {
         val feature = l.slice(4, l.size).toIndexedSeq
-        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
+        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos(feature))
       }
     }
     terms
