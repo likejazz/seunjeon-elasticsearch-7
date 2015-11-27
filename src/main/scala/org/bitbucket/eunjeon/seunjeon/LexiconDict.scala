@@ -29,13 +29,13 @@ import scala.collection.mutable.ListBuffer
 import scala.io.Source
 import scala.util.matching.Regex
 
-object Term {
-  def createUnknownTerm(surface:String, term: Term): Term = {
-    new Term(surface,
-      term.leftId,
-      term.rightId,
-      term.cost*surface.length,
-      term.feature,
+object Morpheme {
+  def createUnknownMorpheme(surface:String, morpheme: Morpheme): Morpheme = {
+    new Morpheme(surface,
+      morpheme.leftId,
+      morpheme.rightId,
+      morpheme.cost*surface.length,
+      morpheme.feature,
       Pos.UNKNOWN)
   }
 }
@@ -49,18 +49,18 @@ object Term {
   * @param feature  feature
   * @param pos    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
   */
-case class Term(surface:String,
-                leftId:Short,
-                rightId:Short,
-                cost:Int,
-                feature:IndexedSeq[String],
-                pos:Pos) {
+case class Morpheme(surface:String,
+                    leftId:Short,
+                    rightId:Short,
+                    cost:Int,
+                    feature:IndexedSeq[String],
+                    pos:Pos) {
 }
 
 class LexiconDict {
   val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
 
-  var termDict: Array[Term] = null
+  var termDict: Array[Morpheme] = null
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
 
@@ -78,7 +78,7 @@ class LexiconDict {
 
   def loadFromIterator(iterator: Iterator[String]): LexiconDict = {
     val startTime = System.nanoTime()
-    val terms = new mutable.MutableList[Term]()
+    val terms = new mutable.MutableList[Morpheme]()
     // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
     // TODO: yield 사용하는 것으로 바꿔보자.
@@ -89,7 +89,7 @@ class LexiconDict {
       case Some(List(surface, cost)) =>
         terms += buildNNGTerm(surface, cost.toShort)
       case Some(List(surface, cost, leftId, rightId, feature @ _*)) =>
-        terms += Term(surface,
+        terms += Morpheme(surface,
           cost.toShort,
           leftId.toShort,
           rightId.toShort,
@@ -102,7 +102,7 @@ class LexiconDict {
     build(terms.toIndexedSeq.sortBy(_.surface))
   }
 
-  private def buildNNGTerm(surface:String, cost:Int): Term = {
+  private def buildNNGTerm(surface:String, cost:Int): Morpheme = {
     val lastChar = surface.last
     val feature = if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
@@ -113,7 +113,7 @@ class LexiconDict {
     } else {
       IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Term(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature))
+    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature))
   }
 
   private def hasJongsung(ch:Char): Boolean = {
@@ -134,7 +134,7 @@ class LexiconDict {
     }
   }
 
-  private def build(sortedTerms: Seq[Term]): LexiconDict = {
+  private def build(sortedTerms: Seq[Morpheme]): LexiconDict = {
     termDict = sortedTerms.toArray
     val startTime = System.nanoTime()
     val surfaceIndexDict = buildSurfaceIndexDict(sortedTerms)
@@ -164,7 +164,7 @@ class LexiconDict {
     result
   }
 
-  def buildSurfaceIndexDict(sortedTerms: Seq[Term]):Array[(String, Array[Int])] = {
+  def buildSurfaceIndexDict(sortedTerms: Seq[Morpheme]):Array[(String, Array[Int])] = {
     val groupedTerms:mutable.ListBuffer[(String, Array[Int])] = mutable.ListBuffer()
     if (sortedTerms.isEmpty) {
       return groupedTerms.toArray
@@ -172,7 +172,7 @@ class LexiconDict {
 
     var curIndices:Array[Int] = null
     var preSurface:String = null
-    sortedTerms.view.zipWithIndex.foreach { case (term:Term, idx) =>
+    sortedTerms.view.zipWithIndex.foreach { case (term:Morpheme, idx) =>
       if (preSurface != term.surface) {
         if (preSurface != null) {
           groupedTerms.append((preSurface, curIndices))
@@ -186,7 +186,7 @@ class LexiconDict {
     groupedTerms.toArray
   }
 
-  def commonPrefixSearch(keyword: String): Seq[Term] = {
+  def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
     val indexedLexiconDictPositions = ListBuffer[Int]()
     val iterator = trie.commonPrefixSearchEntries(keyword).iterator()
     while (iterator.hasNext) {
@@ -242,7 +242,7 @@ class LexiconDict {
     // FIXME: 사전 로딩이 3초에서 9초로 느려짐... posid 추가하면서 느려짐..
     var startTime = System.nanoTime()
     val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
-    termDict = termDictIn.readObject().asInstanceOf[Array[Term]]
+    termDict = termDictIn.readObject().asInstanceOf[Array[Morpheme]]
     termDictIn.close()
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"terms loading is completed. ($elapsedTime ms)")

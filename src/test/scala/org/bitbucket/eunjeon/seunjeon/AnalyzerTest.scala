@@ -17,13 +17,13 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("penalty cost") {
     assert("BOS,아버지,가,방,에,들어가,신다,.,EOS" ==
-      Analyzer.parse("아버지가방에들어가신다.").map(_.term.surface).mkString(","))
+      Analyzer.parse("아버지가방에들어가신다.").map(_.morpheme.surface).mkString(","))
     assert("BOS,아버지,가방,에,들어가,신다,.,EOS" ==
-      Analyzer.parse("아버지 가방에 들어가신다.").map(_.term.surface).mkString(","))
+      Analyzer.parse("아버지 가방에 들어가신다.").map(_.morpheme.surface).mkString(","))
   }
 
   test("number test") {
-    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: TermNode =>
+    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LatticeNode =>
       println(t)
     }
   }
@@ -108,8 +108,8 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   }
 
-  def getSurfacePos(termNode:TermNode): String = {
+  def getSurfacePos(termNode:LatticeNode): String = {
     println(termNode)
-    s"${termNode.term.surface}:${termNode.term.feature.head}"
+    s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }
 }
