@@ -45,8 +45,8 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Morpheme("BOS", 0, 0, 0, IndexedSeq("BOS"), Pos.BOS, IndexedSeq(Pos.BOS)), 0, 0, 0)
-  var eos = new LatticeNode(new Morpheme("EOS", 0, 0, 0, IndexedSeq("EOS"), Pos.EOS, IndexedSeq(Pos.BOS)), length, length)
+  var bos = new LatticeNode(new Morpheme("BOS", 0, 0, 0, IndexedSeq("BOS"), IndexedSeq(Pos.BOS)), 0, 0, 0)
+  var eos = new LatticeNode(new Morpheme("EOS", 0, 0, 0, IndexedSeq("EOS"), IndexedSeq(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos

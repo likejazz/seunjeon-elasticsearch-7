@@ -36,7 +36,6 @@ object Morpheme {
       morpheme.rightId,
       morpheme.cost*surface.length,
       morpheme.feature,
-      Pos.UNKNOWN,
       IndexedSeq(Pos.UNKNOWN))
   }
 }
@@ -48,14 +47,13 @@ object Morpheme {
   * @param rightId  우문맥ID
   * @param cost     Term 비용
   * @param feature  feature
-  * @param pos    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
+  * @param poses    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
   */
 case class Morpheme(surface:String,
                     leftId:Short,
                     rightId:Short,
                     cost:Int,
                     feature:IndexedSeq[String],
-                    pos:Pos,
                     poses:IndexedSeq[Pos]) {
 }
 
@@ -98,7 +96,6 @@ class LexiconDict {
               leftId.toShort,
               rightId.toShort,
               feature.toIndexedSeq,
-              Pos(feature),
               Pos.poses(feature))
         }
       } catch {
@@ -122,7 +119,7 @@ class LexiconDict {
     } else {
       IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature), Pos.poses(feature))
+    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos.poses(feature))
   }
 
   private def hasJongsung(ch:Char): Boolean = {
