@@ -10,7 +10,7 @@ class PosTest extends FunSuite with BeforeAndAfter {
     var term = "가가방,1784,3537,2943,NNG,*,T,가가방,Compound,*,*,가가/NNG/*+방/NNG/*".split(",")
     assert(Pos.COMPOUND == Pos(term.slice(4, term.length)))
     term = "힘,1784,3537,1889,NNG,*,T,힘,*,*,*,*".split(",")
-    assert(Pos.NNG == Pos("NNG,*,T,곽밥,*,*,*,*".split(",")))
+    assert(Pos.N == Pos("NNG,*,T,곽밥,*,*,*,*".split(",")))
   }
 
 }

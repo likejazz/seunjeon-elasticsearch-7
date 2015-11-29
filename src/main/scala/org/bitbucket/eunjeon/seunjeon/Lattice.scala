@@ -45,8 +45,8 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LatticeNode(new Morpheme("BOS", 0, 0, 0, IndexedSeq("BOS"), Pos.BOS), 0, 0, 0)
-  var eos = new LatticeNode(new Morpheme("EOS", 0, 0, 0, IndexedSeq("EOS"), Pos.EOS), length, length)
+  var bos = new LatticeNode(new Morpheme("BOS", 0, 0, 0, IndexedSeq("BOS"), Pos.BOS, IndexedSeq(Pos.BOS)), 0, 0, 0)
+  var eos = new LatticeNode(new Morpheme("EOS", 0, 0, 0, IndexedSeq("EOS"), Pos.EOS, IndexedSeq(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -106,7 +106,9 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: LatticeNode, startingNode: LatticeNode): Int = {
-    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) SpacePenalty(startingNode.morpheme.pos) else 0
+    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
+      SpacePenalty(startingNode.morpheme.poses.head)
+    } else 0
 
     endingNode.accumulatedCost +
       endingNode.morpheme.cost +

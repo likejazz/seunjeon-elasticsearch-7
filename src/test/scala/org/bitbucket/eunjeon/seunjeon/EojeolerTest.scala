@@ -6,8 +6,11 @@ import org.scalatest.FunSuite
 class EojeolerTest extends FunSuite {
 
   test("Eojeol build") {
-    val eojeols = Eojeoler.build(Analyzer.parse("아버지 가방에 들어가신다."))
-    println(eojeols)
+    //val analyzed = Analyzer.parse("아버지가방에들어가신다.")
+    val analyzed = Analyzer.parse("유영호군과김고은양이결혼했습니다.")
+    analyzed.foreach(println)
+    val eojeols = Eojeoler.build(analyzed)
+    println(eojeols.map(_.surface).mkString(" "))
   }
 
 }

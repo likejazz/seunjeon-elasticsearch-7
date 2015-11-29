@@ -36,7 +36,8 @@ object Morpheme {
       morpheme.rightId,
       morpheme.cost*surface.length,
       morpheme.feature,
-      Pos.UNKNOWN)
+      Pos.UNKNOWN,
+      IndexedSeq(Pos.UNKNOWN))
   }
 }
 
@@ -54,7 +55,8 @@ case class Morpheme(surface:String,
                     rightId:Short,
                     cost:Int,
                     feature:IndexedSeq[String],
-                    pos:Pos) {
+                    pos:Pos,
+                    poses:IndexedSeq[Pos]) {
 }
 
 class LexiconDict {
@@ -83,18 +85,25 @@ class LexiconDict {
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
     // TODO: yield 사용하는 것으로 바꿔보자.
     iterator.dropWhile(_.head == '#').
-      map(CSVParser.parse(_, '"', ',', '"')).foreach {
-      case Some(List(surface)) =>
-        terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
-      case Some(List(surface, cost)) =>
-        terms += buildNNGTerm(surface, cost.toShort)
-      case Some(List(surface, cost, leftId, rightId, feature @ _*)) =>
-        terms += Morpheme(surface,
-          cost.toShort,
-          leftId.toShort,
-          rightId.toShort,
-          feature.toIndexedSeq,
-          Pos(feature))
+      map(CSVParser.parse(_, '"', ',', '"')).foreach { item =>
+      try {
+        item match {
+          case Some(List(surface)) =>
+            terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
+          case Some(List(surface, cost)) =>
+            terms += buildNNGTerm(surface, cost.toShort)
+          case Some(List(surface, cost, leftId, rightId, feature@_ *)) =>
+            terms += Morpheme(surface,
+              cost.toShort,
+              leftId.toShort,
+              rightId.toShort,
+              feature.toIndexedSeq,
+              Pos(feature),
+              Pos.poses(feature))
+        }
+      } catch {
+        case _: Throwable => logger.warn(s"invalid format : $item")
+      }
     }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
@@ -113,7 +122,7 @@ class LexiconDict {
     } else {
       IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature))
+    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos(feature), Pos.poses(feature))
   }
 
   private def hasJongsung(ch:Char): Boolean = {

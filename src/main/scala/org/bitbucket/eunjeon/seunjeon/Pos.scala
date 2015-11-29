@@ -2,100 +2,89 @@ package org.bitbucket.eunjeon.seunjeon
 
 object Pos extends Enumeration {
   type Pos = Value
-  val BOS, EOS, UNKNOWN, COMPOUND,
-      INFLECT_EC, INFLECT_EF, INFLECT_EP, INFLECT_ETM, INFLECT_ETN,
-      INFLECT_JC, INFLECT_JKB, INFLECT_JKC, INFLECT_JKG, INFLECT_JKO,
-      INFLECT_JKQ, INFLECT_JKS, INFLECT_JKV, INFLECT_JX, INFLECT_XSA,
-      INFLECT_XSN, INFLECT_XSV, INFLECT_VCP, INFLECT,
-      PREANALYSIS,
-      EC, EF, EP, ETM, ETN,
-      IC,
-      JC, JKB, JKC, JKG, JKO, JKQ, JKS, JKV, JX,
-      MAG, MAJ, MM,
-      NNG, NNP,
-      NNB, NNBC, NP, NR,
-      SF, SH, SL, SN, SP,
-      SSC, SSO,
-      SC, SY, SE,
-      VA, VCN, VCP, VV, VX,
-      XPN, XR, XSA, XSN, XSV = Value
+  // 품사 태그 설명
+  //  https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265&vpid=A1
+  val BOS, EOS, UNKNOWN, COMPOUND, INFLECT, PREANALYSIS,
+      EP, // 선어말어미,
+      E,  // 어미
+      I,  // 독립언
+      J,  // 관계언
+      M,  // 수식언
+      N,  // 체언
+      S,  // 부호
+      SL, // 외국어
+      SH, // 한자
+      SN, // 숫자
+      V,  // 용언
+      VCP,  // 긍정지정사
+      XP, // 접두사,
+      XS, // 접미사
+      XR  // 어근
+      = Value
 
-  val rules = Seq(
-    Seq("UNKNOWN","*","*","*","*","*","*","*") -> UNKNOWN,
-    Seq("*","*","*","*","Compound","*","*","*") -> COMPOUND,
-    Seq("*","*","*","*","Inflect","EC","*","*") -> INFLECT_EC,
-    Seq("*","*","*","*","Inflect","EF","*","*") -> INFLECT_EF,
-    Seq("*","*","*","*","Inflect","EP","*","*") -> INFLECT_EP,
-    Seq("*","*","*","*","Inflect","ETM","*","*") -> INFLECT_ETM,
-    Seq("*","*","*","*","Inflect","ETN","*","*") -> INFLECT_ETN,
-    Seq("*","*","*","*","Inflect","JC","*","*") -> INFLECT_JC,
-    Seq("*","*","*","*","Inflect","JKB","*","*") -> INFLECT_JKB,
-    Seq("*","*","*","*","Inflect","JKC","*","*") -> INFLECT_JKC,
-    Seq("*","*","*","*","Inflect","JKG","*","*") -> INFLECT_JKG,
-    Seq("*","*","*","*","Inflect","JKO","*","*") -> INFLECT_JKO,
-    Seq("*","*","*","*","Inflect","JKQ","*","*") -> INFLECT_JKQ,
-    Seq("*","*","*","*","Inflect","JKS","*","*") -> INFLECT_JKS,
-    Seq("*","*","*","*","Inflect","JKV","*","*") -> INFLECT_JKV,
-    Seq("*","*","*","*","Inflect","JX","*","*") -> INFLECT_JX,
-    Seq("*","*","*","*","Inflect","XSA","*","*") -> INFLECT_XSA,
-    Seq("*","*","*","*","Inflect","XSN","*","*") -> INFLECT_XSN,
-    Seq("*","*","*","*","Inflect","XSV","*","*") -> INFLECT_XSV,
-    Seq("*","*","*","*","Inflect","VCP","*","*") -> INFLECT_VCP,
-    Seq("*","*","*","*","Inflect","*","*","*") -> INFLECT,
-    Seq("*","*","*","*","Preanalysis","*","*","*") -> PREANALYSIS,
-    Seq("EC","*","*","*","*","*","*","*") -> EC,
-    Seq("EF","*","*","*","*","*","*","*") -> EF,
-    Seq("EP","*","*","*","*","*","*","*") -> EP,
-    Seq("ETM","*","*","*","*","*","*","*") -> ETM,
-    Seq("ETN","*","*","*","*","*","*","*") -> ETN,
-    Seq("IC","*","*","*","*","*","*","*") -> IC,
-    Seq("JC","*","*","*","*","*","*","*") -> JC,
-    Seq("JKB","*","*","*","*","*","*","*") -> JKB,
-    Seq("JKC","*","*","*","*","*","*","*") -> JKC,
-    Seq("JKG","*","*","*","*","*","*","*") -> JKG,
-    Seq("JKO","*","*","*","*","*","*","*") -> JKO,
-    Seq("JKQ","*","*","*","*","*","*","*") -> JKQ,
-    Seq("JKS","*","*","*","*","*","*","*") -> JKS,
-    Seq("JKV","*","*","*","*","*","*","*") -> JKV,
-    Seq("JX","*","*","*","*","*","*","*") -> JX,
-    Seq("MAG","*","*","*","*","*","*","*") -> MAG,
-    Seq("MAJ","*","*","*","*","*","*","*") -> MAJ,
-    Seq("MM","*","*","*","*","*","*","*") -> MM,
-    Seq("NNG","*","*","*","*","*","*","*") -> NNG,
-    Seq("NNP","*","*","*","*","*","*","*") -> NNP,
-    Seq("NNB","*","*","*","*","*","*","*") -> NNB,
-    Seq("NNBC","*","*","*","*","*","*","*") ->NNBC,
-    Seq("NP","*","*","*","*","*","*","*") -> NP,
-    Seq("NR","*","*","*","*","*","*","*") -> NR,
-    Seq("SF","*","*","*","*","*","*","*") -> SF,
-    Seq("SH","*","*","*","*","*","*","*") -> SH,
-    Seq("SL","*","*","*","*","*","*","*") -> SL,
-    Seq("SN","*","*","*","*","*","*","*") -> SN,
-    Seq("SP","*","*","*","*","*","*","*") -> SP,
-    Seq("SSC","*","*","*","*","*","*","*") -> SSC,
-    Seq("SSO","*","*","*","*","*","*","*") -> SSO,
-    Seq("SC","*","*","*","*","*","*","*") -> SC,
-    Seq("SY","*","*","*","*","*","*","*") -> SY,
-    Seq("SE","*","*","*","*","*","*","*") -> SE,
-    Seq("VA","*","*","*","*","*","*","*") -> VA,
-    Seq("VCN","*","*","*","*","*","*","*") -> VCN,
-    Seq("VCP","*","*","*","*","*","*","*") -> VCP,
-    Seq("VV","*","*","*","*","*","*","*") -> VV,
-    Seq("VX","*","*","*","*","*","*","*") -> VX,
-    Seq("XPN","*","*","*","*","*","*","*") -> XPN,
-    Seq("XR","*","*","*","*","*","*","*") -> XR,
-    Seq("XSA","*","*","*","*","*","*","*") -> XSA,
-    Seq("XSN","*","*","*","*","*","*","*") -> XSN,
-    Seq("XSV","*","*","*","*","*","*","*") -> XSV
+  val matchTable = Map(
+  "UNKNOWN" -> UNKNOWN,
+  "EP" -> EP,
+  "EC" -> E,
+  "EF" -> E,
+  "ETM" -> E,
+  "ETN" -> E,
+  "IC" -> I,
+  "JC" -> J,
+  "JKB" -> J,
+  "JKC" -> J,
+  "JKG" -> J,
+  "JKO" -> J,
+  "JKQ" -> J,
+  "JKS" -> J,
+  "JKV" -> J,
+  "JX" -> J,
+  "MAG" -> M,
+  "MAJ" -> M,
+  "MM" -> M,
+  "NNG" -> N,
+  "NNP" -> N,
+  "NNB" -> N,
+  "NNBC" -> N,
+  "NP" -> N,
+  "NR" -> N,
+  "SL" -> SL,
+  "SH" -> SH,
+  "SN" -> SN,
+  "SF" -> S,
+  "SP" -> S,
+  "SSC" -> S,
+  "SSO" -> S,
+  "SC" -> S,
+  "SY" -> S,
+  "SE" -> S,
+  "VCP" -> VCP,
+  "VA" -> V,
+  "VCN" -> V,
+  "VV" -> V,
+  "VX" -> V,
+  "XPN" -> XP,
+  "XSA" -> XS,
+  "XSN" -> XS,
+  "XSV" -> XS,
+  "XR" -> XR
   )
 
-  def apply(feature:Seq[String]): Pos = { try {
-      rules.find(rule => isMatch(rule._1, feature)).get._2
-    } catch {
-      case _: Throwable => println(feature); throw new Exception
+  def apply(feature:Seq[String]): Pos = {
+    if (feature(4) == "*") {
+      matchTable(feature(0))
+    } else {
+      feature(4) match {
+        case "Compound" => Pos.COMPOUND
+        case "Preanalysis" => Pos.PREANALYSIS
+        case "Inflect" => Pos.INFLECT
+      }
     }
   }
 
+  def poses(feature:Seq[String]): IndexedSeq[Pos] = {
+    feature(0).split("[+]").map(matchTable(_))
+  }
 
   private def isMatch(pattern:Seq[String], feature:Seq[String]): Boolean = {
     for (idx <- pattern.indices) {
