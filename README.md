@@ -1,6 +1,8 @@
 # seunjeon
 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic) 기반으로 만들어진 JVM 상에서 돌아가는 한국어 형태소분석기입니다. 기본적으로 java와 scala 인터페이스를 제공합니다. 사전이 패키지 내에 포함되어 있기 때문에 별도로 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic)을 설치할 필요가 없습니다.
 
+[TOC]
+
 ## Maven
 ### 배포버전
 ```xml
@@ -8,7 +10,7 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>0.6.0</version>
+        <version>0.7.0</version>
     </dependency>
 </dependencies>
 ```
@@ -19,7 +21,7 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 
@@ -35,14 +37,15 @@
 </repositories>
 ```
 
-## 형태소분석하기
+## 형태소 분석하기
 ### java
 ```java
-List<TermNode> result = Analyzer.parseJava("아버지가방에들어가신다.");
-for (TermNode term: result) {
-    System.out.println(term);
+public void testParse() {
+    List<LNode> result = Analyzer.parseJava("아버지가방에들어가신다.");
+    for (LNode node: result) {
+        System.out.println(node);
+    }
 }
-
 ```
 ### scala
 ```scala
@@ -50,17 +53,41 @@ Analyzer.parse("아버지가방에들어가신다.").foreach(println)
 ```
 ### 결과
 ```bash
-TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
-TermNode(Term(아버지,1784,3536,2818,Vector(NNG, *, F, 아버지, *, *, *, *),150),0,2,-1135)
-TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),3,3,-738)
-TermNode(Term(방,1784,3537,2975,Vector(NNG, *, T, 방, *, *, *, *),150),4,4,660)
-TermNode(Term(에,356,307,1248,Vector(JKB, *, F, 에, *, *, *, *),120),5,5,203)
-TermNode(Term(들어가,2421,3574,1648,Vector(VV, *, F, 들어가, *, *, *, *),173),6,8,583)
-TermNode(Term(신다,5,6,3600,Vector(EP+EF, *, F, 신다, Inflect, EP, EF, 시/EP/*+ᆫ다/EF/*),200),9,10,-1256)
-TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),11,11,325)
-TermNode(Term(EOS,0,0,0,Vector(EOS),0),12,12,2102)
+LNode(Morpheme(BOS,0,0,0,WrappedArray(BOS),WrappedArray(BOS)),0,0,0)
+LNode(Morpheme(아버지,1784,3536,2818,WrappedArray(NNG, *, F, 아버지, *, *, *, *),WrappedArray(N)),0,2,-1135)
+LNode(Morpheme(가,490,1044,1501,WrappedArray(JKS, *, F, 가, *, *, *, *),WrappedArray(J)),3,3,-738)
+LNode(Morpheme(방,1784,3537,2975,WrappedArray(NNG, *, T, 방, *, *, *, *),WrappedArray(N)),4,4,660)
+LNode(Morpheme(에,356,307,1248,WrappedArray(JKB, *, F, 에, *, *, *, *),WrappedArray(J)),5,5,203)
+LNode(Morpheme(들어가,2421,3574,1648,WrappedArray(VV, *, F, 들어가, *, *, *, *),WrappedArray(V)),6,8,583)
+LNode(Morpheme(신다,5,6,3600,WrappedArray(EP+EF, *, F, 신다, Inflect, EP, EF, 시/EP/*+ᆫ다/EF/*),WrappedArray(EP, E)),9,10,-1256)
+LNode(Morpheme(.,1794,3555,3559,WrappedArray(SF, *, *, *, *, *, *, *),WrappedArray(S)),11,11,325)
+LNode(Morpheme(EOS,0,0,0,WrappedArray(EOS),WrappedArray(BOS)),12,12,2102)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
+
+## 어절 분석하기
+### scala
+```scala
+Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
+// 또는
+Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).map(_.surface).foreach(println)
+```
+### java
+```java
+List<Eojeol> eojeols = Analyzer.parseEojeolJava("아버지가방에들어가신다.");
+for (Eojeol eojeol: eojeols) {
+    System.out.println(eojeol.surface());
+}
+```
+### 결과
+```bash
+BOS
+아버지가
+방에
+들어가신다
+.
+EOS
+```
 
 ## 사용자 정의 사전
 ### scala
@@ -104,28 +131,28 @@ Analyzer.parse("").foreach(println)
 ```
 ```java
 System.out.println("# BEFORE");
-List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
-for (TermNode term: result) {
+List<LNode> result = Analyzer.parseJava("덕후냄새가 난다.");
+for (LNode term: result) {
     System.out.println(term);
 }
 System.out.println("# BEFORE");
 Analyzer.setUserDictDir("src/test/resources/userdict/");
 result = Analyzer.parseJava("덕후냄새가 난다.");
-for (TermNode term: result) {
+for (LNode term: result) {
     System.out.println(term);
 }
 ```
 #### iterator에서 읽기
 ```java
 System.out.println("# BEFORE");
-List<TermNode> result = Analyzer.parseJava("덕후냄새가 난다.");
-for (TermNode term: result) {
+List<LNode> result = Analyzer.parseJava("덕후냄새가 난다.");
+for (LNode term: result) {
     System.out.println(term);
 }
 System.out.println("# BEFORE");
 Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼빠빠").iterator());
 result = Analyzer.parseJava("덕후냄새가 난다.");
-for (TermNode term: result) {
+for (LNode term: result) {
     System.out.println(term);
 }
 ```
@@ -133,25 +160,23 @@ for (TermNode term: result) {
 ### 결과
 ```bash
 # BEFORE
-TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
-TermNode(Term(덕,1784,3537,3128,Vector(NNG, *, T, 덕, *, *, *, *),150),0,0,-1135)
-TermNode(Term(후,1784,3536,2200,Vector(NNG, *, F, 후, *, *, *, *),150),1,1,2189)
-TermNode(Term(냄새,1784,3536,2123,Vector(NNG, *, F, 냄새, *, *, *, *),150),2,3,4585)
-TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),4,4,4287)
-TermNode(Term(난다,2421,6,1277,Vector(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),2),6,7,5072)
-TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),8,8,4330)
-TermNode(Term(EOS,0,0,0,Vector(EOS),0),9,9,6107)
-# AFTER
-TermNode(Term(BOS,0,0,0,Vector(BOS),0),0,0,0)
-TermNode(Term(덕후,1784,3535,800,Vector(NNG, *, F, 덕후, *, *, *, *),150),0,1,-1135)
-TermNode(Term(냄새,1784,3536,2123,Vector(NNG, *, F, 냄새, *, *, *, *),150),2,3,-139)
-TermNode(Term(가,490,1044,1501,Vector(JKS, *, F, 가, *, *, *, *),120),4,4,-437)
-TermNode(Term(난다,2421,6,1277,Vector(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),2),6,7,348)
-TermNode(Term(.,1794,3555,3559,Vector(SF, *, *, *, *, *, *, *),160),8,8,-394)
-TermNode(Term(EOS,0,0,0,Vector(EOS),0),9,9,1383)
-
+LNode(Morpheme(BOS,0,0,0,WrappedArray(BOS),WrappedArray(BOS)),0,0,0)
+LNode(Morpheme(덕,1784,3537,3128,WrappedArray(NNG, *, T, 덕, *, *, *, *),WrappedArray(N)),0,0,-1135)
+LNode(Morpheme(후,1784,3536,2200,WrappedArray(NNG, *, F, 후, *, *, *, *),WrappedArray(N)),1,1,2189)
+LNode(Morpheme(냄새,1784,3536,2123,WrappedArray(NNG, *, F, 냄새, *, *, *, *),WrappedArray(N)),2,3,4585)
+LNode(Morpheme(가,490,1044,1501,WrappedArray(JKS, *, F, 가, *, *, *, *),WrappedArray(J)),4,4,4287)
+LNode(Morpheme(난다,2421,6,1277,WrappedArray(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),WrappedArray(V, E)),6,7,5072)
+LNode(Morpheme(.,1794,3555,3559,WrappedArray(SF, *, *, *, *, *, *, *),WrappedArray(S)),8,8,4330)
+LNode(Morpheme(EOS,0,0,0,WrappedArray(EOS),WrappedArray(BOS)),9,9,6107)
+# AFTER 
+LNode(Morpheme(BOS,0,0,0,WrappedArray(BOS),WrappedArray(BOS)),0,0,0)
+LNode(Morpheme(덕후,1784,3535,800,WrappedArray(NNG, *, F, 덕후, *, *, *, *),WrappedArray(N)),0,1,-1135)
+LNode(Morpheme(냄새,1784,3536,2123,WrappedArray(NNG, *, F, 냄새, *, *, *, *),WrappedArray(N)),2,3,-139)
+LNode(Morpheme(가,490,1044,1501,WrappedArray(JKS, *, F, 가, *, *, *, *),WrappedArray(J)),4,4,-437)
+LNode(Morpheme(난다,2421,6,1277,WrappedArray(VV+EF, *, F, 난다, Inflect, VV, EF, 나/VV/*+ᆫ다/EF/*),WrappedArray(V, E)),6,7,348)
+LNode(Morpheme(.,1794,3555,3559,WrappedArray(SF, *, *, *, *, *, *, *),WrappedArray(S)),8,8,-394)
+LNode(Morpheme(EOS,0,0,0,WrappedArray(EOS),WrappedArray(BOS)),9,9,1383)
 ```
-
 
 ## Group
 [https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 개발 참여 환영합니다.

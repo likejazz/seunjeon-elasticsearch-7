@@ -20,17 +20,17 @@ import scala.collection.mutable
 
 /**
   * Lattice 노드
-  * @param term   Term
+  * @param morpheme   Morpheme
   * @param startPos  시작 offset
   * @param endPos   끝 offset
   * @param accumulatedCost  누적비용
   */
-case class TermNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
-  var leftNode:TermNode = null
+case class LNode(morpheme:Morpheme, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
+  var leftNode:LNode = null
 
   // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
   override def equals(o: Any) = o match {
-    case that:TermNode => (that.startPos == startPos) && (that.endPos == endPos)
+    case that:LNode => (that.startPos == startPos) && (that.endPos == endPos)
     case _ => false
   }
 
@@ -45,45 +45,45 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new TermNode(new Term("BOS", 0, 0, 0, IndexedSeq("BOS"), 0), 0, 0, 0)
-  var eos = new TermNode(new Term("EOS", 0, 0, 0, IndexedSeq("EOS"), 0), length, length)
+  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), Array(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
   endingNodes.last += eos
 
-  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
+  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[LNode]] = {
     // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[TermNode])
+    temp.map(l => new mutable.MutableList[LNode])
   }
 
-  def add(latticeNode:TermNode): Lattice = {
+  def add(latticeNode:LNode): Lattice = {
     startingNodes(latticeNode.startPos+1) += latticeNode
     endingNodes(latticeNode.endPos+1) += latticeNode
     this
   }
 
-  def addAll(latticeNodes:Seq[TermNode]): Lattice = {
+  def addAll(latticeNodes:Seq[LNode]): Lattice = {
     latticeNodes.foreach(node => add(node))
     this
   }
 
   def removeSpace(): Lattice = {
     startingNodes = startingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
     endingNodes = endingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
     this
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
-  def getBestPath: Seq[TermNode] = {
+  def getBestPath: Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
       startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
     }
 
-    var result = new mutable.ListBuffer[TermNode]
+    var result = new mutable.ListBuffer[LNode]
     var node = eos
     while (node != null) {
       result += node
@@ -93,7 +93,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
 
-  private def updateCost(endingNodes:Seq[TermNode], startingNode:TermNode): Unit = {
+  private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
     var minTotalCost:Int = 2147483647
     endingNodes.foreach{ endingNode =>
       val totalCost: Int = getCost(endingNode, startingNode)
@@ -105,14 +105,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     }
   }
 
-  private def getCost(endingNode: TermNode, startingNode: TermNode): Int = {
+  private def getCost(endingNode: LNode, startingNode: LNode): Int = {
     val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
-      Dicrc.getPenaltyCost(startingNode.term.posid)
+      SpacePenalty(startingNode.morpheme.poses.head)
     } else 0
 
     endingNode.accumulatedCost +
-      endingNode.term.cost +
-      connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId) +
+      endingNode.morpheme.cost +
+      connectingCostDict.getCost(endingNode.morpheme.rightId, startingNode.morpheme.leftId) +
       penaltyCost
   }
 }

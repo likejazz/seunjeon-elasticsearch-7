@@ -23,31 +23,31 @@ import scala.io.Source
 
 
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
-case class CharSet(str: String, rlength: Int, category: Category, term: Term)
+case class CharSet(str: String, rlength: Int, category: Category, term: Morpheme)
 
 // TODO
 object UnkDef {
   // defaultTerm, terms 순서가 중요하다.. refactoring하자.
-  var defaultTerm: Term = null
+  var defaultTerm: Morpheme = null
   val terms = buildUnk
 
-  def buildUnk: mutable.Map[String, Term] = {
-    val terms = mutable.Map[String, Term]()
+  def buildUnk: mutable.Map[String, Morpheme] = {
+    val terms = mutable.Map[String, Morpheme]()
     val inputStream = getClass.getResourceAsStream(DictBuilder.UNK_DEF)
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
-        val feature = l.slice(4, l.size).toIndexedSeq
-        defaultTerm = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
+        val feature = l.slice(4, l.size)
+        defaultTerm = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       } else {
-        val feature = l.slice(4, l.size).toIndexedSeq
-        terms(l(0)) = Term(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, PosId(feature))
+        val feature = l.slice(4, l.size)
+        terms(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       }
     }
     terms
   }
 
-  def apply(name: String): Option[Term] = {
+  def apply(name: String): Option[Morpheme] = {
     terms.get(name)
   }
 }
@@ -57,11 +57,11 @@ case class Category(invoke:Boolean, group:Boolean, length:Int)
 // TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
 object CharDef {
   var defaultCategory:Category = null
-  val charFinder:util.TreeMap[Char, (Category, Term)] = loadChar
+  val charFinder:util.TreeMap[Char, (Category, Morpheme)] = loadChar
 
   def loadChar = {
     val categories = mutable.Map[String, Category]()
-    val charMap = new util.TreeMap[Char, (Category, Term)]()
+    val charMap = new util.TreeMap[Char, (Category, Morpheme)]()
     val inputStream = getClass.getResourceAsStream(DictBuilder.CHAR_DEF)
     Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
@@ -100,9 +100,9 @@ object CharDef {
       return charsets
     }
     var start = 0
-    var curCategoryTerm: (Category, Term) = null
+    var curCategoryTerm: (Category, Morpheme) = null
     text.view.zipWithIndex.foreach { case (ch, idx) =>
-      val categoryTerm: (Category, Term) = getCategoryTerm(ch)
+      val categoryTerm: (Category, Morpheme) = getCategoryTerm(ch)
       if (categoryTerm != curCategoryTerm) {
         // first loop
         if (curCategoryTerm == null) {
@@ -120,7 +120,7 @@ object CharDef {
     charsets
   }
 
-  private def getCategoryTerm(ch: Char): (Category, Term) = {
+  private def getCategoryTerm(ch: Char): (Category, Morpheme) = {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
     if (floor == null || ceiling == null) {
