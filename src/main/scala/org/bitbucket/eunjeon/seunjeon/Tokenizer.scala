@@ -26,7 +26,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   // TODO: 꼭 리팩토링하자
-  def parseText(input:String): Seq[LatticeNode] = {
+  def parseText(input:String): Seq[LNode] = {
     // TODO: 성능 향상을 위해 intern 잘 활용하도록 고민해보자.
     val text = input.intern()
     text.intern()
@@ -42,9 +42,9 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       removeSpace()
   }
 
-  private def getUnknownTerms(charsets: Seq[CharSet]): Seq[LatticeNode] = {
+  private def getUnknownTerms(charsets: Seq[CharSet]): Seq[LNode] = {
     // TODO: functional 하게 바꾸고 싶음.
-    val unknownTerms = new ListBuffer[LatticeNode]
+    val unknownTerms = new ListBuffer[LNode]
     var charsetOffset = 0
     charsets.foreach { charset: CharSet =>
       unknownTerms ++= getUnknownTerms(charsetOffset, charset)
@@ -53,17 +53,17 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     unknownTerms
   }
 
-  private def getKnownTerms(text:String): Seq[LatticeNode] = {
-    val knownTerms = new ListBuffer[LatticeNode]
+  private def getKnownTerms(text:String): Seq[LNode] = {
+    val knownTerms = new ListBuffer[LNode]
     for (idx <- 0 until text.length) {
       knownTerms ++= getKnownTerms(0, idx, text.substring(idx))
     }
     knownTerms
   }
 
-  private def getUnknownTerms(charsetOffset: Int, charset: CharSet): Seq[LatticeNode] = {
+  private def getUnknownTerms(charsetOffset: Int, charset: CharSet): Seq[LNode] = {
     // TODO: 성능이 떨어질까봐 immutable 로 못하겠음...
-    val unknownTerms = new ListBuffer[LatticeNode]
+    val unknownTerms = new ListBuffer[LNode]
     for (idx <- 0 until charset.str.length) {
       val termOffset = idx
       val suffixSurface = charset.str.substring(idx)
@@ -78,22 +78,22 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   private def getKnownTerms(charsetOffset: Int,
                             termOffset: Int,
-                            suffixSurface: String): Seq[LatticeNode] = {
+                            suffixSurface: String): Seq[LNode] = {
     var searchedTerms = lexiconDict.commonPrefixSearch(suffixSurface)
     if (userDict != null) {
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
     searchedTerms.map(term =>
-      LatticeNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
+      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
     )
   }
 
   private def get1NLengthTerms(charsetOffset: Int,
                                termOffset: Int,
                                suffixSurface: String,
-                               charset:CharSet): Seq[LatticeNode] = {
+                               charset:CharSet): Seq[LNode] = {
     if (charset.category.group && charset.category.length == 0) {
-      return Seq.empty[LatticeNode]
+      return Seq.empty[LNode]
     }
     var categoryLength = if (suffixSurface.length < charset.category.length) suffixSurface.length else charset.category.length
     if (categoryLength == 0) {
@@ -103,13 +103,13 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     (1 to categoryLength).map { unknownIdx =>
       val unknownTerm = Morpheme.createUnknownMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx),
                                                charset.term)
-      LatticeNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
+      LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
     }
   }
 
-  private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LatticeNode = {
+  private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
     val fullLengthTerm = Morpheme.createUnknownMorpheme(charset.str, charset.term)
-    LatticeNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
+    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
   }
 }
 

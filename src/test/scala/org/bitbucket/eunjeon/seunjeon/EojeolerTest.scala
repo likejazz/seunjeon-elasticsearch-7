@@ -10,6 +10,7 @@ class EojeolerTest extends FunSuite {
     val analyzed = Analyzer.parse("유영호군과김고은양이결혼했습니다.")
     analyzed.foreach(println)
     val eojeols = Eojeoler.build(analyzed)
+    eojeols.foreach(println)
     println(eojeols.map(_.surface).mkString(" "))
   }
 

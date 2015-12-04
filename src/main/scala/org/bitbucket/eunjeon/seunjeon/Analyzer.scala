@@ -15,6 +15,7 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
+
 import scala.collection.JavaConverters._
 
 object Analyzer {
@@ -27,11 +28,11 @@ object Analyzer {
     new Tokenizer(lexiconDict, connectionCostDict)
   }
 
-  def parse(sentence: String): Seq[LatticeNode] = {
+  def parse(sentence: String): Seq[LNode] = {
     tokenizer.parseText(sentence)
   }
 
-  def parseJava(sentence: String): java.util.List[LatticeNode] = {
+  def parseJava(sentence: String): java.util.List[LNode] = {
     tokenizer.parseText(sentence).asJava
   }
 
@@ -45,6 +46,22 @@ object Analyzer {
 
   def setUserDict(iterator: java.util.Iterator[String]): Unit = {
     tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
+  }
+
+  def parseEojeol(sentence: String): Seq[Eojeol] = {
+    Eojeoler.build(parse(sentence))
+  }
+
+  def parseEojeol(lnodes: Seq[LNode]): Seq[Eojeol] = {
+    Eojeoler.build(lnodes)
+  }
+
+  def parseEojeolJava(sentence: String): java.util.List[Eojeol] = {
+    Eojeoler.build(parse(sentence)).asJava
+  }
+
+  def parseEojeolJava(lnodes: List[LNode]): java.util.List[Eojeol] = {
+    Eojeoler.build(lnodes).asJava
   }
 
   def resetUserDict(): Unit = {

@@ -37,10 +37,10 @@ object UnkDef {
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
-        val feature = l.slice(4, l.size).toIndexedSeq
+        val feature = l.slice(4, l.size)
         defaultTerm = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       } else {
-        val feature = l.slice(4, l.size).toIndexedSeq
+        val feature = l.slice(4, l.size)
         terms(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       }
     }

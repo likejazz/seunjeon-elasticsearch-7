@@ -23,7 +23,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("number test") {
-    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LatticeNode =>
+    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LNode =>
       println(t)
     }
   }
@@ -108,7 +108,12 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   }
 
-  def getSurfacePos(termNode:LatticeNode): String = {
+  test("README eojeol") {
+    Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
+    Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).map(_.surface).foreach(println)
+  }
+
+  def getSurfacePos(termNode:LNode): String = {
     println(termNode)
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }

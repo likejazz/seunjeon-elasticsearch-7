@@ -19,7 +19,6 @@ import java.io.{File, _}
 
 import com.github.tototoshi.csv.CSVParser
 import com.typesafe.scalalogging.Logger
-import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
@@ -29,33 +28,6 @@ import scala.collection.mutable.ListBuffer
 import scala.io.Source
 import scala.util.matching.Regex
 
-object Morpheme {
-  def createUnknownMorpheme(surface:String, morpheme: Morpheme): Morpheme = {
-    new Morpheme(surface,
-      morpheme.leftId,
-      morpheme.rightId,
-      morpheme.cost*surface.length,
-      morpheme.feature,
-      IndexedSeq(Pos.UNKNOWN))
-  }
-}
-
-/**
-  * 형태소
-  * @param surface  표현층
-  * @param leftId   좌문맥ID
-  * @param rightId  우문맥ID
-  * @param cost     Term 비용
-  * @param feature  feature
-  * @param poses    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
-  */
-case class Morpheme(surface:String,
-                    leftId:Short,
-                    rightId:Short,
-                    cost:Int,
-                    feature:IndexedSeq[String],
-                    poses:IndexedSeq[Pos]) {
-}
 
 class LexiconDict {
   val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
@@ -95,8 +67,8 @@ class LexiconDict {
               cost.toShort,
               leftId.toShort,
               rightId.toShort,
-              feature.toIndexedSeq,
-              Pos.poses(feature))
+              wrapRefArray(feature.toArray),
+              wrapRefArray(Pos.poses(feature).toArray))
         }
       } catch {
         case _: Throwable => logger.warn(s"invalid format : $item")
@@ -105,21 +77,21 @@ class LexiconDict {
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
-    build(terms.toIndexedSeq.sortBy(_.surface))
+    build(terms.sortBy(_.surface))
   }
 
   private def buildNNGTerm(surface:String, cost:Int): Morpheme = {
     val lastChar = surface.last
     val feature = if (isHangul(lastChar)) {
       if (hasJongsung(lastChar)) {
-        IndexedSeq("NNG","*","T", surface, "*", "*", "*", "*")
+        Array("NNG","*","T", surface, "*", "*", "*", "*")
       } else {
-        IndexedSeq("NNG","*","F", surface, "*", "*", "*", "*")
+        Array("NNG","*","F", surface, "*", "*", "*", "*")
       }
     } else {
-      IndexedSeq("NNG","*","*", surface, "*", "*", "*", "*")
+      Array("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, feature, Pos.poses(feature))
+    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, wrapRefArray(feature), wrapRefArray(Pos.poses(feature)))
   }
 
   private def hasJongsung(ch:Char): Boolean = {

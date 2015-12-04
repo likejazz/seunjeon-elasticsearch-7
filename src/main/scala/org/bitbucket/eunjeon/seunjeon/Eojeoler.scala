@@ -2,7 +2,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-case class Eojeol(nodes:Seq[LatticeNode]) {
+case class Eojeol(nodes:Seq[LNode]) {
   val surface = nodes.map(_.morpheme.surface).mkString
   val startPos = nodes.head.startPos
   val endPos = nodes.last.endPos
@@ -10,14 +10,14 @@ case class Eojeol(nodes:Seq[LatticeNode]) {
 
 object Eojeoler {
 
-  def build(nodes:Seq[LatticeNode]):Seq[Eojeol] =  {
+  def build(nodes:Seq[LNode]):Seq[Eojeol] =  {
 
     var result = mutable.LinearSeq[Eojeol]()
 
     val iter = nodes.iterator
     var pre = iter.next
     // TODO: Eojeol class 만들어서 surface, position 정보들을 담아볼까?
-    var eojeolNodes = mutable.LinearSeq[LatticeNode](pre)
+    var eojeolNodes = mutable.LinearSeq[LNode](pre)
     while (iter.hasNext) {
       val cur = iter.next
       if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
@@ -25,7 +25,7 @@ object Eojeoler {
       }
       else {
         result = result :+ Eojeol(eojeolNodes)
-        eojeolNodes = mutable.LinearSeq[LatticeNode](cur)
+        eojeolNodes = mutable.LinearSeq[LNode](cur)
       }
       pre = cur
     }
