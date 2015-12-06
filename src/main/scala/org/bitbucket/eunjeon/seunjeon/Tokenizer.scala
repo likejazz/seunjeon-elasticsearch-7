@@ -25,12 +25,27 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     userDict = dict
   }
 
-  // TODO: 꼭 리팩토링하자
   def parseText(input:String): Seq[LNode] = {
-    // TODO: 성능 향상을 위해 intern 잘 활용하도록 고민해보자.
     val text = input.intern()
-    text.intern()
-    text.split("\n").flatMap(buildLattice(_).getBestPath)
+    text.split("\n").flatMap(buildLattice(_).getBestPath.flatMap(depreanalysis))
+  }
+
+  // TODO: 함수 위치를 다른 곳으로 옮겨야 할까?
+  private def depreanalysis(node: LNode): Seq[LNode] = {
+    // TODO: Preanalysis 문자열 비교라서 성능 저하가 일어날 것 같음. type 정의해보세.
+    if (node.morpheme.feature.isDefinedAt(4) && node.morpheme.feature(4) == "Preanalysis") {
+      var startPos = node.startPos
+      var endPos = node.endPos
+      for (feature7 <- node.morpheme.feature(7).split("[+]")) yield {
+        val morpheme = Morpheme.createFromFeature7(feature7)
+        val morphemeStartPos = startPos
+        val morphemeEndPos = startPos+morpheme.surface.length
+        startPos = morphemeEndPos
+        LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
+      }
+    } else {
+      Seq(node)
+    }
   }
 
   private def buildLattice(text: String): Lattice = {
@@ -84,7 +99,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
     searchedTerms.map(term =>
-      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
+      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
     )
   }
 
@@ -101,15 +116,15 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     }
 
     (1 to categoryLength).map { unknownIdx =>
-      val unknownTerm = Morpheme.createUnknownMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx),
-                                               charset.term)
-      LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
+      val unknownTerm = Morpheme.createUnknown(charset.str.substring(termOffset, termOffset + unknownIdx),
+                                               charset.morpheme)
+      LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
     }
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
-    val fullLengthTerm = Morpheme.createUnknownMorpheme(charset.str, charset.term)
-    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
+    val fullLengthTerm = Morpheme.createUnknown(charset.str, charset.morpheme)
+    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length)
   }
 }
 

@@ -60,7 +60,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
 
   def add(latticeNode:LNode): Lattice = {
     startingNodes(latticeNode.startPos+1) += latticeNode
-    endingNodes(latticeNode.endPos+1) += latticeNode
+    endingNodes(latticeNode.endPos) += latticeNode
     this
   }
 

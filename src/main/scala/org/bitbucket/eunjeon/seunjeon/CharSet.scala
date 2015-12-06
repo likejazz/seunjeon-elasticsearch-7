@@ -23,28 +23,28 @@ import scala.io.Source
 
 
 // TODO: unk.def 파일에서 좌/우/비용 찾아서 넣어주자.
-case class CharSet(str: String, rlength: Int, category: Category, term: Morpheme)
+case class CharSet(str: String, rlength: Int, category: Category, morpheme: Morpheme)
 
 // TODO
 object UnkDef {
-  // defaultTerm, terms 순서가 중요하다.. refactoring하자.
-  var defaultTerm: Morpheme = null
+  // defaultMorpheme, morpehmes 순서가 중요하다.. refactoring하자.
+  var defaultMorpheme: Morpheme = null
   val terms = buildUnk
 
   def buildUnk: mutable.Map[String, Morpheme] = {
-    val terms = mutable.Map[String, Morpheme]()
+    val morphemes = mutable.Map[String, Morpheme]()
     val inputStream = getClass.getResourceAsStream(DictBuilder.UNK_DEF)
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         val feature = l.slice(4, l.size)
-        defaultTerm = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
+        defaultMorpheme = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       } else {
         val feature = l.slice(4, l.size)
-        terms(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
+        morphemes(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
       }
     }
-    terms
+    morphemes
   }
 
   def apply(name: String): Option[Morpheme] = {
@@ -124,11 +124,11 @@ object CharDef {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
     if (floor == null || ceiling == null) {
-      (CharDef.defaultCategory, UnkDef.defaultTerm)
+      (CharDef.defaultCategory, UnkDef.defaultMorpheme)
     } else if (floor.getValue == ceiling.getValue) {
       floor.getValue
     } else {
-      (CharDef.defaultCategory, UnkDef.defaultTerm)
+      (CharDef.defaultCategory, UnkDef.defaultMorpheme)
     }
   }
 }

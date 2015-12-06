@@ -82,6 +82,10 @@ object Pos extends Enumeration {
     }
   }
 
+  def apply(detailPos:String): Pos = {
+    matchTable(detailPos)
+  }
+
   def poses(feature:Seq[String]): Array[Pos] = {
     feature(0).split("[+]").map(matchTable(_))
   }

@@ -8,13 +8,30 @@ import scala.collection.mutable
 
 
 object Morpheme {
-  def createUnknownMorpheme(surface:String, morpheme: Morpheme): Morpheme = {
-    new Morpheme(surface,
+  def createUnknown(surface:String, morpheme: Morpheme): Morpheme = {
+    Morpheme(surface,
       morpheme.leftId,
       morpheme.rightId,
       morpheme.cost*surface.length,
       morpheme.feature,
       wrapRefArray(Array(Pos.UNKNOWN)))
+  }
+
+
+  /**
+    *
+    * @param feature7  "은전/NNG/\*"
+    */
+  def createFromFeature7(feature7:String): Morpheme = {
+    val splited = feature7.split("/")
+    // TODO: leftId, rightId, cost, etc ...
+    Morpheme(
+      splited(0),
+      -1,
+      -1,
+      0,
+      wrapRefArray(Array[String]()),  // TODO: feature 를 적당히 만들어 주자.
+      wrapRefArray(Array(Pos(splited(1)))))
   }
 }
 
