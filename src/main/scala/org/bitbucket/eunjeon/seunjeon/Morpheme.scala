@@ -2,6 +2,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{ObjectInputStream, ObjectOutputStream, IOException}
 
+import org.bitbucket.eunjeon.seunjeon.MorphemeType.MorphemeType
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 
 import scala.collection.mutable
@@ -14,9 +15,9 @@ object Morpheme {
       morpheme.rightId,
       morpheme.cost*surface.length,
       morpheme.feature,
+      morpheme.mType,
       wrapRefArray(Array(Pos.UNKNOWN)))
   }
-
 
   /**
     *
@@ -31,6 +32,7 @@ object Morpheme {
       -1,
       0,
       wrapRefArray(Array[String]()),  // TODO: feature 를 적당히 만들어 주자.
+      MorphemeType.GENERAL,
       wrapRefArray(Array(Pos(splited(1)))))
   }
 }
@@ -49,6 +51,7 @@ case class Morpheme(var surface:String,
                     var rightId:Short,
                     var cost:Int,
                     var feature:mutable.WrappedArray[String],
+                    var mType:MorphemeType,
                     var poses:mutable.WrappedArray[Pos]) extends Serializable {
 
   @throws(classOf[IOException])
@@ -59,7 +62,8 @@ case class Morpheme(var surface:String,
     out.writeInt(cost)
 
     out.writeUTF(feature.mkString(","))
-    out.writeUTF(poses.map(_.toString).mkString(","))
+    out.writeInt(mType.id)
+    out.writeUTF(poses.map(_.id).mkString(","))
   }
 
   @throws(classOf[IOException])
@@ -70,9 +74,8 @@ case class Morpheme(var surface:String,
     cost = in.readInt()
 
     feature = wrapRefArray(in.readUTF().split(","))
-    poses = wrapRefArray(in.readUTF().split(",").map(Pos.withName))
-
+    mType = MorphemeType(in.readInt())
+    poses = wrapRefArray(in.readUTF().split(",").map(id => Pos(id.toInt)))
   }
-
 }
 

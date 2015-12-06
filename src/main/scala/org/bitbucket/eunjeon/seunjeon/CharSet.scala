@@ -38,10 +38,10 @@ object UnkDef {
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         val feature = l.slice(4, l.size)
-        defaultMorpheme = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
+        defaultMorpheme = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, MorphemeType(feature), Pos.poses(feature))
       } else {
         val feature = l.slice(4, l.size)
-        morphemes(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, Pos.poses(feature))
+        morphemes(l(0)) = Morpheme(l(0), l(1).toShort, l(2).toShort, l(3).toShort, feature, MorphemeType(feature), Pos.poses(feature))
       }
     }
     morphemes

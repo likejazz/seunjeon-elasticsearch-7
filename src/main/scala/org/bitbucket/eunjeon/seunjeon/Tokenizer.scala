@@ -33,7 +33,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   // TODO: 함수 위치를 다른 곳으로 옮겨야 할까?
   private def depreanalysis(node: LNode): Seq[LNode] = {
     // TODO: Preanalysis 문자열 비교라서 성능 저하가 일어날 것 같음. type 정의해보세.
-    if (node.morpheme.feature.isDefinedAt(4) && node.morpheme.feature(4) == "Preanalysis") {
+    if (node.morpheme.mType == MorphemeType.PREANALYSIS) {
       var startPos = node.startPos
       var endPos = node.endPos
       for (feature7 <- node.morpheme.feature(7).split("[+]")) yield {

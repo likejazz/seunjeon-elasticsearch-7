@@ -68,7 +68,8 @@ class LexiconDict {
               leftId.toShort,
               rightId.toShort,
               wrapRefArray(feature.toArray),
-              wrapRefArray(Pos.poses(feature).toArray))
+              MorphemeType(feature),
+              wrapRefArray(Pos.poses(feature)))
         }
       } catch {
         case _: Throwable => logger.warn(s"invalid format : $item")
@@ -91,7 +92,14 @@ class LexiconDict {
     } else {
       Array("NNG","*","*", surface, "*", "*", "*", "*")
     }
-    Morpheme(surface, NngUtil.nngLeftId, NngUtil.nngRightId, cost, wrapRefArray(feature), wrapRefArray(Pos.poses(feature)))
+    Morpheme(
+      surface,
+      NngUtil.nngLeftId,
+      NngUtil.nngRightId,
+      cost,
+      wrapRefArray(feature),
+      MorphemeType(feature),
+      wrapRefArray(Pos.poses(feature)))
   }
 
   private def hasJongsung(ch:Char): Boolean = {

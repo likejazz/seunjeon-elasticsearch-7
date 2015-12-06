@@ -45,8 +45,8 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), Array(Pos.BOS)), length, length)
+  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.GENERAL, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.GENERAL, Array(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -58,14 +58,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     temp.map(l => new mutable.MutableList[LNode])
   }
 
-  def add(latticeNode:LNode): Lattice = {
-    startingNodes(latticeNode.startPos+1) += latticeNode
-    endingNodes(latticeNode.endPos) += latticeNode
+  def add(node:LNode): Lattice = {
+    startingNodes(node.startPos+1) += node
+    endingNodes(node.endPos) += node
     this
   }
 
-  def addAll(latticeNodes:Seq[LNode]): Lattice = {
-    latticeNodes.foreach(node => add(node))
+  def addAll(nodes:Seq[LNode]): Lattice = {
+    nodes.foreach(node => add(node))
     this
   }
 
@@ -92,7 +92,6 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     result.reverse
   }
 
-
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
     var minTotalCost:Int = 2147483647
     endingNodes.foreach{ endingNode =>
@@ -107,7 +106,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
     val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
-      SpacePenalty(startingNode.morpheme.poses.head)
+      SpacePenalty(startingNode.morpheme.poses(0))
     } else 0
 
     endingNode.accumulatedCost +
