@@ -19,6 +19,12 @@ object Morpheme {
       wrapRefArray(Array(Pos.UNKNOWN)))
   }
 
+  def deComposition(feature7:String): Seq[Morpheme] = {
+    for (feature7 <- feature7.split("[+]")) yield {
+      Morpheme.createFromFeature7(feature7)
+    }
+  }
+
   /**
     *
     * @param feature7  "은전/NNG/\*"
@@ -31,7 +37,7 @@ object Morpheme {
       -1,
       -1,
       0,
-      wrapRefArray(Array[String]()),  // TODO: feature 를 적당히 만들어 주자.
+      wrapRefArray(Array[String](splited(1))),  // TODO: feature 를 적당히 만들어 주자.
       MorphemeType.GENERAL,
       wrapRefArray(Array(Pos(splited(1)))))
   }

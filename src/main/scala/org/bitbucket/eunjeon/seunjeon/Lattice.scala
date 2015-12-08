@@ -17,26 +17,6 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-
-/**
-  * Lattice 노드
-  * @param morpheme   Morpheme
-  * @param startPos  시작 offset
-  * @param endPos   끝 offset
-  * @param accumulatedCost  누적비용
-  */
-case class LNode(morpheme:Morpheme, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
-  var leftNode:LNode = null
-
-  // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
-  override def equals(o: Any) = o match {
-    case that:LNode => (that.startPos == startPos) && (that.endPos == endPos)
-    case _ => false
-  }
-
-  override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
-}
-
 object Lattice {
   def apply(length:Int, connectingCostDict:ConnectionCostDict) = new Lattice(length, connectingCostDict)
 }
@@ -78,7 +58,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
-  def getBestPath: Seq[LNode] = {
+  def getBestPath(): Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
       startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
     }
@@ -105,7 +85,7 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
-    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
+    val penaltyCost = if (endingNode.endPos != startingNode.startPos) {
       SpacePenalty(startingNode.morpheme.poses(0))
     } else 0
 

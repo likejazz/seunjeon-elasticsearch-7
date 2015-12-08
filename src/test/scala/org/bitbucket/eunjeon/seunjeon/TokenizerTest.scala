@@ -37,26 +37,26 @@ class TokenizerTest extends FunSuite with BeforeAndAfter {
 
   test("testParseOneEojeol") {
     assert("BOS,감자,고구마,오징어,EOS" ==
-      tokenizer.parseText("감자고구마오징어").map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고구마오징어", true).map(_.morpheme.surface).mkString(","))
   }
 
   test("testParseMultipleEojeol") {
     assert("BOS,감자,고구마,오징어,EOS" ==
-      tokenizer.parseText("감자고구마 오징어").map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고구마 오징어", true).map(_.morpheme.surface).mkString(","))
 
     assert("BOS,감자,고,구마,오징어,EOS" ==
-      tokenizer.parseText("감자고 구마 오징어").map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고 구마 오징어", true).map(_.morpheme.surface).mkString(","))
   }
 
   // TODO: "호박"을 찾아줄껀가말껀가..
   test("unknown word") {
     assert("BOS,감자,호박,오징어,EOS" ==
-      tokenizer.parseText("감자호박오징어").map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자호박오징어", true).map(_.morpheme.surface).mkString(","))
   }
 
   test("long eojeol") {
     assert("BOS,감자,호박,오징어,감자,호박,오징어,감자,호박,오징어,감자,호박,오징어,감자,호박,오징어,감자,호박,오징어,EOS" ==
-      tokenizer.parseText("감자호박오징어감자호박오징어감자호박오징어감자호박오징어감자호박오징어감자호박오징어").map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자호박오징어감자호박오징어감자호박오징어감자호박오징어감자호박오징어감자호박오징어", true).map(_.morpheme.surface).mkString(","))
   }
 
 }

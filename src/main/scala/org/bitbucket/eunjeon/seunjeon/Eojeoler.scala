@@ -2,38 +2,49 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-case class Eojeol(nodes:Seq[LNode]) {
+case class Eojeol(var nodes:Seq[LNode]) {
   val surface = nodes.map(_.morpheme.surface).mkString
   val startPos = nodes.head.startPos
   val endPos = nodes.last.endPos
+
+  def deCompound(): Eojeol = {
+    nodes = nodes.flatMap { node =>
+      val deCompounded = LNode.deCompound(node).toList
+      if (deCompounded.size > 1) {
+        deCompounded.head :: node :: deCompounded.tail ::: Nil
+      } else {
+        deCompounded
+      }
+    }
+    this
+  }
 }
 
 object Eojeoler {
-
-  def build(nodes:Seq[LNode]):Seq[Eojeol] =  {
-
+  // TODO: deCompound
+  def build(nodes:Seq[LNode], deCompound:Boolean):Seq[Eojeol] = {
     var result = mutable.LinearSeq[Eojeol]()
-
-    val iter = nodes.iterator
-    var pre = iter.next
-    // TODO: Eojeol class 만들어서 surface, position 정보들을 담아볼까?
-    var eojeolNodes = mutable.LinearSeq[LNode](pre)
-    while (iter.hasNext) {
-      val cur = iter.next
+    var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
+    nodes.sliding(2).foreach { slid =>
+      val pre = slid.head
+      val cur = slid.last
       if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
         eojeolNodes = eojeolNodes :+ cur
-      }
-      else {
+      } else {
         result = result :+ Eojeol(eojeolNodes)
         eojeolNodes = mutable.LinearSeq[LNode](cur)
       }
-      pre = cur
     }
-    result :+ Eojeol(eojeolNodes)
+    // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
+    result = result :+ Eojeol(eojeolNodes)
+    if (deCompound) {
+      result.map(_.deCompound())
+    } else {
+      result
+    }
   }
 
   val appendable = Seq(
-
     Pos.V -> Pos.EP,
 
     Pos.EP -> Pos.E,

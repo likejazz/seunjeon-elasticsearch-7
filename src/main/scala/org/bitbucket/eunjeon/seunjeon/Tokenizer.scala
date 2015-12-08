@@ -25,27 +25,12 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     userDict = dict
   }
 
-  def parseText(input:String): Seq[LNode] = {
+  def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    text.split("\n").flatMap(buildLattice(_).getBestPath.flatMap(depreanalysis))
-  }
+    val bestPath = text.split("\n").flatMap(buildLattice(_).getBestPath())
 
-  // TODO: 함수 위치를 다른 곳으로 옮겨야 할까?
-  private def depreanalysis(node: LNode): Seq[LNode] = {
-    // TODO: Preanalysis 문자열 비교라서 성능 저하가 일어날 것 같음. type 정의해보세.
-    if (node.morpheme.mType == MorphemeType.PREANALYSIS) {
-      var startPos = node.startPos
-      var endPos = node.endPos
-      for (feature7 <- node.morpheme.feature(7).split("[+]")) yield {
-        val morpheme = Morpheme.createFromFeature7(feature7)
-        val morphemeStartPos = startPos
-        val morphemeEndPos = startPos+morpheme.surface.length
-        startPos = morphemeEndPos
-        LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
-      }
-    } else {
-      Seq(node)
-    }
+    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)
+    else bestPath
   }
 
   private def buildLattice(text: String): Lattice = {
