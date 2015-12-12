@@ -110,7 +110,22 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("README eojeol") {
     Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
-    Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).map(_.surface).foreach(println)
+    Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).foreach(println)
+  }
+
+  test("dePreAnalysis") {
+    val result1 = Analyzer.parse("은전한닢프로젝트")
+    assert("BOS+은전+한+닢+프로젝트+EOS" == result1.map(_.morpheme.surface).mkString("+"))
+    result1.foreach(println)
+
+    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis=false)
+    assert("BOS+은전한닢+프로젝트+EOS" == result2.map(_.morpheme.surface).mkString("+"))
+    result2.foreach(println)
+  }
+
+  test("deCompound") {
+    Analyzer.parseEojeol("삼성전자").foreach(println)
+    Analyzer.parseEojeol("삼성전자", deCompound = true).foreach(println)
   }
 
   def getSurfacePos(termNode:LNode): String = {

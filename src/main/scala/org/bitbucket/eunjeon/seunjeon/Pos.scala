@@ -1,10 +1,27 @@
 package org.bitbucket.eunjeon.seunjeon
 
+object MorphemeType extends Enumeration {
+  type MorphemeType = Value
+  val COMMON, COMPOUND, INFLECT, PREANALYSIS = Value
+
+  def apply(feature:Seq[String]): MorphemeType = {
+    if (feature(4) == "*") {
+      COMMON
+    } else {
+      feature(4) match {
+        case "Compound" => COMPOUND
+        case "Preanalysis" => PREANALYSIS
+        case "Inflect" => INFLECT
+      }
+    }
+  }
+}
+
 object Pos extends Enumeration {
   type Pos = Value
   // 품사 태그 설명
   //  https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265&vpid=A1
-  val BOS, EOS, UNKNOWN, COMPOUND, INFLECT, PREANALYSIS,
+  val BOS, EOS, UNKNOWN,
       EP, // 선어말어미,
       E,  // 어미
       I,  // 독립언
@@ -70,16 +87,8 @@ object Pos extends Enumeration {
   "XR" -> XR
   )
 
-  def apply(feature:Seq[String]): Pos = {
-    if (feature(4) == "*") {
-      matchTable(feature(0))
-    } else {
-      feature(4) match {
-        case "Compound" => Pos.COMPOUND
-        case "Preanalysis" => Pos.PREANALYSIS
-        case "Inflect" => Pos.INFLECT
-      }
-    }
+  def apply(detailPos:String): Pos = {
+    matchTable(detailPos)
   }
 
   def poses(feature:Seq[String]): Array[Pos] = {

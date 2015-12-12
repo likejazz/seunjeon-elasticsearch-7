@@ -17,26 +17,6 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-
-/**
-  * Lattice 노드
-  * @param morpheme   Morpheme
-  * @param startPos  시작 offset
-  * @param endPos   끝 offset
-  * @param accumulatedCost  누적비용
-  */
-case class LNode(morpheme:Morpheme, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
-  var leftNode:LNode = null
-
-  // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
-  override def equals(o: Any) = o match {
-    case that:LNode => (that.startPos == startPos) && (that.endPos == endPos)
-    case _ => false
-  }
-
-  override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
-}
-
 object Lattice {
   def apply(length:Int, connectingCostDict:ConnectionCostDict) = new Lattice(length, connectingCostDict)
 }
@@ -45,8 +25,8 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), Array(Pos.BOS)), length, length)
+  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -58,14 +38,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     temp.map(l => new mutable.MutableList[LNode])
   }
 
-  def add(latticeNode:LNode): Lattice = {
-    startingNodes(latticeNode.startPos+1) += latticeNode
-    endingNodes(latticeNode.endPos+1) += latticeNode
+  def add(node:LNode): Lattice = {
+    startingNodes(node.startPos+1) += node
+    endingNodes(node.endPos) += node
     this
   }
 
-  def addAll(latticeNodes:Seq[LNode]): Lattice = {
-    latticeNodes.foreach(node => add(node))
+  def addAll(nodes:Seq[LNode]): Lattice = {
+    nodes.foreach(node => add(node))
     this
   }
 
@@ -78,9 +58,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
-  def getBestPath: Seq[LNode] = {
+  def getBestPath(): Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
-      startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
+      // while 하는 것이 foreach 보다 성능이 좋음.
+      //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+      val  iter = startingNodes(idx).iterator
+      while (iter.hasNext) {
+        updateCost(endingNodes(idx-1), iter.next())
+      }
     }
 
     var result = new mutable.ListBuffer[LNode]
@@ -92,10 +77,13 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     result.reverse
   }
 
-
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
     var minTotalCost:Int = 2147483647
-    endingNodes.foreach{ endingNode =>
+    // while 하는 것이 foreach 보다 성능이 좋음.
+    //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+    val iter = endingNodes.iterator
+    while (iter.hasNext) {
+      val endingNode = iter.next()
       val totalCost: Int = getCost(endingNode, startingNode)
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost
@@ -106,8 +94,8 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
-    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
-      SpacePenalty(startingNode.morpheme.poses.head)
+    val penaltyCost = if (endingNode.endPos != startingNode.startPos) {
+      SpacePenalty(startingNode.morpheme.poses(0))
     } else 0
 
     endingNode.accumulatedCost +

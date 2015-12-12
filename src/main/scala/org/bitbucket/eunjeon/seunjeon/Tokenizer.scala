@@ -15,6 +15,7 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
@@ -25,12 +26,12 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     userDict = dict
   }
 
-  // TODO: 꼭 리팩토링하자
-  def parseText(input:String): Seq[LNode] = {
-    // TODO: 성능 향상을 위해 intern 잘 활용하도록 고민해보자.
+  def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    text.intern()
-    text.split("\n").flatMap(buildLattice(_).getBestPath)
+    val bestPath = text.split("\n").flatMap(buildLattice(_).getBestPath())
+
+    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)
+    else bestPath
   }
 
   private def buildLattice(text: String): Lattice = {
@@ -83,9 +84,17 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     if (userDict != null) {
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
-    searchedTerms.map(term =>
-      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length - 1)
-    )
+    var idx = 0
+    val nodes = new Array[LNode](searchedTerms.length)
+    while(idx < searchedTerms.length) {
+      val term = searchedTerms(idx)
+      nodes(idx) = LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+      idx += 1
+    }
+    nodes
+//    searchedTerms.map(term =>
+//      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+//    )
   }
 
   private def get1NLengthTerms(charsetOffset: Int,
@@ -100,16 +109,21 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       categoryLength = 1
     }
 
-    (1 to categoryLength).map { unknownIdx =>
-      val unknownTerm = Morpheme.createUnknownMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx),
-                                               charset.term)
-      LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length - 1)
+    // 성능때문에 while 사용
+    var unknownIdx = 1
+    val nodes = new Array[LNode](categoryLength)
+    while (unknownIdx <= categoryLength) {
+      val unknownTerm = Morpheme.createUnknown(charset.str.substring(termOffset, termOffset + unknownIdx),
+        charset.morpheme)
+      nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
+      unknownIdx += 1
     }
+    nodes
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
-    val fullLengthTerm = Morpheme.createUnknownMorpheme(charset.str, charset.term)
-    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length - 1)
+    val fullLengthTerm = Morpheme.createUnknown(charset.str, charset.morpheme)
+    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length)
   }
 }
 
