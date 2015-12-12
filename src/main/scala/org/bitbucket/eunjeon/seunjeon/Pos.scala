@@ -2,11 +2,11 @@ package org.bitbucket.eunjeon.seunjeon
 
 object MorphemeType extends Enumeration {
   type MorphemeType = Value
-  val GENERAL, COMPOUND, INFLECT, PREANALYSIS = Value
+  val COMMON, COMPOUND, INFLECT, PREANALYSIS = Value
 
   def apply(feature:Seq[String]): MorphemeType = {
     if (feature(4) == "*") {
-      GENERAL
+      COMMON
     } else {
       feature(4) match {
         case "Compound" => COMPOUND

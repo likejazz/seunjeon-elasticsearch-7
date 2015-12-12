@@ -173,15 +173,13 @@ class LexiconDict {
   }
 
   def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
-    val indexedLexiconDictPositions = ListBuffer[Int]()
+    val indexedLexiconDictPositions = new ListBuffer[Int]
     val iterator = trie.commonPrefixSearchEntries(keyword).iterator()
     while (iterator.hasNext) {
       indexedLexiconDictPositions += iterator.next().getValue
     }
 
-    indexedLexiconDictPositions.
-      flatMap(mapPos => dictMapper(mapPos)).
-      map(termPos => termDict(termPos))
+    indexedLexiconDictPositions.flatMap(dictMapper(_)).map(termDict(_))
   }
 
   def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {

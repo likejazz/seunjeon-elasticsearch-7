@@ -38,7 +38,7 @@ object Morpheme {
       -1,
       0,
       wrapRefArray(Array[String](splited(1))),  // TODO: feature 를 적당히 만들어 주자.
-      MorphemeType.GENERAL,
+      MorphemeType.COMMON,
       wrapRefArray(Array(Pos(splited(1)))))
   }
 }

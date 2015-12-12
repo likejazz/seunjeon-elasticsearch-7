@@ -15,6 +15,7 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
@@ -83,9 +84,17 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     if (userDict != null) {
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
-    searchedTerms.map(term =>
-      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
-    )
+    var idx = 0
+    val nodes = new Array[LNode](searchedTerms.length)
+    while(idx < searchedTerms.length) {
+      val term = searchedTerms(idx)
+      nodes(idx) = LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+      idx += 1
+    }
+    nodes
+//    searchedTerms.map(term =>
+//      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+//    )
   }
 
   private def get1NLengthTerms(charsetOffset: Int,
@@ -100,11 +109,16 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       categoryLength = 1
     }
 
-    (1 to categoryLength).map { unknownIdx =>
+    // 성능때문에 while 사용
+    var unknownIdx = 1
+    val nodes = new Array[LNode](categoryLength)
+    while (unknownIdx <= categoryLength) {
       val unknownTerm = Morpheme.createUnknown(charset.str.substring(termOffset, termOffset + unknownIdx),
-                                               charset.morpheme)
-      LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
+        charset.morpheme)
+      nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
+      unknownIdx += 1
     }
+    nodes
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {

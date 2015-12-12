@@ -25,8 +25,8 @@ object Lattice {
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.GENERAL, Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.GENERAL, Array(Pos.BOS)), length, length)
+  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -60,7 +60,12 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   // FIXME: space 패널티 cost 계산해줘야 함.
   def getBestPath(): Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
-      startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
+      // while 하는 것이 foreach 보다 성능이 좋음.
+      //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+      val  iter = startingNodes(idx).iterator
+      while (iter.hasNext) {
+        updateCost(endingNodes(idx-1), iter.next())
+      }
     }
 
     var result = new mutable.ListBuffer[LNode]
@@ -74,7 +79,11 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
 
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
     var minTotalCost:Int = 2147483647
-    endingNodes.foreach{ endingNode =>
+    // while 하는 것이 foreach 보다 성능이 좋음.
+    //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+    val iter = endingNodes.iterator
+    while (iter.hasNext) {
+      val endingNode = iter.next()
       val totalCost: Int = getCost(endingNode, startingNode)
       if (totalCost < minTotalCost) {
         minTotalCost = totalCost

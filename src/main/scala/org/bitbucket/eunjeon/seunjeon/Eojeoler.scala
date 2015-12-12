@@ -21,22 +21,22 @@ case class Eojeol(var nodes:Seq[LNode]) {
 }
 
 object Eojeoler {
-  // TODO: deCompound
   def build(nodes:Seq[LNode], deCompound:Boolean):Seq[Eojeol] = {
-    var result = mutable.LinearSeq[Eojeol]()
+    val result = mutable.ListBuffer[Eojeol]()
     var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
     nodes.sliding(2).foreach { slid =>
       val pre = slid.head
       val cur = slid.last
+      // TODO: contains 더 빠르게 자료구조 바꿔야 함.
       if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
         eojeolNodes = eojeolNodes :+ cur
       } else {
-        result = result :+ Eojeol(eojeolNodes)
+        result.append(Eojeol(eojeolNodes))
         eojeolNodes = mutable.LinearSeq[LNode](cur)
       }
     }
     // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
-    result = result :+ Eojeol(eojeolNodes)
+    result.append(Eojeol(eojeolNodes))
     if (deCompound) {
       result.map(_.deCompound())
     } else {
@@ -44,7 +44,7 @@ object Eojeoler {
     }
   }
 
-  val appendable = Seq(
+  val appendable = Set(
     Pos.V -> Pos.EP,
 
     Pos.EP -> Pos.E,
