@@ -46,10 +46,6 @@ object DictBuilder {
   val LEFT_ID_DEF = DICT_PATH + LEFT_ID_DEF_FILENAME
   val RIGHT_ID_DEF_FILENAME = "/right-id.def"
   val RIGHT_ID_DEF = DICT_PATH + RIGHT_ID_DEF_FILENAME
-  val DICRC_FILENAME = "/dicrc"
-  val DICRC = DICT_PATH + DICRC_FILENAME
-  val POS_ID_DEF_FILENAME = "/pos-id.def"
-  val POS_ID_DEF = DICT_PATH + POS_ID_DEF_FILENAME
 
   def main(args: Array[String]): Unit = {
     clear()
@@ -58,8 +54,6 @@ object DictBuilder {
     copyUnkDef()
     copyLeftIdDef()
     copyRightIdDef()
-    copyDicrc()
-    copyPosidDef()
 
     println("compiling lexicon dictionary...")
     buildLexiconDict()
@@ -84,14 +78,6 @@ object DictBuilder {
 
   private def copyRightIdDef(): Unit = {
     copyDefFile(RIGHT_ID_DEF_FILENAME)
-  }
-
-  private def copyDicrc(): Unit = {
-    copyDefFile(DICRC_FILENAME)
-  }
-
-  private def copyPosidDef(): Unit = {
-    copyDefFile(POS_ID_DEF_FILENAME)
   }
 
   private def copyDefFile(defFileName: String): Unit = {
