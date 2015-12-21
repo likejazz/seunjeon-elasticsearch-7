@@ -10,9 +10,15 @@ import java.io.StringReader;
 public class SeunjeonTokenizerTest {
     @Test
     public void testTokenize() throws IOException {
+        System.out.println(tokenize("소설 무궁화꽃이 피었습니다."));
+        System.out.println(tokenize("대우전자에 입사합니다."));
+    }
+
+    public String tokenize(String document) throws IOException {
         Tokenizer tokenizer = new SeunjeonTokenizer();
-        tokenizer.setReader(new StringReader("소설 무궁화꽃이 피었습니다."));
+        tokenizer.setReader(new StringReader(document));
         tokenizer.reset();
+        StringBuilder sb = new StringBuilder();
         while (tokenizer.incrementToken()) {
             CharTermAttribute termAttr = tokenizer.getAttribute(CharTermAttribute.class);
             PositionIncrementAttribute posIncrAttr = tokenizer.getAttribute(PositionIncrementAttribute.class);
@@ -23,10 +29,11 @@ public class SeunjeonTokenizerTest {
                     posIncrAttr.getPositionIncrement() + ":" +
                     posLength.getPositionLength() + ":" +
                     offsetAttr.startOffset() + ":" +
-                    offsetAttr.endOffset()  + ":" +
+                    offsetAttr.endOffset() + ":" +
                     typeAttr.type();
-            System.out.println(toString);
+            sb.append(toString);
+            sb.append(";");
         }
-
+        return sb.toString();
     }
 }

@@ -21,25 +21,18 @@ object PosBuilder {
     // TODO: 어절, 복합명사 분해
     // TODO: 여러 문장의 offset 계산
     Analyzer.parseEojeol(document).flatMap { eojeol =>
-      var termSet = mutable.TreeSet[LucenePos]
-      termSet ++
+      val newEojeol = if (eojeol.nodes.length > 1) {
+        Seq(LucenePos(0, 1, eojeol.startPos, eojeol.endPos, eojeol.surface, "EOJEOL"))
+      } else {
+        Seq()
+      }
       eojeol.nodes.filter(isIndexNode).map { node =>
         LucenePos(1, 1,
           node.startPos,
           node.endPos,
           node.morpheme.surface,
           node.morpheme.poses.mkString("+"))
-      }
-//      if (eojeol.nodes.length > 1) {
-//      } :+ LucenePos(0, 1, eojeol.startPos, eojeol.endPos, eojeol.surface, "EOJEOL")
-//      } else {
-//        eojeol.nodes.filter(isIndexNode).map { node =>
-//          LucenePos(1, 1,
-//            node.startPos,
-//            node.endPos,
-//            node.morpheme.surface,
-//            node.morpheme.poses.mkString("+")) }
-//      }
+      } ++ newEojeol
     }.asJava
   }
 
