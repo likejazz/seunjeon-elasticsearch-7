@@ -3,8 +3,6 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.apache.lucene.util.AttributeFactory;
-import org.bitbucket.eunjeon.seunjeon.elasticsearch.LucenePos;
-import org.bitbucket.eunjeon.seunjeon.elasticsearch.PosBuilder;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,7 +16,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     private PositionLengthAttribute posLenAtt;
     private OffsetAttribute offsetAtt;
     private TypeAttribute typeAtt;
-    private Queue<LucenePos> tokensQueue;
+    private Queue<LuceneToken> tokensQueue;
 
 
     public SeunjeonTokenizer() {
@@ -33,7 +31,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     @Override
     public void reset() throws IOException {
         super.reset();
-        tokensQueue = new LinkedList(PosBuilder.tokenize(getDocument()));
+        tokensQueue = new LinkedList(TokenBuilder.tokenize(getDocument()));
     }
 
     @Override
@@ -41,7 +39,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         if (tokensQueue.isEmpty()) {
             return false;
         } else {
-            LucenePos pos = tokensQueue.poll();
+            LuceneToken pos = tokensQueue.poll();
             posIncrAtt.setPositionIncrement(pos.positionIncr());
             posLenAtt.setPositionLength(pos.positionLength());
             offsetAtt.setOffset(

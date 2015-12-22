@@ -4,14 +4,37 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 
 public class SeunjeonTokenizerTest {
+
     @Test
     public void testTokenize() throws IOException {
-        System.out.println(tokenize("소설 무궁화꽃이 피었습니다."));
-        System.out.println(tokenize("대우전자에 입사합니다."));
+        System.out.println(tokenize("전자"));
+        System.out.println(tokenize("전자는"));
+        System.out.println(tokenize("삼성전자는"));
+        System.out.println(tokenize("LG전자는"));
+        System.out.println(tokenize("아버지가방에들어가신다."));
+        System.out.println(tokenize("무궁화꽃이피었습니다."));
+        System.out.println(tokenize("직무를 행한다."));
+    }
+
+    @Test
+    public void testPerformance() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(classLoader.getResourceAsStream("long_contents.txt")));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+            sb.append("\n");
+        }
+        reader.close();
+        String longContents = sb.toString();
+        System.out.println("longContents = " + longContents);
+        String result = tokenize(longContents);
+        System.out.println("result = " + result);
     }
 
     public String tokenize(String document) throws IOException {

@@ -28,9 +28,10 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    val bestPath = text.split("\n").flatMap(buildLattice(_).getBestPath())
+//    val bestPath = text.split("\n").flatMap(buildLattice(_).getBestPath())
+    val bestPath = buildLattice(text).getBestPath()
 
-    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)
+    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)//.flatMap(LNode.deInflect)
     else bestPath
   }
 

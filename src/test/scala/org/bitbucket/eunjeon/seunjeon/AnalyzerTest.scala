@@ -123,11 +123,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     result2.foreach(println)
   }
 
-  test("deCompound") {
-    Analyzer.parseEojeol("삼성전자").foreach(println)
-    Analyzer.parseEojeol("삼성전자", deCompound = true).foreach(println)
-  }
-
   def getSurfacePos(termNode:LNode): String = {
     println(termNode)
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
