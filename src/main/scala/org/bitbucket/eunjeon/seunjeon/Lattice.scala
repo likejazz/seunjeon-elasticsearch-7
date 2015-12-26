@@ -58,12 +58,17 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
-  def getBestPath(): Seq[LNode] = {
+  def getBestPath(offset:Int=0): Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
       // while 하는 것이 foreach 보다 성능이 좋음.
       //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
-      val  iter = startingNodes(idx).iterator
+      if (endingNodes(idx-1).isEmpty) {
+        startingNodes(idx).foreach(node => node.isActive = false)
+        startingNodes(idx).clear()
+      }
+      val iter = startingNodes(idx).iterator
       while (iter.hasNext) {
+        // FIXME: endingNodes 가 없으면 startingNode를 지워줘야 할듯?
         updateCost(endingNodes(idx-1), iter.next())
       }
     }
@@ -74,7 +79,13 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
       result += node
       node = node.leftNode
     }
-    result.reverse
+    result.reverse.map(addOffset(offset, _))
+  }
+
+  def addOffset(offset: Int, node: LNode): LNode = {
+    node.startPos += offset
+    node.endPos += offset
+    node
   }
 
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
@@ -84,12 +95,14 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     val iter = endingNodes.iterator
     while (iter.hasNext) {
       val endingNode = iter.next()
-      val totalCost: Int = getCost(endingNode, startingNode)
-      if (totalCost < minTotalCost) {
-        minTotalCost = totalCost
-        startingNode.accumulatedCost = totalCost
-        startingNode.leftNode = endingNode
-      }
+      if (endingNode.isActive) {
+        val totalCost: Int = getCost(endingNode, startingNode)
+        if (totalCost < minTotalCost) {
+          minTotalCost = totalCost
+          startingNode.accumulatedCost = totalCost
+          startingNode.leftNode = endingNode
+        }
+      } else {}
     }
   }
 

@@ -36,6 +36,10 @@ class LexiconDict {
   var dictMapper: Array[Array[Int]] = null
   var trie: MapDoubleArray[Int] = null
 
+  def getDictionaryInfo(): String = {
+    s"termSize = ${termDict.length} mapper size = ${dictMapper.length}"
+  }
+
   def loadFromDir(dir: String): LexiconDict = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
@@ -174,11 +178,13 @@ class LexiconDict {
 
   def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
     val indexedLexiconDictPositions = new ListBuffer[Int]
+    // TODO: boxed type (Integer) 떄문에 속도가 느리다.
     val iterator = trie.commonPrefixSearchEntries(keyword).iterator()
     while (iterator.hasNext) {
       indexedLexiconDictPositions += iterator.next().getValue
     }
 
+    // TODO: 성능을 위해 풀자.
     indexedLexiconDictPositions.flatMap(dictMapper(_)).map(termDict(_))
   }
 

@@ -44,6 +44,10 @@ object LNode {
   * @param endPos   끝 offset
   * @param accumulatedCost  누적비용
   */
-case class LNode(morpheme:Morpheme, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
+case class LNode(morpheme:Morpheme,
+                 var startPos:Int,
+                 var endPos:Int,
+                 var accumulatedCost:Int=Short.MaxValue) {
   var leftNode:LNode = null
+  var isActive:Boolean=true
 }

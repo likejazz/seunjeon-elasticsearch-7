@@ -61,5 +61,21 @@ lazy val seunjeon = (project in file(".")).
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
-  // other settings
+    libraryDependencies ++= Seq(
+      "org.elasticsearch" % "elasticsearch" % "2.1.1",
+      "junit" % "junit" % "4.12" % "test"
+    ),
+
+    assemblyMergeStrategy in assembly := {
+      case PathList("org", "joda", "time", "base", "BaseDateTime.class") => new IncludeFromJar("joda-time-2.8.2.jar")
+      case x => (assemblyMergeStrategy in assembly).value(x)
+    },
+
+    assembly <<= assembly map { (f: File) =>
+      val zipPath = f.getPath.substring(0, f.getPath.length - f.ext.length - 1) + ".zip"
+      val zipFile = file(zipPath)
+      IO.zip(List((f, f.toPath.getFileName.toString)), zipFile)
+      println("GENERATED PACKAGE LOCATION:  " + zipPath)
+      zipFile
+    }
   )

@@ -123,6 +123,15 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     result2.foreach(println)
   }
 
+  test("functation") {
+    Analyzer.parse("《재규어》.").foreach(println)
+    Analyzer.parse(" ^^ 55 《삐리리~ 불어봐! 재규어》.").foreach(println)
+  }
+
+  test("multi line") {
+    Analyzer.parse("가\n나").foreach(println)
+  }
+
   def getSurfacePos(termNode:LNode): String = {
     println(termNode)
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"

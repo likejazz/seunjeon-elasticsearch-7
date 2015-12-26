@@ -13,7 +13,7 @@ object Morpheme {
     Morpheme(surface,
       morpheme.leftId,
       morpheme.rightId,
-      morpheme.cost*surface.length,
+      morpheme.cost, //morpheme.cost*surface.length,
       morpheme.feature,
       morpheme.mType,
       wrapRefArray(Array(Pos.UNKNOWN)))
