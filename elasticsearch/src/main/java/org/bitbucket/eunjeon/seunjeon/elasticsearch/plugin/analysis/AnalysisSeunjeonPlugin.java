@@ -4,16 +4,17 @@ import org.bitbucket.eunjeon.seunjeon.elasticsearch.index.analysis.SeunjeonToken
 import org.elasticsearch.index.analysis.AnalysisModule;
 import org.elasticsearch.plugins.Plugin;
 
-public class SeunjeonPlugin  extends Plugin {
+public class AnalysisSeunjeonPlugin extends Plugin {
     @Override
     public String name() {
-        return "seunjeon-elasticsearch";
+        return "analysis-seunjeon";
     }
 
     @Override
     public String description() {
-        return "mecab-ko-lucene-analyzer analysis support";
+        return "seunjeon analysis support. https://bitbucket.org/eunjeon/seunjeon";
     }
+
     public void onModule(AnalysisModule module) {
         module.addTokenizer("seunjeon_tokenizer", SeunjeonTokenizerFactory.class);
     }

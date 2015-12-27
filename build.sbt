@@ -4,6 +4,8 @@ lazy val commonSettings = Seq(
   version := "0.7.0-SNAPSHOT"
 )
 
+// TODO: http://stackoverflow.com/questions/27466869/download-a-zip-from-url-and-extract-it-in-resource-using-sbt
+
 lazy val seunjeon = (project in file(".")).
   settings(commonSettings: _*).
   settings(
@@ -62,20 +64,25 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "2.1.1",
+      "org.elasticsearch" % "elasticsearch" % "2.1.0" % "provided",
       "junit" % "junit" % "4.12" % "test"
     ),
 
-    assemblyMergeStrategy in assembly := {
-      case PathList("org", "joda", "time", "base", "BaseDateTime.class") => new IncludeFromJar("joda-time-2.8.2.jar")
-      case x => (assemblyMergeStrategy in assembly).value(x)
-    },
+//    assemblyMergeStrategy in assembly := {
+//      case PathList("org", "joda", "time", "base", "BaseDateTime.class") => new IncludeFromJar("joda-time-2.8.2.jar")
+//      case PathList("plugin-descriptor.properties") => MergeStrategy.discard
+//      case x => (assemblyMergeStrategy in assembly).value(x)
+//    },
 
     assembly <<= assembly map { (f: File) =>
       val zipPath = f.getPath.substring(0, f.getPath.length - f.ext.length - 1) + ".zip"
       val zipFile = file(zipPath)
-      IO.zip(List((f, f.toPath.getFileName.toString)), zipFile)
+
+      val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
+      IO.zip(List((f, f.toPath.getFileName.toString), (propertiesFile, propertiesFile.toPath.getFileName.toString)), zipFile)
       println("GENERATED PACKAGE LOCATION:  " + zipPath)
       zipFile
-    }
+    },
+    test in assembly := {}
   )
+
