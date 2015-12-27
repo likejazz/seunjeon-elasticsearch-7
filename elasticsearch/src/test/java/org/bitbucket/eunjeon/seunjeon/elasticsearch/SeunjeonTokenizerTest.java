@@ -11,6 +11,7 @@ public class SeunjeonTokenizerTest {
 
     @Test
     public void testTokenize() throws IOException {
+        System.out.println(tokenize("영호와김고은"));
         System.out.println(tokenize("전자"));
         System.out.println(tokenize("전자는"));
         System.out.println(tokenize("삼성전자는"));

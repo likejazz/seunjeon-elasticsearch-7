@@ -23,7 +23,7 @@ object TokenBuilder {
       val nodes = eojeol.nodes.filter(isIndexNode).flatMap(deCompound)
 
       // TODO: 어절 색인 옵션으로 뺄까?
-      if (nodes.length > 1) {
+      if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
         val eojeolNode = LuceneToken(0, nodes.length, eojeol.startPos, eojeol.endPos, eojeol.surface, "EOJEOL")
         nodes.head +: eojeolNode +: nodes.tail
       } else {
