@@ -15,7 +15,6 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
@@ -28,10 +27,22 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    val bestPath = text.split("\n").flatMap(buildLattice(_).getBestPath())
+    // TODO: offset 계산해줘야 함...  ㅠㅠ
+    var offset = 0
+    val lineSeparator = System.lineSeparator()
+    val bestPath = text.split(lineSeparator).
+      map{str =>
+        val path = buildLattice(str).getBestPath(offset)
+        offset += str.length + lineSeparator.length
+        path
+      }.flatMap(removeHeadLast)
 
-    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)
+    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)//.flatMap(LNode.deInflect)
     else bestPath
+  }
+
+  def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
+    nodes.slice(1, nodes.length - 1)
   }
 
   private def buildLattice(text: String): Lattice = {
@@ -84,17 +95,17 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     if (userDict != null) {
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
-    var idx = 0
-    val nodes = new Array[LNode](searchedTerms.length)
-    while(idx < searchedTerms.length) {
-      val term = searchedTerms(idx)
-      nodes(idx) = LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
-      idx += 1
-    }
-    nodes
-//    searchedTerms.map(term =>
-//      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
-//    )
+//    var idx = 0
+//    val nodes = new Array[LNode](searchedTerms.length)
+//    while(idx < searchedTerms.length) {
+//      val term = searchedTerms(idx)
+//      nodes(idx) = LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+//      idx += 1
+//    }
+//    nodes
+    searchedTerms.map(term =>
+      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+    )
   }
 
   private def get1NLengthTerms(charsetOffset: Int,

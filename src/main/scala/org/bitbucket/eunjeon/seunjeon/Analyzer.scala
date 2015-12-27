@@ -36,14 +36,10 @@ object Analyzer {
   def setUserDict(iterator: Iterator[String]): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator))
   def setUserDict(iterator: java.util.Iterator[String]): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
 
-  def parseEojeol(sentence: String): Seq[Eojeol] = Eojeoler.build(parse(sentence), deCompound=false)
-  def parseEojeol(lnodes: Seq[LNode]): Seq[Eojeol] = Eojeoler.build(lnodes, deCompound=false)
-  def parseEojeol(sentence: String, deCompound: Boolean): Seq[Eojeol] = Eojeoler.build(parse(sentence), deCompound)
-  def parseEojeol(lnodes: Seq[LNode], deCompound: Boolean): Seq[Eojeol] = Eojeoler.build(lnodes, deCompound)
-  def parseEojeolJava(sentence: String): java.util.List[Eojeol] = Eojeoler.build(parse(sentence), deCompound=false).asJava
-  def parseEojeolJava(lnodes: List[LNode]): java.util.List[Eojeol] = Eojeoler.build(lnodes, deCompound=false).asJava
-  def parseEojeolJava(sentence: String, deCompound: Boolean): java.util.List[Eojeol] = Eojeoler.build(parse(sentence), deCompound).asJava
-  def parseEojeolJava(lnodes: List[LNode], deCompound: Boolean): java.util.List[Eojeol] = Eojeoler.build(lnodes, deCompound).asJava
+  def parseEojeol(sentence: String): Seq[Eojeol] = Eojeoler.build(parse(sentence))
+  def parseEojeol(lnodes: Seq[LNode]): Seq[Eojeol] = Eojeoler.build(lnodes)
+  def parseEojeolJava(sentence: String): java.util.List[Eojeol] = Eojeoler.build(parse(sentence)).asJava
+  def parseEojeolJava(lnodes: List[LNode]): java.util.List[Eojeol] = Eojeoler.build(lnodes).asJava
 
   def resetUserDict(): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(Seq[String]().toIterator))
 }

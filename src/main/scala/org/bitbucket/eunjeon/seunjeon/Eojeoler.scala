@@ -1,27 +1,18 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
+import scala.collection.JavaConverters._
 
 case class Eojeol(var nodes:Seq[LNode]) {
   val surface = nodes.map(_.morpheme.surface).mkString
   val startPos = nodes.head.startPos
   val endPos = nodes.last.endPos
 
-  def deCompound(): Eojeol = {
-    nodes = nodes.flatMap { node =>
-      val deCompounded = LNode.deCompound(node).toList
-      if (deCompounded.size > 1) {
-        deCompounded.head :: node :: deCompounded.tail ::: Nil
-      } else {
-        deCompounded
-      }
-    }
-    this
-  }
+  def nodesJava = nodes.asJava
 }
 
 object Eojeoler {
-  def build(nodes:Seq[LNode], deCompound:Boolean):Seq[Eojeol] = {
+  def build(nodes:Seq[LNode]):Seq[Eojeol] = {
     val result = mutable.ListBuffer[Eojeol]()
     var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
     nodes.sliding(2).foreach { slid =>
@@ -37,14 +28,11 @@ object Eojeoler {
     }
     // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
     result.append(Eojeol(eojeolNodes))
-    if (deCompound) {
-      result.map(_.deCompound())
-    } else {
-      result
-    }
+    result
   }
 
   val appendable = Set(
+    Pos.XS -> Pos.EP,
     Pos.V -> Pos.EP,
 
     Pos.EP -> Pos.E,

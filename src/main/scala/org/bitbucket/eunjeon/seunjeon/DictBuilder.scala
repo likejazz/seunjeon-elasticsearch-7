@@ -38,8 +38,6 @@ object DictBuilder {
   val CONNECTION_COST_FILENAME = "/connection_cost.dat"
   val CONNECTION_COST = DICT_PATH + CONNECTION_COST_FILENAME
 
-  val CHAR_DEF_FILENAME = "/char.def"
-  val CHAR_DEF = DICT_PATH + CHAR_DEF_FILENAME
   val UNK_DEF_FILENAME = "/unk.def"
   val UNK_DEF = DICT_PATH + UNK_DEF_FILENAME
   val LEFT_ID_DEF_FILENAME = "/left-id.def"
@@ -50,7 +48,6 @@ object DictBuilder {
   def main(args: Array[String]): Unit = {
     clear()
 
-    copyCharDef()
     copyUnkDef()
     copyLeftIdDef()
     copyRightIdDef()
@@ -62,10 +59,6 @@ object DictBuilder {
     buildConnectionCostDict()
 
     println("complete")
-  }
-
-  private def copyCharDef(): Unit = {
-    copyDefFile(CHAR_DEF_FILENAME)
   }
 
   private def copyUnkDef(): Unit = {
@@ -103,6 +96,8 @@ object DictBuilder {
     lexiconDict.save(dictPath + File.separator + TERM_DICT_FILENAME,
                      dictPath + File.separator + DICT_MAPPER_FILENAME,
                      dictPath + File.separator + TERM_TRIE_FILENAME)
+    println("building LexiconDict OK. " +
+      s"(${lexiconDict.getDictionaryInfo()})")
   }
 
   private def clear(): Unit = {

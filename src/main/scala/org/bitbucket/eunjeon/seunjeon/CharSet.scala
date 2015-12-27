@@ -62,7 +62,7 @@ object CharDef {
   def loadChar = {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Morpheme)]()
-    val inputStream = getClass.getResourceAsStream(DictBuilder.CHAR_DEF)
+    val inputStream = getClass.getResourceAsStream("/char.def")
     Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>
@@ -95,7 +95,8 @@ object CharDef {
   }
 
   def splitCharSet(text: String): Seq[CharSet] = {
-    val charsets = new mutable.ListBuffer[CharSet]
+    // TODO: ArrayBuffer 크기를 미리 잡아두어서 속도는 빠르겠지만 메모리 많이 사용할 수도 있음.
+    val charsets = new mutable.ArrayBuffer[CharSet](text.length)
     if (text.length == 0) {
       return charsets
     }
