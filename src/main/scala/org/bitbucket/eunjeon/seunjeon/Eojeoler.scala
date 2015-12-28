@@ -13,22 +13,26 @@ case class Eojeol(var nodes:Seq[LNode]) {
 
 object Eojeoler {
   def build(nodes:Seq[LNode]):Seq[Eojeol] = {
-    val result = mutable.ListBuffer[Eojeol]()
-    var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
-    nodes.sliding(2).foreach { slid =>
-      val pre = slid.head
-      val cur = slid.last
-      // TODO: contains 더 빠르게 자료구조 바꿔야 함.
-      if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
-        eojeolNodes = eojeolNodes :+ cur
-      } else {
-        result.append(Eojeol(eojeolNodes))
-        eojeolNodes = mutable.LinearSeq[LNode](cur)
+    if (nodes.length == 1) {
+      Seq(Eojeol(nodes))
+    } else {
+      val result = mutable.ListBuffer[Eojeol]()
+      var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
+      nodes.sliding(2).foreach { slid =>
+        val pre = slid.head
+        val cur = slid.last
+        // TODO: contains 더 빠르게 자료구조 바꿔야 함.
+        if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
+          eojeolNodes = eojeolNodes :+ cur
+        } else {
+          result.append(Eojeol(eojeolNodes))
+          eojeolNodes = mutable.LinearSeq[LNode](cur)
+        }
       }
+      // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
+      result.append(Eojeol(eojeolNodes))
+      result
     }
-    // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
-    result.append(Eojeol(eojeolNodes))
-    result
   }
 
   val appendable = Set(

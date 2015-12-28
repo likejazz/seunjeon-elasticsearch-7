@@ -27,11 +27,9 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    // TODO: offset 계산해줘야 함...  ㅠㅠ
     var offset = 0
     val lineSeparator = System.lineSeparator()
-    val bestPath = text.split(lineSeparator).
-      map{str =>
+    val bestPath = text.split(lineSeparator).map{str =>
         val path = buildLattice(str).getBestPath(offset)
         offset += str.length + lineSeparator.length
         path
@@ -41,7 +39,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     else bestPath
   }
 
-  def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
+  private def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
     nodes.slice(1, nodes.length - 1)
   }
 
