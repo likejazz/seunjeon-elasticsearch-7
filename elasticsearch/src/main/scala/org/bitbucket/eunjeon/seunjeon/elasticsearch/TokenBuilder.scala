@@ -13,7 +13,11 @@ object TokenBuilder {
     Pos.SN, // 숫자
     Pos.XR, // 어근
     Pos.V, // 용언
-    Pos.UNKNOWN)
+    Pos.UNK)
+
+  def setUserDict(userWords:Array[String]): Unit = {
+    Analyzer.setUserDict(userWords.toSeq.iterator)
+  }
 
   def tokenize(document:String): java.util.List[LuceneToken] = {
     val analyzed = Analyzer.parseEojeol(document).map(_.deCompound()).map(_.deInflect())
@@ -22,7 +26,7 @@ object TokenBuilder {
 
       // TODO: 어절 색인 옵션으로 뺄까?
       if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
-        val eojeolNode = LuceneToken(s"${eojeol.surface}", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJEOL")
+        val eojeolNode = LuceneToken(s"${eojeol.surface}/EOJ", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJ")
         nodes.head +: eojeolNode +: nodes.tail
       } else {
         nodes

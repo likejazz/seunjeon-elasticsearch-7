@@ -58,11 +58,11 @@ object Eojeoler {
     Pos.N -> Pos.XS,
     Pos.M -> Pos.XS,
     Pos.XR -> Pos.XS,
-    Pos.UNKNOWN -> Pos.XS,
+    Pos.UNK -> Pos.XS,
 
     Pos.N -> Pos.VCP,
     Pos.XS -> Pos.VCP,
-    Pos.UNKNOWN -> Pos.VCP,
+    Pos.UNK -> Pos.VCP,
 
     Pos.N -> Pos.J,
     Pos.XS -> Pos.J,
@@ -72,7 +72,7 @@ object Eojeoler {
     Pos.SL -> Pos.J,
     Pos.SH -> Pos.J,
     Pos.SN -> Pos.J,
-    Pos.UNKNOWN -> Pos.J,
+    Pos.UNK -> Pos.J,
 
     Pos.XP -> Pos.N
   )

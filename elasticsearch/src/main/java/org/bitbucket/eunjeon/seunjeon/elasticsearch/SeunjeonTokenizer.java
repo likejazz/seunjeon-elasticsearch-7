@@ -18,9 +18,18 @@ public class SeunjeonTokenizer extends Tokenizer {
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
 
-
     public SeunjeonTokenizer() {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        initAttribute();
+    }
+
+    public SeunjeonTokenizer(String[] userWords) {
+        super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        initAttribute();
+        TokenBuilder.setUserDict(userWords);
+    }
+
+    private void initAttribute() {
         charTermAtt = addAttribute(CharTermAttribute.class);
         posIncrAtt = addAttribute(PositionIncrementAttribute.class);
         posLenAtt = addAttribute(PositionLengthAttribute.class);

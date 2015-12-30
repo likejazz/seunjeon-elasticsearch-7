@@ -11,6 +11,7 @@ import org.elasticsearch.index.analysis.AbstractTokenizerFactory;
 import org.elasticsearch.index.settings.IndexSettingsService;
 
 public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
+    String[] userWords;
 
     @Inject
     public SeunjeonTokenizerFactory(Index index,
@@ -18,10 +19,11 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
                                     @Assisted String name,
                                     @Assisted Settings settings) {
         super(index, indexSettingsService.getSettings(), name, settings);
+        userWords = settings.getAsArray("user_words");
     }
 
     @Override
     public Tokenizer create() {
-        return new SeunjeonTokenizer();
+        return new SeunjeonTokenizer(userWords);
     }
 }
