@@ -9,17 +9,18 @@ import scala.collection.mutable
 
 
 object Morpheme {
-  def createUnknown(surface:String, morpheme: Morpheme): Morpheme = {
+  def apply(surface:String, morpheme: Morpheme): Morpheme = {
     Morpheme(surface,
       morpheme.leftId,
       morpheme.rightId,
       morpheme.cost, //morpheme.cost*surface.length,
       morpheme.feature,
       morpheme.mType,
-      wrapRefArray(Array(Pos.UNKNOWN)))
+      morpheme.poses)
+//      wrapRefArray(Array(Pos.UNKNOWN)))
   }
 
-  def deComposition(feature7:String): Seq[Morpheme] = {
+  def deComposite(feature7:String): Seq[Morpheme] = {
     for (feature7 <- feature7.split("[+]")) yield {
       Morpheme.createFromFeature7(feature7)
     }
@@ -59,6 +60,10 @@ case class Morpheme(var surface:String,
                     var feature:mutable.WrappedArray[String],
                     var mType:MorphemeType,
                     var poses:mutable.WrappedArray[Pos]) extends Serializable {
+
+  def deComposite(): Seq[Morpheme] = {
+    Morpheme.deComposite(feature(7))
+  }
 
   @throws(classOf[IOException])
   private def writeObject(out: ObjectOutputStream): Unit = {

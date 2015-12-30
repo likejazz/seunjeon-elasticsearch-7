@@ -2,23 +2,30 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
-import org.bitbucket.eunjeon.seunjeon.Analyzer;
 import org.junit.Test;
 
 import java.io.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class SeunjeonTokenizerTest {
 
     @Test
     public void testTokenize() throws IOException {
-        System.out.println(tokenize("영호와김고은"));
-        System.out.println(tokenize("전자"));
-        System.out.println(tokenize("전자는"));
-        System.out.println(tokenize("삼성전자는"));
-        System.out.println(tokenize("LG전자는"));
+        assertEquals("eojeol",
+                "유영호/N:1:1:0:3:N;유영호와:0:1:0:4:EOJEOL;이용운/N:1:1:4:7:N;", tokenize("유영호와이용운"));
+        assertEquals("compound + eojeol",
+                "삼성/N:1:1:0:2:N;삼성전자는:0:2:0:5:EOJEOL;전자/N:1:1:2:4:N;", tokenize("삼성전자는"));
+        assertEquals("noun noun eojeol",
+                "LG/SL:1:1:0:2:SL;전자/N:1:1:2:4:N;전자는:0:1:2:5:EOJEOL;", tokenize("LG전자는"));
+        assertEquals("deInflect",
+                "직무/N:1:1:0:2:N;직무를:0:1:0:3:EOJEOL;행하/V:1:1:4:6:V;행한다:0:1:4:7:EOJEOL;", tokenize("직무를 행한다."));
+        assertEquals("number, symbol",
+                "55/SN:1:1:0:2:SN;32/SN:1:1:3:5:SN;ms/SL:1:1:5:7:SL;", tokenize("55.32ms"));
+
+        System.out.println(tokenize("들어가신다."));
         System.out.println(tokenize("아버지가방에들어가신다."));
         System.out.println(tokenize("무궁화꽃이피었습니다."));
-        System.out.println(tokenize("직무를 행한다."));
     }
 
     @Test

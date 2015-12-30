@@ -45,7 +45,7 @@ public class SeunjeonTokenizer extends Tokenizer {
             offsetAtt.setOffset(
                     correctOffset(pos.startOffset()),
                     correctOffset(pos.endOffset()));
-            String term = pos.surface();
+            String term = pos.charTerm();
             charTermAtt.copyBuffer(term.toCharArray(), 0, term.length());
             typeAtt.setType(pos.poses());
 

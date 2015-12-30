@@ -9,6 +9,16 @@ case class Eojeol(var nodes:Seq[LNode]) {
   val endPos = nodes.last.endPos
 
   def nodesJava = nodes.asJava
+
+  def deCompound(): Eojeol = {
+    nodes = nodes.flatMap(_.deCompound())
+    this
+  }
+
+  def deInflect(): Eojeol = {
+    nodes = nodes.flatMap(_.deInflect())
+    this
+  }
 }
 
 object Eojeoler {

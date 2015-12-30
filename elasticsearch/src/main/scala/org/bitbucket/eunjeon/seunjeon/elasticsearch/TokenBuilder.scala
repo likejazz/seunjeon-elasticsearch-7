@@ -16,35 +16,18 @@ object TokenBuilder {
     Pos.UNKNOWN)
 
   def tokenize(document:String): java.util.List[LuceneToken] = {
-    // TODO: 어절, 복합명사 분해
-    // TODO: 여러 문장의 offset 계산
-    val analyzed = Analyzer.parseEojeol(document)
+    val analyzed = Analyzer.parseEojeol(document).map(_.deCompound()).map(_.deInflect())
     analyzed.flatMap { eojeol =>
-      val nodes = eojeol.nodes.filter(isIndexNode).flatMap(deCompound)
+      val nodes = eojeol.nodes.filter(isIndexNode).map(LuceneToken(_))
 
       // TODO: 어절 색인 옵션으로 뺄까?
       if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
-        val eojeolNode = LuceneToken(0, nodes.length, eojeol.startPos, eojeol.endPos, eojeol.surface, "EOJEOL")
+        val eojeolNode = LuceneToken(s"${eojeol.surface}", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJEOL")
         nodes.head +: eojeolNode +: nodes.tail
       } else {
         nodes
       }
     }.asJava
-  }
-
-  private def deCompound(node:LNode): Seq[LuceneToken] = {
-    // TODO: decompound option으로 뺴야할까?
-    if (node.morpheme.mType == MorphemeType.COMPOUND) {
-      LNode.deComposite(node).map { n =>
-        LuceneToken(1, 1, n.startPos, n.endPos, n.morpheme.surface, n.morpheme.poses.mkString("+"))
-      }
-    } else {
-      LuceneToken(1, 1,
-        node.startPos,
-        node.endPos,
-        node.morpheme.surface,
-        node.morpheme.poses.mkString("+")) :: Nil
-    }
   }
 
   private def isIndexNode(node:LNode): Boolean = {
@@ -54,10 +37,3 @@ object TokenBuilder {
   }
 }
 
-case class LuceneToken(
-  positionIncr:Int,
-  positionLength:Int,
-  startOffset:Int,
-  endOffset:Int,
-  surface:String,
-  poses:String)
