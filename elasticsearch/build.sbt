@@ -1,2 +1,2 @@
-name := "seunjeon-elasticsearch"
+name := "elasticsearch-analysis-seunjeon"
 

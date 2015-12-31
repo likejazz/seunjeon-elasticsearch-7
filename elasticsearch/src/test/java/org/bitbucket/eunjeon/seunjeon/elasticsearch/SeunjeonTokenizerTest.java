@@ -29,7 +29,6 @@ public class SeunjeonTokenizerTest {
         assertEquals("number, symbol",
                 "55/SN:1:1:0:2:SN;32/SN:1:1:3:5:SN;ms/SL:1:1:5:7:SL;", tokenize("55.32ms", t));
 
-        System.out.println(tokenize("들어가신다.", t));
         System.out.println(tokenize("아버지가방에들어가신다.", t));
         System.out.println(tokenize("무궁화꽃이피었습니다.", t));
     }
@@ -40,12 +39,38 @@ public class SeunjeonTokenizerTest {
         assertEquals("user words",
                 "버카충/UNK:1:1:0:3:UNK;", tokenize("버카충", t));
 
-        TokenizerOptions options = new TokenizerOptions();
-        options.userWords = new String[]{"버카충"};
-
-        Tokenizer ut = new SeunjeonTokenizer(options);
+        Tokenizer ut = new SeunjeonTokenizer(TokenizerOptions.create().setUserWords(new String[]{"버카충"}));
         assertEquals("user words",
                 "버카충/N:1:1:0:3:N;", tokenize("버카충", ut));
+    }
+
+    @Test
+    public void testDeCompound() throws IOException {
+        assertEquals("삼성/N:1:1:0:2:N;삼성전자/EOJ:0:2:0:4:EOJ;전자/N:1:1:2:4:N;",
+                tokenize("삼성전자", new SeunjeonTokenizer(TokenizerOptions.create())));
+
+        assertEquals("삼성전자/N:1:1:0:4:N;",
+                tokenize("삼성전자", new SeunjeonTokenizer(TokenizerOptions.create().setDeCompound(false))));
+    }
+
+    @Test
+    public void testDeInflect() throws IOException {
+        assertEquals("슬프/V:1:1:0:2:V;슬픈/EOJ:0:1:0:2:EOJ;",
+                tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create())));
+
+        assertEquals("슬픈/V+E:1:1:0:2:V+E;",
+                tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create().setDeInflect(false))));
+    }
+
+    @Test
+    public void testIndexPoses() throws IOException {
+        assertEquals("꽃/N:1:1:0:1:N;꽃이/EOJ:0:1:0:2:EOJ;피/V:1:1:2:3:V;피다/EOJ:0:1:2:4:EOJ;",
+                tokenize("꽃이피다", new SeunjeonTokenizer(TokenizerOptions.create())));
+
+        assertEquals("꽃/N:1:1:0:1:N;",
+                tokenize("꽃이피다", new SeunjeonTokenizer(TokenizerOptions.create().
+                        setIndexPoses(new String[]{"N"}).
+                        setIndexEojeol(false))));
     }
 
     @Test

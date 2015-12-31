@@ -33,17 +33,18 @@ class TokenBuilder(deCompound:Boolean, deInflect:Boolean, indexEojeol:Boolean, i
   }
 
   def tokenize(document:String): java.util.List[LuceneToken] = {
-    val analyzed = Analyzer.parseEojeol(document).map(_.deCompound()).map(_.deInflect())
-    analyzed.flatMap { eojeol =>
+    val analyzed = Analyzer.parseEojeol(document)
+    val deCompounded = if (this.deCompound) analyzed.map(_.deCompound()) else analyzed
+    val deInflected = if (this.deInflect) deCompounded.map(_.deInflect()) else deCompounded
+    deInflected.flatMap { eojeol =>
       val nodes = eojeol.nodes.filter(isIndexNode).map(LuceneToken(_))
 
-      // TODO: 어절 색인 옵션으로 뺄까?
-      if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
-        val eojeolNode = LuceneToken(s"${eojeol.surface}/EOJ", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJ")
-        nodes.head +: eojeolNode +: nodes.tail
-      } else {
-        nodes
-      }
+      if (this.indexEojeol) {
+        if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
+          val eojeolNode = LuceneToken(s"${eojeol.surface}/EOJ", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJ")
+          nodes.head +: eojeolNode +: nodes.tail
+        } else nodes
+      } else nodes
     }.asJava
   }
 

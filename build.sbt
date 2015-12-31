@@ -1,7 +1,7 @@
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   organization := "org.bitbucket.eunjeon",
-  version := "0.7.0-SNAPSHOT"
+  version := "1.0.0-SNAPSHOT"
 )
 
 // TODO: http://stackoverflow.com/questions/27466869/download-a-zip-from-url-and-extract-it-in-resource-using-sbt
@@ -68,12 +68,6 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
       "junit" % "junit" % "4.12" % "test"
     ),
 
-//    assemblyMergeStrategy in assembly := {
-//      case PathList("org", "joda", "time", "base", "BaseDateTime.class") => new IncludeFromJar("joda-time-2.8.2.jar")
-//      case PathList("plugin-descriptor.properties") => MergeStrategy.discard
-//      case x => (assemblyMergeStrategy in assembly).value(x)
-//    },
-
     assembly <<= assembly map { (f: File) =>
       val zipPath = f.getPath.substring(0, f.getPath.length - f.ext.length - 1) + ".zip"
       val zipFile = file(zipPath)
@@ -83,6 +77,9 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
       println("GENERATED PACKAGE LOCATION:  " + zipPath)
       zipFile
     },
+
+    assemblyJarName in assembly := s"${name.value}-${version.value}.jar",
+
     test in assembly := {}
   )
 

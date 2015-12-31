@@ -28,12 +28,12 @@ public class SeunjeonTokenizer extends Tokenizer {
     public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
         initAttribute();
-        TokenBuilder.setUserDict(options.userWords);
+        TokenBuilder.setUserDict(options.getUserWords());
         tokenBuilder = new TokenBuilder(
-                options.deCompound,
-                options.deInflect,
-                options.indexEojeol,
-                TokenBuilder.convertPos(options.indexPoses));
+                options.getDeCompound(),
+                options.getDeInflect(),
+                options.getIndexEojeol(),
+                TokenBuilder.convertPos(options.getIndexPoses()));
     }
 
     private void initAttribute() {
