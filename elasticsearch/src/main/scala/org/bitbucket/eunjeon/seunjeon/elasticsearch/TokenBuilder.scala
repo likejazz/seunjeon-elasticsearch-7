@@ -6,7 +6,7 @@ import scala.collection.JavaConverters._
 
 
 object TokenBuilder {
-  val indexPoses = Set[Pos](
+  val INDEX_POSES = Set[Pos](
     Pos.N,  // 체언
     Pos.SL, // 외국어
     Pos.SH, // 한자
@@ -15,8 +15,21 @@ object TokenBuilder {
     Pos.V, // 용언
     Pos.UNK)
 
+  lazy val INDEX_POSES_JAVA = INDEX_POSES.map(_.toString).toArray
+
+  def convertPos(poses: Array[String]): Set[Pos] = {
+    poses.map(Pos.withName).toSet
+  }
+
   def setUserDict(userWords:Array[String]): Unit = {
     Analyzer.setUserDict(userWords.toSeq.iterator)
+  }
+}
+
+
+class TokenBuilder(deCompound:Boolean, deInflect:Boolean, indexEojeol:Boolean, indexPoses:Set[Pos]) {
+  def this() {
+    this(true, true, true, TokenBuilder.INDEX_POSES)
   }
 
   def tokenize(document:String): java.util.List[LuceneToken] = {
@@ -39,5 +52,5 @@ object TokenBuilder {
       node.morpheme.mType == MorphemeType.INFLECT ||
       (node.morpheme.mType == MorphemeType.COMMON && indexPoses.contains(node.morpheme.poses.head))
   }
-}
 
+}

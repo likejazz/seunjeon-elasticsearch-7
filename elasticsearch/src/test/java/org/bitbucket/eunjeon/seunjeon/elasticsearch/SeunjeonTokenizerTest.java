@@ -40,7 +40,10 @@ public class SeunjeonTokenizerTest {
         assertEquals("user words",
                 "버카충/UNK:1:1:0:3:UNK;", tokenize("버카충", t));
 
-        Tokenizer ut = new SeunjeonTokenizer(new String[]{"버카충"});
+        TokenizerOptions options = new TokenizerOptions();
+        options.userWords = new String[]{"버카충"};
+
+        Tokenizer ut = new SeunjeonTokenizer(options);
         assertEquals("user words",
                 "버카충/N:1:1:0:3:N;", tokenize("버카충", ut));
     }

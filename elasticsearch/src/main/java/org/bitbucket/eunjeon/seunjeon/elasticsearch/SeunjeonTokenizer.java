@@ -17,16 +17,23 @@ public class SeunjeonTokenizer extends Tokenizer {
     private OffsetAttribute offsetAtt;
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
+    private TokenBuilder tokenBuilder;
 
     public SeunjeonTokenizer() {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
         initAttribute();
+        tokenBuilder = new TokenBuilder();
     }
 
-    public SeunjeonTokenizer(String[] userWords) {
+    public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
         initAttribute();
-        TokenBuilder.setUserDict(userWords);
+        TokenBuilder.setUserDict(options.userWords);
+        tokenBuilder = new TokenBuilder(
+                options.deCompound,
+                options.deInflect,
+                options.indexEojeol,
+                TokenBuilder.convertPos(options.indexPoses));
     }
 
     private void initAttribute() {
@@ -40,7 +47,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     @Override
     public void reset() throws IOException {
         super.reset();
-        tokensQueue = new LinkedList(TokenBuilder.tokenize(getDocument()));
+        tokensQueue = new LinkedList(tokenBuilder.tokenize(getDocument()));
     }
 
     @Override

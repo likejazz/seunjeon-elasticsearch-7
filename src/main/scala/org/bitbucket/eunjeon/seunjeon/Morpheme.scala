@@ -17,7 +17,6 @@ object Morpheme {
       morpheme.feature,
       morpheme.mType,
       morpheme.poses)
-//      wrapRefArray(Array(Pos.UNKNOWN)))
   }
 
   def deComposite(feature7:String): Seq[Morpheme] = {
