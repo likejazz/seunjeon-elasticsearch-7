@@ -2,13 +2,17 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{ObjectInputStream, ObjectOutputStream, IOException}
 
+import com.typesafe.scalalogging.Logger
 import org.bitbucket.eunjeon.seunjeon.MorphemeType.MorphemeType
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
 
 
 object Morpheme {
+  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+
   def apply(surface:String, morpheme: Morpheme): Morpheme = {
     Morpheme(surface,
       morpheme.leftId,
@@ -20,8 +24,12 @@ object Morpheme {
   }
 
   def deComposite(feature7:String): Seq[Morpheme] = {
-    for (feature7 <- feature7.split("[+]")) yield {
-      Morpheme.createFromFeature7(feature7)
+    try {
+      for (feature7 <- feature7.split("[+]")) yield Morpheme.createFromFeature7(feature7)
+    } catch {
+      case _: Throwable =>
+        logger.warn(s"invalid feature7 format : $feature7")
+        Seq[Morpheme]()
     }
   }
 
@@ -31,13 +39,10 @@ object Morpheme {
     */
   def createFromFeature7(feature7:String): Morpheme = {
     val splited = feature7.split("/")
-    // TODO: leftId, rightId, cost, etc ...
     Morpheme(
       splited(0),
-      -1,
-      -1,
-      0,
-      wrapRefArray(Array[String](splited(1))),  // TODO: feature 를 적당히 만들어 주자.
+      -1, -1, 0,
+      wrapRefArray(Array[String](splited(1))), // TODO: feature 를 적당히 만들어 주자.
       MorphemeType.COMMON,
       wrapRefArray(Array(Pos(splited(1)))))
   }

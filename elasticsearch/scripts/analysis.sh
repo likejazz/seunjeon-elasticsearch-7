@@ -10,11 +10,11 @@ curl -XPUT $ES/$ESIDX/?pretty -d '{
     "index":{
       "analysis":{
         "analyzer":{
-          "seunjeon":{
+          "korean":{
             "type":"custom",
             "tokenizer":"seunjeon_tokenizer"
           },
-          "noun": {
+          "korean_noun": {
             "type":"custom",
             "tokenizer":"noun_tokenizer"
           }
@@ -37,10 +37,10 @@ curl -XPUT $ES/$ESIDX/?pretty -d '{
 
 sleep 1
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=seunjeon\&pretty -d '낄끼빠빠'
+curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=seunjeon\&pretty -d '삼성전자'
+curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '삼성전자'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=seunjeon\&pretty -d '슬픈'
+curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '슬픈'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=noun\&pretty -d '꽃이피다'
+curl -XGET $ES/$ESIDX/_analyze?analyzer=korean_noun\&pretty -d '꽃이피다'

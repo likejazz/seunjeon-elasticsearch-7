@@ -23,7 +23,9 @@ case class Eojeol(var nodes:Seq[LNode]) {
 
 object Eojeoler {
   def build(nodes:Seq[LNode]):Seq[Eojeol] = {
-    if (nodes.length == 1) {
+    if (nodes.isEmpty) {
+      Seq()
+    } else if (nodes.length == 1) {
       Seq(Eojeol(nodes))
     } else {
       val result = mutable.ListBuffer[Eojeol]()

@@ -1,5 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
+import scala.collection.JavaConverters._
+
 
 object LNode {
   def dePreAnalysis(node: LNode): Seq[LNode] =
@@ -56,7 +58,15 @@ case class LNode(morpheme:Morpheme,
     LNode.deCompound(this)
   }
 
+  def deCompoundJava(): java.util.List[LNode] = {
+    deCompound().asJava
+  }
+
   def deInflect(): Seq[LNode] = {
     LNode.deInflect(this)
+  }
+
+  def deInflectJava(): java.util.List[LNode] = {
+    deInflect().asJava
   }
 }

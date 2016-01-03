@@ -105,12 +105,15 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
     println("# AFTER ")
     Analyzer.parse("덕후냄새가 난다.").foreach(println)
-
   }
 
   test("README eojeol") {
     Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
     Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).foreach(println)
+  }
+
+  test("empty eojeol") {
+    assert(Seq[Eojeol]() == Analyzer.parseEojeol(""))
   }
 
   test("dePreAnalysis") {
