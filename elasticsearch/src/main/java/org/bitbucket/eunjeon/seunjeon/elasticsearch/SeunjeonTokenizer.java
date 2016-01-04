@@ -17,10 +17,26 @@ public class SeunjeonTokenizer extends Tokenizer {
     private OffsetAttribute offsetAtt;
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
-
+    private TokenBuilder tokenBuilder;
 
     public SeunjeonTokenizer() {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        initAttribute();
+        tokenBuilder = new TokenBuilder();
+    }
+
+    public SeunjeonTokenizer(TokenizerOptions options) {
+        super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        initAttribute();
+        TokenBuilder.setUserDict(options.getUserWords());
+        tokenBuilder = new TokenBuilder(
+                options.getDeCompound(),
+                options.getDeInflect(),
+                options.getIndexEojeol(),
+                TokenBuilder.convertPos(options.getIndexPoses()));
+    }
+
+    private void initAttribute() {
         charTermAtt = addAttribute(CharTermAttribute.class);
         posIncrAtt = addAttribute(PositionIncrementAttribute.class);
         posLenAtt = addAttribute(PositionLengthAttribute.class);
@@ -31,7 +47,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     @Override
     public void reset() throws IOException {
         super.reset();
-        tokensQueue = new LinkedList(TokenBuilder.tokenize(getDocument()));
+        tokensQueue = new LinkedList(tokenBuilder.tokenize(getDocument()));
     }
 
     @Override
@@ -45,7 +61,7 @@ public class SeunjeonTokenizer extends Tokenizer {
             offsetAtt.setOffset(
                     correctOffset(pos.startOffset()),
                     correctOffset(pos.endOffset()));
-            String term = pos.surface();
+            String term = pos.charTerm();
             charTermAtt.copyBuffer(term.toCharArray(), 0, term.length());
             typeAtt.setType(pos.poses());
 

@@ -27,11 +27,9 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
-    // TODO: offset 계산해줘야 함...  ㅠㅠ
     var offset = 0
     val lineSeparator = System.lineSeparator()
-    val bestPath = text.split(lineSeparator).
-      map{str =>
+    val bestPath = text.split(lineSeparator).map{str =>
         val path = buildLattice(str).getBestPath(offset)
         offset += str.length + lineSeparator.length
         path
@@ -41,7 +39,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     else bestPath
   }
 
-  def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
+  private def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
     nodes.slice(1, nodes.length - 1)
   }
 
@@ -124,8 +122,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     var unknownIdx = 1
     val nodes = new Array[LNode](categoryLength)
     while (unknownIdx <= categoryLength) {
-      val unknownTerm = Morpheme.createUnknown(charset.str.substring(termOffset, termOffset + unknownIdx),
-        charset.morpheme)
+      val unknownTerm = Morpheme(charset.str.substring(termOffset, termOffset + unknownIdx), charset.morpheme)
       nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
       unknownIdx += 1
     }
@@ -133,7 +130,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
-    val fullLengthTerm = Morpheme.createUnknown(charset.str, charset.morpheme)
+    val fullLengthTerm = Morpheme.apply(charset.str, charset.morpheme)
     LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length)
   }
 }

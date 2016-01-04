@@ -1,35 +1,20 @@
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   organization := "org.bitbucket.eunjeon",
-  version := "0.7.0-SNAPSHOT"
-)
+  version := "1.0.0-SNAPSHOT",
 
-// TODO: http://stackoverflow.com/questions/27466869/download-a-zip-from-url-and-extract-it-in-resource-using-sbt
-
-lazy val seunjeon = (project in file(".")).
-  settings(commonSettings: _*).
-  settings(
-    name := "seunjeon",
-    libraryDependencies ++= Seq(
-      "com.github.takawitter" % "trie4j" % "0.9.1",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-      "com.github.tototoshi" %% "scala-csv" % "1.2.2",
-      "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
-      "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
-      "junit" % "junit" % "4.12" % "test"
-    ),
-    publishMavenStyle := true,
-    publishArtifact in Test := false,
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if (version.value.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-    },
-    pomIncludeRepository := { _ => false },
-    pomExtra := (
-      <url>http://eunjeon.blogspot.kr/</url>
+  publishMavenStyle := true,
+  publishArtifact in Test := false,
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (version.value.trim.endsWith("SNAPSHOT"))
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  },
+  pomIncludeRepository := { _ => false },
+  pomExtra := (
+    <url>http://eunjeon.blogspot.kr/</url>
       <licenses>
         <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -60,29 +45,52 @@ lazy val seunjeon = (project in file(".")).
     )
   )
 
+// TODO: http://stackoverflow.com/questions/27466869/download-a-zip-from-url-and-extract-it-in-resource-using-sbt
+
+lazy val seunjeon = (project in file(".")).
+  settings(commonSettings: _*).
+  settings(
+    name := "seunjeon",
+
+    libraryDependencies ++= Seq(
+      "com.github.takawitter" % "trie4j" % "0.9.1",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+      "com.github.tototoshi" %% "scala-csv" % "1.2.2",
+      "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
+      "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
+      "junit" % "junit" % "4.12" % "test"
+    )
+  )
+
+val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
+    name := elasticsearchPluginName,
+
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "2.1.0" % "provided",
       "junit" % "junit" % "4.12" % "test"
     ),
+    addArtifact(artifact in (Compile, assembly), assembly),
+    assemblyJarName in assembly := s"${name.value}-${version.value}.jar",
 
-//    assemblyMergeStrategy in assembly := {
-//      case PathList("org", "joda", "time", "base", "BaseDateTime.class") => new IncludeFromJar("joda-time-2.8.2.jar")
-//      case PathList("plugin-descriptor.properties") => MergeStrategy.discard
-//      case x => (assemblyMergeStrategy in assembly).value(x)
-//    },
+    test in assembly := {},
 
-    assembly <<= assembly map { (f: File) =>
-      val zipPath = f.getPath.substring(0, f.getPath.length - f.ext.length - 1) + ".zip"
-      val zipFile = file(zipPath)
-
+    elasticsearchZipTask := {
       val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
-      IO.zip(List((f, f.toPath.getFileName.toString), (propertiesFile, propertiesFile.toPath.getFileName.toString)), zipFile)
-      println("GENERATED PACKAGE LOCATION:  " + zipPath)
+      val assemblyFile = assembly.value
+      val zipFile = file(assemblyFile.getPath.substring(0, assemblyFile.getPath.length - assemblyFile.ext.length - 1) + ".zip")
+      IO.zip(List(
+        (propertiesFile, propertiesFile.toPath.getFileName.toString),
+        (assemblyFile, assemblyFile.toPath.getFileName.toString)), zipFile)
+      println("33!@#$")
       zipFile
     },
-    test in assembly := {}
+
+    addArtifact(Artifact(elasticsearchPluginName, "zip", "zip"), elasticsearchZipTask)
   )
+
+
+lazy val elasticsearchZipTask = taskKey[File]("elasticsearch task")
 

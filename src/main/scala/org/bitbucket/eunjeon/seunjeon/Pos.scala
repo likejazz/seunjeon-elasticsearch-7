@@ -21,7 +21,7 @@ object Pos extends Enumeration {
   type Pos = Value
   // 품사 태그 설명
   //  https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265&vpid=A1
-  val BOS, EOS, UNKNOWN,
+  val BOS, EOS, UNK,
       EP, // 선어말어미,
       E,  // 어미
       I,  // 독립언
@@ -40,7 +40,7 @@ object Pos extends Enumeration {
       = Value
 
   val matchTable = Map(
-  "UNKNOWN" -> UNKNOWN,
+  "UNKNOWN" -> UNK,
   "EP" -> EP,
   "EC" -> E,
   "EF" -> E,

@@ -39,7 +39,7 @@ object Analyzer {
   def parseEojeol(sentence: String): Seq[Eojeol] = Eojeoler.build(parse(sentence))
   def parseEojeol(lnodes: Seq[LNode]): Seq[Eojeol] = Eojeoler.build(lnodes)
   def parseEojeolJava(sentence: String): java.util.List[Eojeol] = Eojeoler.build(parse(sentence)).asJava
-  def parseEojeolJava(lnodes: List[LNode]): java.util.List[Eojeol] = Eojeoler.build(lnodes).asJava
+  def parseEojeolJava(lnodes: java.util.List[LNode]): java.util.List[Eojeol] = Eojeoler.build(lnodes.asScala).asJava
 
   def resetUserDict(): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(Seq[String]().toIterator))
 }

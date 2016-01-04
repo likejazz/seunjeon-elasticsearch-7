@@ -1,5 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
+import scala.collection.JavaConverters._
+
 
 object LNode {
   def dePreAnalysis(node: LNode): Seq[LNode] =
@@ -26,7 +28,8 @@ object LNode {
   def deComposite(node: LNode): Seq[LNode] = {
     var startPos = node.startPos
     var endPos = node.endPos
-    Morpheme.deComposition(node.morpheme.feature(7)).map { morpheme =>
+    node.morpheme.deComposite().map { morpheme =>
+//    Morpheme.deComposition(node.morpheme.feature(7)).map { morpheme =>
       // TODO: "ㄴ다" 의 경우 startPos 랑 endPos 잘 계산해서 수정해주자.
       //       성능 걱정으로.. 할 수 있을지 모르겠음.
       val morphemeStartPos = startPos
@@ -50,4 +53,20 @@ case class LNode(morpheme:Morpheme,
                  var accumulatedCost:Int=Short.MaxValue) {
   var leftNode:LNode = null
   var isActive:Boolean=true
+
+  def deCompound(): Seq[LNode] = {
+    LNode.deCompound(this)
+  }
+
+  def deCompoundJava(): java.util.List[LNode] = {
+    deCompound().asJava
+  }
+
+  def deInflect(): Seq[LNode] = {
+    LNode.deInflect(this)
+  }
+
+  def deInflectJava(): java.util.List[LNode] = {
+    deInflect().asJava
+  }
 }

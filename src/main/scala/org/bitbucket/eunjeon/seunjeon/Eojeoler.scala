@@ -9,26 +9,42 @@ case class Eojeol(var nodes:Seq[LNode]) {
   val endPos = nodes.last.endPos
 
   def nodesJava = nodes.asJava
+
+  def deCompound(): Eojeol = {
+    nodes = nodes.flatMap(_.deCompound())
+    this
+  }
+
+  def deInflect(): Eojeol = {
+    nodes = nodes.flatMap(_.deInflect())
+    this
+  }
 }
 
 object Eojeoler {
   def build(nodes:Seq[LNode]):Seq[Eojeol] = {
-    val result = mutable.ListBuffer[Eojeol]()
-    var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
-    nodes.sliding(2).foreach { slid =>
-      val pre = slid.head
-      val cur = slid.last
-      // TODO: contains 더 빠르게 자료구조 바꿔야 함.
-      if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
-        eojeolNodes = eojeolNodes :+ cur
-      } else {
-        result.append(Eojeol(eojeolNodes))
-        eojeolNodes = mutable.LinearSeq[LNode](cur)
+    if (nodes.isEmpty) {
+      Seq()
+    } else if (nodes.length == 1) {
+      Seq(Eojeol(nodes))
+    } else {
+      val result = mutable.ListBuffer[Eojeol]()
+      var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
+      nodes.sliding(2).foreach { slid =>
+        val pre = slid.head
+        val cur = slid.last
+        // TODO: contains 더 빠르게 자료구조 바꿔야 함.
+        if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
+          eojeolNodes = eojeolNodes :+ cur
+        } else {
+          result.append(Eojeol(eojeolNodes))
+          eojeolNodes = mutable.LinearSeq[LNode](cur)
+        }
       }
+      // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
+      result.append(Eojeol(eojeolNodes))
+      result
     }
-    // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
-    result.append(Eojeol(eojeolNodes))
-    result
   }
 
   val appendable = Set(
@@ -44,11 +60,11 @@ object Eojeoler {
     Pos.N -> Pos.XS,
     Pos.M -> Pos.XS,
     Pos.XR -> Pos.XS,
-    Pos.UNKNOWN -> Pos.XS,
+    Pos.UNK -> Pos.XS,
 
     Pos.N -> Pos.VCP,
     Pos.XS -> Pos.VCP,
-    Pos.UNKNOWN -> Pos.VCP,
+    Pos.UNK -> Pos.VCP,
 
     Pos.N -> Pos.J,
     Pos.XS -> Pos.J,
@@ -58,7 +74,7 @@ object Eojeoler {
     Pos.SL -> Pos.J,
     Pos.SH -> Pos.J,
     Pos.SN -> Pos.J,
-    Pos.UNKNOWN -> Pos.J,
+    Pos.UNK -> Pos.J,
 
     Pos.XP -> Pos.N
   )
