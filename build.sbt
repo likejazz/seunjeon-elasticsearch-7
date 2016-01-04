@@ -62,37 +62,35 @@ lazy val seunjeon = (project in file(".")).
     )
   )
 
+val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
-    name := "elasticsearch-analysis-seunjeon",
+    name := elasticsearchPluginName,
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "2.1.0" % "provided",
       "junit" % "junit" % "4.12" % "test"
     ),
+    addArtifact(artifact in (Compile, assembly), assembly),
+    assemblyJarName in assembly := s"${name.value}-${version.value}.jar",
 
-    assembly <<= assembly map { (f: File) =>
-      val zipPath = f.getPath.substring(0, f.getPath.length - f.ext.length - 1) + ".zip"
-      val zipFile = file(zipPath)
+    test in assembly := {},
 
+    elasticsearchZipTask := {
       val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
-      IO.zip(List((f, f.toPath.getFileName.toString), (propertiesFile, propertiesFile.toPath.getFileName.toString)), zipFile)
-      println("GENERATED PACKAGE LOCATION:  " + zipPath)
+      val assemblyFile = assembly.value
+      val zipFile = file(assemblyFile.getPath.substring(0, assemblyFile.getPath.length - assemblyFile.ext.length - 1) + ".zip")
+      IO.zip(List(
+        (propertiesFile, propertiesFile.toPath.getFileName.toString),
+        (assemblyFile, assemblyFile.toPath.getFileName.toString)), zipFile)
+      println("33!@#$")
       zipFile
     },
-    assemblyJarName in assembly := s"${name.value}-${version.value}.jar",
-    //assemblyDefaultJarName in assembly := s"${name.value}-${version.value}.zip",
 
-//    publishArtifact in (Compile, packageBin) := false,
-//
-////    artifact in (Compile, assembly) := {
-////      val art = (artifact in (Compile, assembly)).value
-////      art.copy(`classifier` = Some("assembly"))
-////    },
-//
-//    addArtifact(artifact in (Compile, assembly), assembly),
-
-    test in assembly := {}
+    addArtifact(Artifact(elasticsearchPluginName, "zip", "zip"), elasticsearchZipTask)
   )
+
+
+lazy val elasticsearchZipTask = taskKey[File]("elasticsearch task")
 
