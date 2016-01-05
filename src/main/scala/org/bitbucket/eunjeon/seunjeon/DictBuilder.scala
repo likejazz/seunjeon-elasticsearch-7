@@ -24,42 +24,33 @@ import scala.reflect.io.{File, Path}
 object DictBuilder {
 
   val workingDirectory = System.getProperty("user.dir")
-  val MECAB_KO_DIC_PATH = workingDirectory + File.separator + "mecab-ko-dic"
-  val RESOURCE_PATH = workingDirectory + File.separator + "src/main/resources"
-  val DICT_PATHNAME = "dictionary"
-  val DICT_PATH = File.separator + DICT_PATHNAME
+  val MECAB_KO_DIC_PATH = workingDirectory + "/mecab-ko-dic"
+  val RESOURCE_PATH = workingDirectory + "/src/main/resources"
+  val DICT_PATHNAME = "/dictionary"
+  val DICT_PATH = DICT_PATHNAME
 
-  val TERM_DICT_FILENAME = "termDict.dat"
-  val TERM_DICT = DICT_PATH + File.separator + TERM_DICT_FILENAME
-  val DICT_MAPPER_FILENAME = "dictMapper.dat"
-  val DICT_MAPPER = DICT_PATH + File.separator + DICT_MAPPER_FILENAME
-  val TERM_TRIE_FILENAME = "trie.dat"
-  val TERM_TRIE = DICT_PATH + File.separator + TERM_TRIE_FILENAME
-  val CONNECTION_COST_FILENAME = "connection_cost.dat"
-  val CONNECTION_COST = DICT_PATH + File.separator + CONNECTION_COST_FILENAME
+  val TERM_DICT_FILENAME = "/termDict.dat"
+  val TERM_DICT = DICT_PATH + TERM_DICT_FILENAME
+  val DICT_MAPPER_FILENAME = "/dictMapper.dat"
+  val DICT_MAPPER = DICT_PATH + DICT_MAPPER_FILENAME
+  val TERM_TRIE_FILENAME = "/trie.dat"
+  val TERM_TRIE = DICT_PATH + TERM_TRIE_FILENAME
+  val CONNECTION_COST_FILENAME = "/connection_cost.dat"
+  val CONNECTION_COST = DICT_PATH + CONNECTION_COST_FILENAME
 
-  val CHAR_DEF_FILENAME = "char.def"
-  val CHAR_DEF = DICT_PATH + File.separator + CHAR_DEF_FILENAME
-  val UNK_DEF_FILENAME = "unk.def"
-  val UNK_DEF = DICT_PATH + File.separator + UNK_DEF_FILENAME
-  val LEFT_ID_DEF_FILENAME = "left-id.def"
-  val LEFT_ID_DEF = DICT_PATH + File.separator + LEFT_ID_DEF_FILENAME
-  val RIGHT_ID_DEF_FILENAME = "right-id.def"
-  val RIGHT_ID_DEF = DICT_PATH + File.separator + RIGHT_ID_DEF_FILENAME
-  val DICRC_FILENAME = "dicrc"
-  val DICRC = DICT_PATH + File.separator + DICRC_FILENAME
-  val POS_ID_DEF_FILENAME = "pos-id.def"
-  val POS_ID_DEF = DICT_PATH + File.separator + POS_ID_DEF_FILENAME
+  val UNK_DEF_FILENAME = "/unk.def"
+  val UNK_DEF = DICT_PATH + UNK_DEF_FILENAME
+  val LEFT_ID_DEF_FILENAME = "/left-id.def"
+  val LEFT_ID_DEF = DICT_PATH + LEFT_ID_DEF_FILENAME
+  val RIGHT_ID_DEF_FILENAME = "/right-id.def"
+  val RIGHT_ID_DEF = DICT_PATH + RIGHT_ID_DEF_FILENAME
 
   def main(args: Array[String]): Unit = {
     clear()
 
-    copyCharDef()
     copyUnkDef()
     copyLeftIdDef()
     copyRightIdDef()
-    copyDicrc()
-    copyPosidDef()
 
     println("compiling lexicon dictionary...")
     buildLexiconDict()
@@ -68,10 +59,6 @@ object DictBuilder {
     buildConnectionCostDict()
 
     println("complete")
-  }
-
-  private def copyCharDef(): Unit = {
-    copyDefFile(CHAR_DEF_FILENAME)
   }
 
   private def copyUnkDef(): Unit = {
@@ -84,14 +71,6 @@ object DictBuilder {
 
   private def copyRightIdDef(): Unit = {
     copyDefFile(RIGHT_ID_DEF_FILENAME)
-  }
-
-  private def copyDicrc(): Unit = {
-    copyDefFile(DICRC_FILENAME)
-  }
-
-  private def copyPosidDef(): Unit = {
-    copyDefFile(POS_ID_DEF_FILENAME)
   }
 
   private def copyDefFile(defFileName: String): Unit = {
@@ -117,6 +96,8 @@ object DictBuilder {
     lexiconDict.save(dictPath + File.separator + TERM_DICT_FILENAME,
                      dictPath + File.separator + DICT_MAPPER_FILENAME,
                      dictPath + File.separator + TERM_TRIE_FILENAME)
+    println("building LexiconDict OK. " +
+      s"(${lexiconDict.getDictionaryInfo()})")
   }
 
   private def clear(): Unit = {

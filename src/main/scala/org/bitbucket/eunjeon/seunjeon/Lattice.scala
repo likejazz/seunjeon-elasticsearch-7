@@ -17,95 +17,102 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable
 
-
-case class TermNode(term:Term, startPos:Int, endPos:Int, var accumulatedCost:Int = 9999) {
-  var leftNode:TermNode = null
-
-  // TODO: hashCode 랑 equals 구현안해도 Set에 중복없이 잘 들어가나?
-  override def equals(o: Any) = o match {
-    case that:TermNode => (that.startPos == startPos) && (that.endPos == endPos)
-    case _ => false
-  }
-
-  override def hashCode = startPos.hashCode()<<20 + endPos.hashCode()
-}
-
 object Lattice {
   def apply(length:Int, connectingCostDict:ConnectionCostDict) = new Lattice(length, connectingCostDict)
 }
 
-// TODO: connectionCostDict 클래스로 빼자
 class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
-  var bos = new TermNode(new Term("BOS", 0, 0, 0, IndexedSeq("BOS"), 0), 0, 0, 0)
-  var eos = new TermNode(new Term("EOS", 0, 0, 0, IndexedSeq("EOS"), 0), length, length)
+  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), length, length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
   endingNodes.last += eos
 
-  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[TermNode]] = {
+  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[LNode]] = {
     // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[TermNode])
+    temp.map(l => new mutable.MutableList[LNode])
   }
 
-  def add(latticeNode:TermNode): Lattice = {
-    startingNodes(latticeNode.startPos+1) += latticeNode
-    endingNodes(latticeNode.endPos+1) += latticeNode
+  def add(node:LNode): Lattice = {
+    startingNodes(node.startPos+1) += node
+    endingNodes(node.endPos) += node
     this
   }
 
-  def addAll(latticeNodes:Seq[TermNode]): Lattice = {
-    latticeNodes.foreach(node => add(node))
+  def addAll(nodes:Seq[LNode]): Lattice = {
+    nodes.foreach(node => add(node))
     this
   }
 
   def removeSpace(): Lattice = {
     startingNodes = startingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
     endingNodes = endingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.term.surface != " ")
+      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
     this
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
-  def getBestPath: Seq[TermNode] = {
+  def getBestPath(offset:Int=0): Seq[LNode] = {
     for (idx <- 1 until startingNodes.length) {
-      startingNodes(idx).foreach(updateCost(endingNodes(idx-1), _))
+      // while 하는 것이 foreach 보다 성능이 좋음.
+      //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+      if (endingNodes(idx-1).isEmpty) {
+        startingNodes(idx).foreach(node => node.isActive = false)
+        startingNodes(idx).clear()
+      }
+      val iter = startingNodes(idx).iterator
+      while (iter.hasNext) {
+        // FIXME: endingNodes 가 없으면 startingNode를 지워줘야 할듯?
+        updateCost(endingNodes(idx-1), iter.next())
+      }
     }
 
-    var result = new mutable.ListBuffer[TermNode]
+    var result = new mutable.ListBuffer[LNode]
     var node = eos
     while (node != null) {
       result += node
       node = node.leftNode
     }
-    result.reverse
+    result.reverse.map(addOffset(offset, _))
   }
 
+  def addOffset(offset: Int, node: LNode): LNode = {
+    node.startPos += offset
+    node.endPos += offset
+    node
+  }
 
-  private def updateCost(endingNodes:Seq[TermNode], startingNode:TermNode): Unit = {
+  private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
     var minTotalCost:Int = 2147483647
-    endingNodes.foreach{ endingNode =>
-      val totalCost: Int = getCost(endingNode, startingNode)
-      if (totalCost < minTotalCost) {
-        minTotalCost = totalCost
-        startingNode.accumulatedCost = totalCost
-        startingNode.leftNode = endingNode
-      }
+    // while 하는 것이 foreach 보다 성능이 좋음.
+    //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+    val iter = endingNodes.iterator
+    while (iter.hasNext) {
+      val endingNode = iter.next()
+      if (endingNode.isActive) {
+        val totalCost: Int = getCost(endingNode, startingNode)
+        if (totalCost < minTotalCost) {
+          minTotalCost = totalCost
+          startingNode.accumulatedCost = totalCost
+          startingNode.leftNode = endingNode
+        }
+      } else {}
     }
   }
 
-  private def getCost(endingNode: TermNode, startingNode: TermNode): Int = {
-    val penaltyCost = if (endingNode.endPos + 1 != startingNode.startPos) {
-      Dicrc.getPenaltyCost(startingNode.term.posid)
+  private def getCost(endingNode: LNode, startingNode: LNode): Int = {
+    val penaltyCost = if (endingNode.endPos != startingNode.startPos) {
+      SpacePenalty(startingNode.morpheme.poses(0))
     } else 0
 
     endingNode.accumulatedCost +
-      endingNode.term.cost +
-      connectingCostDict.getCost(endingNode.term.rightId, startingNode.term.leftId) +
+      endingNode.morpheme.cost +
+      connectingCostDict.getCost(endingNode.morpheme.rightId, startingNode.morpheme.leftId) +
       penaltyCost
   }
 }

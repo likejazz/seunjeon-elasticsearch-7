@@ -17,13 +17,13 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("penalty cost") {
     assert("BOS,아버지,가,방,에,들어가,신다,.,EOS" ==
-      Analyzer.parse("아버지가방에들어가신다.").map(_.term.surface).mkString(","))
+      Analyzer.parse("아버지가방에들어가신다.").map(_.morpheme.surface).mkString(","))
     assert("BOS,아버지,가방,에,들어가,신다,.,EOS" ==
-      Analyzer.parse("아버지 가방에 들어가신다.").map(_.term.surface).mkString(","))
+      Analyzer.parse("아버지 가방에 들어가신다.").map(_.morpheme.surface).mkString(","))
   }
 
   test("number test") {
-    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: TermNode =>
+    Analyzer.parse("12345한글67890 !@# ABCD").foreach { t: LNode =>
       println(t)
     }
   }
@@ -105,11 +105,38 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
     println("# AFTER ")
     Analyzer.parse("덕후냄새가 난다.").foreach(println)
-
   }
 
-  def getSurfacePos(termNode:TermNode): String = {
+  test("README eojeol") {
+    Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
+    Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).foreach(println)
+  }
+
+  test("empty eojeol") {
+    assert(Seq[Eojeol]() == Analyzer.parseEojeol(""))
+  }
+
+  test("dePreAnalysis") {
+    val result1 = Analyzer.parse("은전한닢프로젝트")
+    assert("BOS+은전+한+닢+프로젝트+EOS" == result1.map(_.morpheme.surface).mkString("+"))
+    result1.foreach(println)
+
+    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis=false)
+    assert("BOS+은전한닢+프로젝트+EOS" == result2.map(_.morpheme.surface).mkString("+"))
+    result2.foreach(println)
+  }
+
+  test("functation") {
+    Analyzer.parse("《재규어》.").foreach(println)
+    Analyzer.parse(" ^^ 55 《삐리리~ 불어봐! 재규어》.").foreach(println)
+  }
+
+  test("multi line") {
+    Analyzer.parse("가\n나").foreach(println)
+  }
+
+  def getSurfacePos(termNode:LNode): String = {
     println(termNode)
-    s"${termNode.term.surface}:${termNode.term.feature.head}"
+    s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }
 }

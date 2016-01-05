@@ -88,7 +88,7 @@ class ConnectionCostDict {
   }
 
   def load(): ConnectionCostDict = {
-    val connectionCostFile = DictBuilder.DICT_PATH + File.separator + DictBuilder.CONNECTION_COST_FILENAME
+    val connectionCostFile = DictBuilder.DICT_PATH + DictBuilder.CONNECTION_COST_FILENAME
     val inputStream = getClass.getResourceAsStream(connectionCostFile)
     load(inputStream)
     this
