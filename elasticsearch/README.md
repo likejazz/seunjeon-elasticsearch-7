@@ -2,14 +2,14 @@
 [seunjeon](https://bitbucket.org/eunjeon/seunjeon) 한국어 형태소분석기를 elasticsearch에 사용할 수 있도록 만든 plugin입니다.
 
 ## 설치
-```
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/1.0.0
+```bash
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.0.0
 ```
 
 ## Release
 | elasticsearch-analysis-seunjeon | Target elasticsearch version |
 | ------------------------------- | ---------------------------- |
-| 1.0.0                           | 2.1.x                        |
+| 2.1.0.0                         | 2.1.0                        |
 
 ## 사용
 ```bash
