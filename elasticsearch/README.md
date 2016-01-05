@@ -6,6 +6,11 @@
 ./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/1.0.0
 ```
 
+## Release
+| elasticsearch-analysis-seunjeon | Target elasticsearch version |
+| ------------------------------- | ---------------------------- |
+| 1.0.0                           | 2.1.x                        |
+
 ## 사용
 ```bash
 #!/bin/bash
@@ -96,10 +101,10 @@ curl -XGET $ES/$ESIDX/_analyze?analyzer=korean_noun\&pretty -d '꽃이피다'
 # 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
 sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DictBuilder"
 
-# jar 생성
+# zip 생성
 sbt
 > project elasticsearch
-> assembly
+> esZip
 ```
 ## License
 Copyright 2015 유영호, 이용운. 아파치 라이센스 2.0에 따라 소프트웨어를 사용, 재배포 할 수 있습니다. 더 자세한 사항은 http://www.apache.org/licenses/LICENSE-2.0 을 참조하시기 바랍니다.

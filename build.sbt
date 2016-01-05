@@ -72,25 +72,25 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
       "org.elasticsearch" % "elasticsearch" % "2.1.0" % "provided",
       "junit" % "junit" % "4.12" % "test"
     ),
-    addArtifact(artifact in (Compile, assembly), assembly),
-    assemblyJarName in assembly := s"${name.value}-${version.value}.jar",
 
     test in assembly := {},
 
-    elasticsearchZipTask := {
+    esZip := {
       val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
       val assemblyFile = assembly.value
       val zipFile = file(assemblyFile.getPath.substring(0, assemblyFile.getPath.length - assemblyFile.ext.length - 1) + ".zip")
       IO.zip(List(
         (propertiesFile, propertiesFile.toPath.getFileName.toString),
         (assemblyFile, assemblyFile.toPath.getFileName.toString)), zipFile)
-      println("33!@#$")
       zipFile
     },
 
-    addArtifact(Artifact(elasticsearchPluginName, "zip", "zip"), elasticsearchZipTask)
+    // remove scala version of artifact file.
+    crossPaths := false,
+
+    addArtifact(Artifact(elasticsearchPluginName, "zip", "zip"), esZip)
   )
 
 
-lazy val elasticsearchZipTask = taskKey[File]("elasticsearch task")
+lazy val esZip = taskKey[File]("elasticsearch task")
 
