@@ -66,11 +66,11 @@ class LexiconDict {
             terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
           case Some(List(surface, cost)) =>
             terms += buildNNGTerm(surface, cost.toShort)
-          case Some(List(surface, cost, leftId, rightId, feature@_ *)) =>
+          case Some(List(surface, leftId, rightId, cost, feature@_ *)) =>
             terms += Morpheme(surface,
-              cost.toShort,
               leftId.toShort,
               rightId.toShort,
+              cost.toShort,
               wrapRefArray(feature.toArray),
               MorphemeType(feature),
               wrapRefArray(Pos.poses(feature)))

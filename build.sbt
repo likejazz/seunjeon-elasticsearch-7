@@ -1,6 +1,7 @@
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.10.6",
   organization := "org.bitbucket.eunjeon",
+  crossScalaVersions := Seq("2.11.7", "2.10.6"),
 
   publishMavenStyle := true,
   publishArtifact in Test := false,
@@ -55,12 +56,20 @@ lazy val seunjeon = (project in file(".")).
 
     libraryDependencies ++= Seq(
       "com.github.takawitter" % "trie4j" % "0.9.1",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
       "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
       "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
       "junit" % "junit" % "4.12" % "test"
-    )
+    ),
+
+    libraryDependencies ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+          libraryDependencies.value ++ Seq("com.typesafe.scala-logging" %% "scala-logging" % "3.1.0")
+        case _ =>
+          libraryDependencies.value :+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"
+      }
+    }
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
