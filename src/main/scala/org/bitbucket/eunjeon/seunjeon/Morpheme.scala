@@ -1,6 +1,6 @@
 package org.bitbucket.eunjeon.seunjeon
 
-import java.io.{ObjectInputStream, ObjectOutputStream, IOException}
+import java.io.{IOException, ObjectInputStream, ObjectOutputStream}
 
 import com.typesafe.scalalogging.slf4j.Logger
 import org.bitbucket.eunjeon.seunjeon.MorphemeType.MorphemeType
