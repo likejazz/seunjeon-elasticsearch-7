@@ -1,3 +1,6 @@
 .idea
 src/main/target
 mecab-ko-dic*
+target
+project/project
+project/target
