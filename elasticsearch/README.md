@@ -3,46 +3,41 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.0.0
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.1.0
 ```
 
 ## Release
 | elasticsearch-analysis-seunjeon | Target elasticsearch version |
 | ------------------------------- | ---------------------------- |
+| 2.1.1.0                         | 2.1.1                        |
 | 2.1.0.0                         | 2.1.0                        |
 
 ## 사용
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 ES='http://localhost:9200'
 ESIDX='seunjeon-idx'
 
-curl -XDELETE $ES/$ESIDX?pretty
+curl -XDELETE ${ES}/${ESIDX}?pretty
 
-curl -XPUT $ES/$ESIDX/?pretty -d '{
+sleep 1
+
+curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
   "settings" : {
     "index":{
       "analysis":{
         "analyzer":{
           "korean":{
             "type":"custom",
-            "tokenizer":"seunjeon_tokenizer"
-          },
-          "korean_noun": {
-            "type":"custom",
-            "tokenizer":"noun_tokenizer"
+            "tokenizer":"seunjeon_default_tokenizer"
           }
         },
         "tokenizer": {
-          "seunjeon_tokenizer": {
+          "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
-            "user_words": ["낄끼빠빠,-100", "버카충"]
-          },
-          "noun_tokenizer": {
-            "type": "seunjeon_tokenizer",
-            "index_eojeol": false,
-            "index_poses": ["N"]
+            "user_words": ["낄끼빠빠,-100", "버카충"],
+            "user_dict_path": "user_dict.csv"
           }
         }
       }
@@ -53,24 +48,25 @@ curl -XPUT $ES/$ESIDX/?pretty -d '{
 sleep 1
 
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '삼성전자'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '슬픈'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '슬픈'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean_noun\&pretty -d '꽃이피다'
-
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어그로'
 ```
-
 ## 옵션인자
 | 옵션인자      | 설명               | 기본값 |
-| ------------- | -----              | ---- |
+| ------------- | -----           | ---- |
 | user_words    | 사용자 사전        | []     |
+| user_dict_path| 사용자 사전 파일. base directory는 ES_HOME/config 입니다. |      |
 | decompound    | 복합명사 분해      | true |
 | deinflect     | 활용어의 원형 추출 | true |
 | index_eojeol  | 어절 추출     | true |
 | index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "UNK"] |
+ * 사용사 사전(user_words + user_dict_path)은 하나만 관리하기 떄문에 tokenizer 별로 다르게 설정할 수 없습니다. 설정하더라도 마지막 로드된 사전으로 유지됩니다.
+
 
 ### 품사태그표
 | 품사 태그 | 설명 |

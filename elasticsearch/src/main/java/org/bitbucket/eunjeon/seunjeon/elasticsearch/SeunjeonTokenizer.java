@@ -28,7 +28,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
         initAttribute();
-        TokenBuilder.setUserDict(options.getUserWords());
+        TokenBuilder.setUserDict(options.getUserDict().iterator());
         tokenBuilder = new TokenBuilder(
                 options.getDeCompound(),
                 options.getDeInflect(),

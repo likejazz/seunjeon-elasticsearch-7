@@ -1,12 +1,14 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
+import java.util.List;
+
 public class TokenizerOptions {
     public final static boolean DECOMPOUND = true;
     public final static boolean DEINFLECT = true;
     public final static boolean INDEX_EOJEOL = true;
     public final static String[] INDEX_POSES = TokenBuilder.INDEX_POSES_JAVA();
 
-    private String[] userWords = new String[0];
+    private List<String> userDict = null;
     private boolean deCompound = DECOMPOUND;
     private boolean deInflect = DEINFLECT;
     private boolean indexEojeol = INDEX_EOJEOL;
@@ -16,8 +18,8 @@ public class TokenizerOptions {
         return new TokenizerOptions();
     }
 
-    public TokenizerOptions setUserWords(String[] userWords) {
-        this.userWords = userWords;
+    public TokenizerOptions setUserDict(List<String> userDict) {
+        this.userDict = userDict;
         return this;
     }
 
@@ -41,8 +43,8 @@ public class TokenizerOptions {
         return this;
     }
 
-    public String[] getUserWords() {
-        return this.userWords;
+    public List<String> getUserDict() {
+        return this.userDict;
     }
 
     public boolean getDeCompound() {

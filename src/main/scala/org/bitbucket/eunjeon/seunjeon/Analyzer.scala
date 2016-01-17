@@ -19,7 +19,7 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.JavaConverters._
 
 object Analyzer {
-  val tokenizer:Tokenizer = initTokenizer()
+  lazy val tokenizer:Tokenizer = initTokenizer()
 
   private def initTokenizer(): Tokenizer = {
     val lexiconDict = new LexiconDict().load()

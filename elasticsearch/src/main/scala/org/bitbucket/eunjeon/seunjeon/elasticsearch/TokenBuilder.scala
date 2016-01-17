@@ -24,6 +24,10 @@ object TokenBuilder {
   def setUserDict(userWords:Array[String]): Unit = {
     Analyzer.setUserDict(userWords.toSeq.iterator)
   }
+
+  def setUserDict(userWords:java.util.Iterator[String]): Unit = {
+    Analyzer.setUserDict(userWords)
+  }
 }
 
 
