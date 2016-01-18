@@ -65,7 +65,10 @@ curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어�
 | deinflect     | 활용어의 원형 추출 | true |
 | index_eojeol  | 어절 추출     | true |
 | index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "UNK"] |
- * 사용사 사전(user_words + user_dict_path)은 하나만 관리하기 떄문에 tokenizer 별로 다르게 설정할 수 없습니다. 설정하더라도 마지막 로드된 사전으로 유지됩니다.
+| pos_tagging   | 품사태깅. 키워드에 품사를 붙여서 토큰을 뽑습니다        | true |
+ * 사용사 사전은 하나만 관리하기 떄문에 여러개의 tokenizer를 생성하여도 마지막 로드된 사전만 유지됩니다.
+ * user_words와 user_dict_path 를 함께 설정할 경우 user_words 는 무시되고 user_dict_path만 적용됩니다.
+ * `"pos_tagging": true` 의 경우 키워드와 품사가 함께 토큰(ex:`자전거/N`)으로 나오기 때문에 stopword filter나 synonym filter 사용시 적용이 안될 수 있습니다. `"pos_tagging": false`로 설정을 하여 사용하거나, filter사전을 `자전거/N`의 형태로 만들어야 합니다.
 
 
 ### 품사태그표

@@ -31,6 +31,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         initAttribute();
         if (options.getUserDictPath() != null) {
             TokenBuilder.setUserDict(options.getUserDictPath());
+            logger.info(options.getUserDictPath() + " loading was successful.");
             if (options.getUserWords().length > 0) {
                 logger.warn("ignored \"user_words\". because settings of \"user_dict_path\"");
             }

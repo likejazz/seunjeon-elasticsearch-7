@@ -49,7 +49,7 @@ class TokenBuilder(deCompound:Boolean, deInflect:Boolean, indexEojeol:Boolean, p
 
       if (this.indexEojeol) {
         if (eojeol.nodes.length > 1 && nodes.nonEmpty) {
-          val eojeolNode = LuceneToken(s"${eojeol.surface}/EOJ", 0, nodes.length, eojeol.startPos, eojeol.endPos, "EOJ")
+          val eojeolNode = LuceneToken(eojeol, nodes.length, posTagging)
           nodes.head +: eojeolNode +: nodes.tail
         } else nodes
       } else nodes
