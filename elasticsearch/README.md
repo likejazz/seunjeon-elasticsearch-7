@@ -3,46 +3,41 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.0.0
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.1.0
 ```
 
 ## Release
 | elasticsearch-analysis-seunjeon | Target elasticsearch version |
 | ------------------------------- | ---------------------------- |
+| 2.1.1.0                         | 2.1.1                        |
 | 2.1.0.0                         | 2.1.0                        |
 
 ## 사용
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 ES='http://localhost:9200'
 ESIDX='seunjeon-idx'
 
-curl -XDELETE $ES/$ESIDX?pretty
+curl -XDELETE ${ES}/${ESIDX}?pretty
 
-curl -XPUT $ES/$ESIDX/?pretty -d '{
+sleep 1
+
+curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
   "settings" : {
     "index":{
       "analysis":{
         "analyzer":{
           "korean":{
             "type":"custom",
-            "tokenizer":"seunjeon_tokenizer"
-          },
-          "korean_noun": {
-            "type":"custom",
-            "tokenizer":"noun_tokenizer"
+            "tokenizer":"seunjeon_default_tokenizer"
           }
         },
         "tokenizer": {
-          "seunjeon_tokenizer": {
+          "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
-            "user_words": ["낄끼빠빠,-100", "버카충"]
-          },
-          "noun_tokenizer": {
-            "type": "seunjeon_tokenizer",
-            "index_eojeol": false,
-            "index_poses": ["N"]
+            "user_words": ["낄끼빠빠,-100", "버카충"],
+            "user_dict_path": "user_dict.csv"
           }
         }
       }
@@ -53,24 +48,28 @@ curl -XPUT $ES/$ESIDX/?pretty -d '{
 sleep 1
 
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '삼성전자'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean\&pretty -d '슬픈'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '슬픈'
 echo "========================================================================"
-curl -XGET $ES/$ESIDX/_analyze?analyzer=korean_noun\&pretty -d '꽃이피다'
-
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어그로'
 ```
-
 ## 옵션인자
 | 옵션인자      | 설명               | 기본값 |
-| ------------- | -----              | ---- |
+| ------------- | -----           | ---- |
 | user_words    | 사용자 사전        | []     |
+| user_dict_path| 사용자 사전 파일. base directory는 ES_HOME/config 입니다. |      |
 | decompound    | 복합명사 분해      | true |
 | deinflect     | 활용어의 원형 추출 | true |
 | index_eojeol  | 어절 추출     | true |
 | index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "UNK"] |
+| pos_tagging   | 품사태깅. 키워드에 품사를 붙여서 토큰을 뽑습니다        | true |
+ * 사용사 사전은 하나만 관리하기 떄문에 여러개의 tokenizer를 생성하여도 마지막 로드된 사전만 유지됩니다.
+ * user_words와 user_dict_path 를 함께 설정할 경우 user_words 는 무시되고 user_dict_path만 적용됩니다.
+ * `"pos_tagging": true` 의 경우 키워드와 품사가 함께 토큰(ex:`자전거/N`)으로 나오기 때문에 stopword filter나 synonym filter 사용시 적용이 안될 수 있습니다. `"pos_tagging": false`로 설정을 하여 사용하거나, filter사전을 `자전거/N`의 형태로 만들어야 합니다.
+
 
 ### 품사태그표
 | 품사 태그 | 설명 |

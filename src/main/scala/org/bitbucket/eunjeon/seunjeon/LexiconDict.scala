@@ -18,7 +18,7 @@ package org.bitbucket.eunjeon.seunjeon
 import java.io.{File, _}
 
 import com.github.tototoshi.csv.CSVParser
-import com.typesafe.scalalogging.Logger
+import com.typesafe.scalalogging.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.trie4j.doublearray.MapDoubleArray
 import org.trie4j.patricia.MapPatriciaTrie
@@ -38,6 +38,11 @@ class LexiconDict {
 
   def getDictionaryInfo(): String = {
     s"termSize = ${termDict.length} mapper size = ${dictMapper.length}"
+  }
+
+  def loadFromFile(file: String): LexiconDict = {
+    val iterator = Source.fromFile(file, "utf-8").getLines()
+    loadFromIterator(iterator)
   }
 
   def loadFromDir(dir: String): LexiconDict = {
@@ -66,11 +71,11 @@ class LexiconDict {
             terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
           case Some(List(surface, cost)) =>
             terms += buildNNGTerm(surface, cost.toShort)
-          case Some(List(surface, cost, leftId, rightId, feature@_ *)) =>
+          case Some(List(surface, leftId, rightId, cost, feature@_ *)) =>
             terms += Morpheme(surface,
-              cost.toShort,
               leftId.toShort,
               rightId.toShort,
+              cost.toShort,
               wrapRefArray(feature.toArray),
               MorphemeType(feature),
               wrapRefArray(Pos.poses(feature)))

@@ -49,15 +49,16 @@ lazy val commonSettings = Seq(
 lazy val seunjeon = (project in file(".")).
   settings(commonSettings: _*).
   settings(
+    crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
 
-    version := "1.0.0",
+    version := "1.0.1",
 
     libraryDependencies ++= Seq(
       "com.github.takawitter" % "trie4j" % "0.9.1",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
       "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
+      "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
       "junit" % "junit" % "4.12" % "test"
     )
@@ -69,10 +70,10 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.1.0.0",
+    version := "2.1.1.0",
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "2.1.0" % "provided",
+      "org.elasticsearch" % "elasticsearch" % "2.1.1" % "provided",
       "junit" % "junit" % "4.12" % "test"
     ),
 

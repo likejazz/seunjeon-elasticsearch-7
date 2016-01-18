@@ -1,8 +1,8 @@
 package org.bitbucket.eunjeon.seunjeon
 
-import java.io.{ObjectInputStream, ObjectOutputStream, IOException}
+import java.io.{IOException, ObjectInputStream, ObjectOutputStream}
 
-import com.typesafe.scalalogging.Logger
+import com.typesafe.scalalogging.slf4j.Logger
 import org.bitbucket.eunjeon.seunjeon.MorphemeType.MorphemeType
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 import org.slf4j.LoggerFactory
@@ -57,6 +57,8 @@ object Morpheme {
   * @param feature  feature
   * @param poses    품사  [[https://bitbucket.org/eunjeon/mecab-ko-dic/src/5fad4609d23a1b172a57e23addfe167ac5f02bf1/seed/pos-id.def?at=master&fileviewer=file-view-default]]
   */
+// TODO: sbt publish 할때 사전 빌드해도록 하고 SerialVersionUID 빼자
+@SerialVersionUID(1000L)
 case class Morpheme(var surface:String,
                     var leftId:Short,
                     var rightId:Short,

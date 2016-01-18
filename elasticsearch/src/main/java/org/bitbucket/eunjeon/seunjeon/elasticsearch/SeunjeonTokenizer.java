@@ -3,9 +3,13 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.apache.lucene.util.AttributeFactory;
+import org.elasticsearch.common.logging.ESLogger;
+import org.elasticsearch.common.logging.Loggers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,21 +22,27 @@ public class SeunjeonTokenizer extends Tokenizer {
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
     private TokenBuilder tokenBuilder;
-
-    public SeunjeonTokenizer() {
-        super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
-        initAttribute();
-        tokenBuilder = new TokenBuilder();
-    }
+    ESLogger logger = null;
 
     public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        logger = Loggers.getLogger(options.getName());
+
         initAttribute();
-        TokenBuilder.setUserDict(options.getUserWords());
+        if (options.getUserDictPath() != null) {
+            TokenBuilder.setUserDict(options.getUserDictPath());
+            logger.info(options.getUserDictPath() + " loading was successful.");
+            if (options.getUserWords().length > 0) {
+                logger.warn("ignored \"user_words\". because settings of \"user_dict_path\"");
+            }
+        } else {
+            TokenBuilder.setUserDict(Arrays.asList(options.getUserWords()).iterator());
+        }
         tokenBuilder = new TokenBuilder(
                 options.getDeCompound(),
                 options.getDeInflect(),
                 options.getIndexEojeol(),
+                options.getPosTagging(),
                 TokenBuilder.convertPos(options.getIndexPoses()));
     }
 
