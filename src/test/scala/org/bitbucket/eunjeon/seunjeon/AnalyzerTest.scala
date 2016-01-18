@@ -49,7 +49,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("userdic-surface from iterator") {
     assert(Seq(
-      "BOS:BOS",
       "어:IC",
       "그:NP",
       "로:JKB",
@@ -59,11 +58,9 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
       "있:VX",
       "어:EC",
       "봐:VX+EF",
-      ".:SF",
-      "EOS:EOS") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
+      ".:SF") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
     Analyzer.setUserDict(Seq("어그로,-500", "갠소").toIterator)
     assert(Seq(
-      "BOS:BOS",
       "어그로:NNG",
       "좀:MAG",
       "끌:VV",
@@ -71,8 +68,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
       "있:VX",
       "어:EC",
       "봐:VX+EF",
-      ".:SF",
-      "EOS:EOS") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
+      ".:SF") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
   }
 
   test("multi-char-dict") {

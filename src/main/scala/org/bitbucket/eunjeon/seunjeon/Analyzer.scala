@@ -19,7 +19,7 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.JavaConverters._
 
 object Analyzer {
-  val tokenizer:Tokenizer = initTokenizer()
+  lazy val tokenizer:Tokenizer = initTokenizer()
 
   private def initTokenizer(): Tokenizer = {
     val lexiconDict = new LexiconDict().load()
@@ -33,6 +33,7 @@ object Analyzer {
   def parseJava(sentence: String, preAnalysis:Boolean): java.util.List[LNode] = tokenizer.parseText(sentence, preAnalysis).asJava
 
   def setUserDictDir(path: String): Unit = tokenizer.setUserDict(new LexiconDict().loadFromDir(path))
+  def setUserDictFile(file: String): Unit = tokenizer.setUserDict(new LexiconDict().loadFromFile(file))
   def setUserDict(iterator: Iterator[String]): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator))
   def setUserDict(iterator: java.util.Iterator[String]): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(iterator.asScala))
 
