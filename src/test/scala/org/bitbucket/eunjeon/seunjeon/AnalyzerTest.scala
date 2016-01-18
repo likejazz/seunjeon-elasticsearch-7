@@ -16,9 +16,9 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("penalty cost") {
-    assert("BOS,아버지,가,방,에,들어가,신다,.,EOS" ==
+    assert("아버지,가,방,에,들어가,신다,." ==
       Analyzer.parse("아버지가방에들어가신다.").map(_.morpheme.surface).mkString(","))
-    assert("BOS,아버지,가방,에,들어가,신다,.,EOS" ==
+    assert("아버지,가방,에,들어가,신다,." ==
       Analyzer.parse("아버지 가방에 들어가신다.").map(_.morpheme.surface).mkString(","))
   }
 
@@ -30,21 +30,17 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("userdic-surface from file") {
     assert(Seq(
-      "BOS:BOS",
       "버:NNP",
       "카:NNG",
       "충:NNG",
       "했:XSV+EP",
-      "어:EF","?:SF",
-      "EOS:EOS") == Analyzer.parse("버카충했어?").map(getSurfacePos))
+      "어:EF","?:SF") == Analyzer.parse("버카충했어?").map(getSurfacePos))
     Analyzer.setUserDictDir("src/test/resources/userdict/")
     assert(Seq(
-      "BOS:BOS",
       "버카충:NNG",
       "했:XSV+EP",
       "어:EF",
-      "?:SF",
-      "EOS:EOS") == Analyzer.parse("버카충했어?").map(getSurfacePos))
+      "?:SF") == Analyzer.parse("버카충했어?").map(getSurfacePos))
   }
 
   test("userdic-surface from iterator") {
@@ -74,13 +70,9 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("multi-char-dict") {
     Analyzer.setUserDict(Seq("삼성SDS", "LG CNS").toIterator)
     assert(Seq(
-      "BOS:BOS",
-      "삼성SDS:NNG",
-      "EOS:EOS") == Analyzer.parse("삼성SDS").map(getSurfacePos))
+      "삼성SDS:NNG") == Analyzer.parse("삼성SDS").map(getSurfacePos))
     assert(Seq(
-      "BOS:BOS",
-      "LG CNS:NNG",
-      "EOS:EOS") == Analyzer.parse("LG CNS").map(getSurfacePos))
+      "LG CNS:NNG") == Analyzer.parse("LG CNS").map(getSurfacePos))
   }
 
   test("README example1") {
@@ -114,11 +106,11 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("dePreAnalysis") {
     val result1 = Analyzer.parse("은전한닢프로젝트")
-    assert("BOS+은전+한+닢+프로젝트+EOS" == result1.map(_.morpheme.surface).mkString("+"))
+    assert("은전+한+닢+프로젝트" == result1.map(_.morpheme.surface).mkString("+"))
     result1.foreach(println)
 
     val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis=false)
-    assert("BOS+은전한닢+프로젝트+EOS" == result2.map(_.morpheme.surface).mkString("+"))
+    assert("은전한닢+프로젝트" == result2.map(_.morpheme.surface).mkString("+"))
     result2.foreach(println)
   }
 

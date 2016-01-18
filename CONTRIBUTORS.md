@@ -6,4 +6,4 @@
   * Windows OS 에서 돌아가도록 구현
 * **[Wan-Hee Lee](https://bitbucket.org/whlee21/)**
   * 사용사 사전 로딩 버그 수정
-  * 2.10 cross-compile 지원
+  * scala 2.10, 2.11 cross-compile 지원

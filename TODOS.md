@@ -1,6 +1,4 @@
-* elasticsearch-plugin
-  * log 찍히게 하자. warn 로그가 안찍히고 있어서 위험..
-  * 성능 비교테스트 with mecab-ko
+* double-array trie 직접 구현(성능개선)
 * 기분석 단어 사용자 사전 등록
 * 사용자사전
   * feature 정의 가능하게

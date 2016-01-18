@@ -27,7 +27,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     tokenizer = new Tokenizer(lexiconDict, connectionCostDict)
   }
 
-  test("performance long term") {
+  ignore("performance long term") {
     var result:Seq[LNode] = null
     val times = 100
     val startTime = System.nanoTime()
@@ -45,7 +45,7 @@ class PerformanceSuite extends FunSuite with BeforeAndAfter {
     filetest("./src/test/resources/too_many_special_chars.txt")
   }
 
-  test("performance long_sentence") {
+  ignore("performance long_sentence") {
     filetest("./src/test/resources/long_sentence.txt")
   }
 
