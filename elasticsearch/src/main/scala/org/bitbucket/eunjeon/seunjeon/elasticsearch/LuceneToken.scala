@@ -4,6 +4,7 @@ import org.bitbucket.eunjeon.seunjeon.LNode
 
 
 object LuceneToken {
+  // TODO: posTagging
   def apply(lnode:LNode): LuceneToken = {
     LuceneToken(
       s"${lnode.morpheme.surface}/${lnode.morpheme.poses.mkString("+")}",
@@ -13,6 +14,7 @@ object LuceneToken {
   }
 }
 
+// TODO: posTagging
 case class LuceneToken(charTerm:String,
                        positionIncr:Int, positionLength:Int,
                        startOffset:Int, endOffset:Int,

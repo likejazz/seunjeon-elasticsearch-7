@@ -4,9 +4,7 @@ ES='http://localhost:9200'
 ESIDX='seunjeon-idx'
 
 curl -XDELETE ${ES}/${ESIDX}?pretty
-
 sleep 1
-
 curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
   "settings" : {
     "index":{
@@ -21,7 +19,7 @@ curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
           "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
             "user_words": ["낄끼빠빠,-100", "버카충"],
-            "user_dict_path": "user_dict.csv"
+            "pos_tagging": false
           }
         }
       }
@@ -31,8 +29,6 @@ curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
 
 sleep 1
 
-echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
 echo "========================================================================"
 curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
 echo "========================================================================"

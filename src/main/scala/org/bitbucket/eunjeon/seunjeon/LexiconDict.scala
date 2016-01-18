@@ -40,6 +40,11 @@ class LexiconDict {
     s"termSize = ${termDict.length} mapper size = ${dictMapper.length}"
   }
 
+  def loadFromFile(file: String): LexiconDict = {
+    val iterator = Source.fromFile(file, "utf-8").getLines()
+    loadFromIterator(iterator)
+  }
+
   def loadFromDir(dir: String): LexiconDict = {
     val r = new Regex(".+[.]csv")
     val files = new File(dir).listFiles.filter(f => r.findFirstIn(f.getName).isDefined)
