@@ -11,7 +11,7 @@ class DoubleArrayTrieTest extends FunSuite {
     trie.add("acd", 30)
 
     val daTrie = DoubleArrayTrie(trie)
-
+    assert("10,20" == daTrie.commonPrefixSearch("ab").mkString(","))
   }
 
 }
