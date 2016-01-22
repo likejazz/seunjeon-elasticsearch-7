@@ -4,7 +4,7 @@ import org.scalatest._
 
 class SimpleTrieTest extends FunSuite {
 
-  test("commonPrefixSearch") {
+  test("add") {
     val trie = SimpleTrie()
     trie.add("a", 10)
     trie.add("ab", 20)

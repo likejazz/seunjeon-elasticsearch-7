@@ -1,7 +1,5 @@
 package org.bitbucket.eunjeon.seunjeon
 
-import scala.collection.mutable
-
 case class TNode(children:java.util.TreeMap[Char, TNode], value:Int)
 
 object SimpleTrie {
