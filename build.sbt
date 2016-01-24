@@ -11,6 +11,7 @@ lazy val commonSettings = Seq(
     else
       Some("releases"  at nexus + "service/local/staging/deploy/maven2")
   },
+  isSnapshot := {if (version.value.trim.endsWith("SNAPSHOT")) true else false},
   pomIncludeRepository := { _ => false },
   pomExtra := (
     <url>http://eunjeon.blogspot.kr/</url>
@@ -52,7 +53,7 @@ lazy val seunjeon = (project in file(".")).
     crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
 
-    version := "1.0.1",
+    version := "1.0.2-SNAPSHOT",
 
     libraryDependencies ++= Seq(
       "com.github.takawitter" % "trie4j" % "0.9.1",

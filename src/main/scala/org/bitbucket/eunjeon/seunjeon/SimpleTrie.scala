@@ -8,6 +8,7 @@ object SimpleTrie {
 
 class SimpleTrie() {
   val root:TNode = TNode(new java.util.TreeMap[Char, TNode](), -1)
+  var size = 0
 
   def add(term:String, value:Int): Unit = {
     add(root, term.toCharArray, value)
@@ -15,6 +16,7 @@ class SimpleTrie() {
 
   private def add(root:TNode, chars:Array[Char], value:Int): Unit = {
     if (chars.length == 0) {
+      size += 1
     } else {
       val children = root.children
       val head = chars.head
@@ -22,20 +24,11 @@ class SimpleTrie() {
         val subTrie = children.get(head)
         add(subTrie, chars.tail, value)
       } else {
-        val termianlValue = if (chars.length == 1) value else -1
-        val subTrie = TNode(new java.util.TreeMap[Char, TNode](), termianlValue)
+        val terminalValue = if (chars.length == 1) value else -1
+        val subTrie = TNode(new java.util.TreeMap[Char, TNode](), terminalValue)
         children.put(head, subTrie)
         add(subTrie, chars.tail, value)
       }
     }
   }
-//
-//  def commonPrefixSearch(term:String): Seq[Int] = {
-//    commonPrefixSearch(root, term.toCharArray)
-//  }
-//
-//  private def commonPrefixSearch(root:TNode, chars:Array[Char]): Seq[Int] = {
-//
-//  }
-
 }

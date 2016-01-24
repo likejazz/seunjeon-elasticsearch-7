@@ -34,7 +34,7 @@ class LexiconDict {
 
   var termDict: Array[Morpheme] = null
   var dictMapper: Array[Array[Int]] = null
-  var trie: MapDoubleArray[Int] = null
+  var trie: DoubleArrayTrie = null
 
   def getDictionaryInfo(): String = {
     s"termSize = ${termDict.length} mapper size = ${dictMapper.length}"
@@ -143,17 +143,17 @@ class LexiconDict {
     this
   }
 
-  def buildTrie(dict:Array[(String, Array[Int])]): MapDoubleArray[Int] = {
+  def buildTrie(dict:Array[(String, Array[Int])]): DoubleArrayTrie = {
     var startTime = System.nanoTime()
-    val patricia = new MapPatriciaTrie[Int]
+    val patricia = SimpleTrie()
     for (idx <- dict.indices) {
-      patricia.insert(dict(idx)._1, idx)
+      patricia.add(dict(idx)._1, idx)
     }
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
-    logger.info(s"patricia trie building is completed. ($elapsedTime ms)")
+    logger.info(s"simple trie building is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
-    val result = new MapDoubleArray(patricia)
+    val result = DoubleArrayTrie(patricia)
     elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"double-array trie building is completed. ($elapsedTime ms)")
     result
@@ -182,15 +182,7 @@ class LexiconDict {
   }
 
   def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
-    val indexedLexiconDictPositions = new ListBuffer[Int]
-    // TODO: boxed type (Integer) 떄문에 속도가 느리다.
-    val iterator = trie.commonPrefixSearchEntries(keyword).iterator()
-    while (iterator.hasNext) {
-      indexedLexiconDictPositions += iterator.next().getValue
-    }
-
-    // TODO: 성능을 위해 풀자.
-    indexedLexiconDictPositions.flatMap(dictMapper(_)).map(termDict(_))
+    trie.commonPrefixSearch(keyword).flatMap(dictMapper(_).map(termDict(_)))
   }
 
   def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
@@ -205,12 +197,7 @@ class LexiconDict {
     dictMapperStore.writeObject(dictMapper)
     dictMapperStore.close()
 
-    // TODO: writer 사용해서 직렬화하자.
-    // https://github.com/takawitter/trie4j/blob/master/trie4j/src/test/java/org/trie4j/io/TrieWriterTest.java
-    val trieStore = new ObjectOutputStream(
-      new BufferedOutputStream(new FileOutputStream(triePath), 16*1024))
-    trieStore.writeObject(trie)
-    trieStore.close()
+    trie.write(new java.io.File(triePath))
   }
 
   def load(): LexiconDict = {
@@ -249,12 +236,8 @@ class LexiconDict {
     elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"mapper loading is completed. ($elapsedTime ms)")
 
-
     startTime = System.nanoTime()
-    val TrieIn = new ObjectInputStream(new BufferedInputStream(trieStream, 16*1024))
-    trie = TrieIn.readObject().asInstanceOf[MapDoubleArray[Int]]
-    TrieIn.close()
-    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
+    trie = DoubleArrayTrie(trieStream)
     logger.info(s"double-array trie loading is completed. ($elapsedTime ms)")
   }
 }

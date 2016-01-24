@@ -5,7 +5,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 
 class AnalyzerTest extends FunSuite with BeforeAndAfter {
   before {
-    Analyzer.resetUserDict()
+//    Analyzer.resetUserDict()
   }
 
   test("main test") {
