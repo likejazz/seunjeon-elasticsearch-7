@@ -30,6 +30,7 @@ class DoubleArrayTrie {
 
   var totalSize = 0
   var size = 0
+  var nextOffset = 0
   var base = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
   var check = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
   var values = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
@@ -76,6 +77,7 @@ class DoubleArrayTrie {
       *         --------------------
       *         | ...    | ...     |
       */
+    // TODO: recursive 하게 넣고 있는게 정확히 이해가 안됨... 잘 돌아가긴 하는데...
     val offset = findOffset(children)
     children.foreach { child =>
       val char = child._1
@@ -85,14 +87,17 @@ class DoubleArrayTrie {
       val childOffset = add(checkPos, tnode.children.asScala.toMap)
       base(checkPos) = childOffset
       values(checkPos) = tnode.value
+      size += 1
     }
-    size += 1
-    println(size)
     offset
   }
 
   private def findOffset(children:Map[Char, TNode]): Int = {
-    (0 until ARRAY_INIT_SIZE).toStream.map(_ * (math.log(size)*10).toInt).filter(tryPosition(_, children)).head
+//    (0 until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
+    val offset = (nextOffset until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
+    // TODO: 가끔 4000 이상 offset이 튈때가 있는데 왜 그런지 모르겠음
+    nextOffset = if ((offset - nextOffset) > 100) nextOffset + 1 else offset
+    offset
   }
 
   private def tryPosition(offset:Int, children:Map[Char, TNode]): Boolean = {
