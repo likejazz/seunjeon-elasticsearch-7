@@ -1,7 +1,6 @@
-package org.bitbucket.eunjeon.seunjeon
+package org.bitbucket.eunjeon.seunjeon.trie
 
 import java.io._
-
 import scala.collection.JavaConverters._
 
 /**
@@ -11,15 +10,11 @@ object DoubleArrayTrie {
   def apply(simpleTrie:SimpleTrie) = new DoubleArrayTrie().build(simpleTrie)
 
   def apply(file:File) = {
-    val trie = new DoubleArrayTrie()
-    trie.read(file)
-    trie
+    new DoubleArrayTrie().read(file)
   }
 
   def apply(inStream:InputStream) = {
-    val trie = new DoubleArrayTrie()
-    trie.read(inStream)
-    trie
+    new DoubleArrayTrie().read(inStream)
   }
 }
 
@@ -29,12 +24,10 @@ class DoubleArrayTrie {
   val startPos = 0
 
   var totalSize = 0
-  var size = 0
   var nextOffset = 0
   var base = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
   var check = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
   var values = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
-  val random = scala.util.Random
 
   def build(simpleTrie: SimpleTrie) = {
     base(0) = 0
@@ -46,8 +39,7 @@ class DoubleArrayTrie {
   }
 
   private def packArrays(): Unit = {
-//    val maxPos = math.max(getMaxPosition(), Char.MaxValue)
-    val maxPos = getMaxPosition()
+    val maxPos = getMaxPosition
     base = copyArray(base, maxPos)
     check = copyArray(check, maxPos)
     values = copyArray(values, maxPos)
@@ -59,15 +51,15 @@ class DoubleArrayTrie {
     newArray
   }
 
-  private def getMaxPosition(): Int = {
+  private def getMaxPosition: Int = {
     (ARRAY_INIT_SIZE-1 to 0 by -1).toStream.filter(base(_) != -1).head
   }
 
   private def add(basePos:Int, children:Map[Char, TNode]): Int = {
     /**
       * start from basePos. insert 'c'
-      *         --------------------
-      *         | base   | check   |
+      *
+      *           base     check
       *         --------------------
       *         |        |         | offset
       *         --------------------
@@ -78,7 +70,7 @@ class DoubleArrayTrie {
       *         | ...    | ...     |
       */
     // TODO: recursive 하게 넣고 있는게 정확히 이해가 안됨... 잘 돌아가긴 하는데...
-    val offset = findOffset(children)
+    val offset = findEmptyOffset(children)
     children.foreach { child =>
       val char = child._1
       val tnode = child._2
@@ -87,13 +79,11 @@ class DoubleArrayTrie {
       val childOffset = add(checkPos, tnode.children.asScala.toMap)
       base(checkPos) = childOffset
       values(checkPos) = tnode.value
-      size += 1
     }
     offset
   }
 
-  private def findOffset(children:Map[Char, TNode]): Int = {
-//    (0 until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
+  private def findEmptyOffset(children:Map[Char, TNode]): Int = {
     val offset = (nextOffset until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
     // TODO: 가끔 4000 이상 offset이 튈때가 있는데 왜 그런지 모르겠음
     nextOffset = if ((offset - nextOffset) > 100) nextOffset + 1 else offset
@@ -117,7 +107,7 @@ class DoubleArrayTrie {
       // TODO: 깔끔하게 고치자
       if (childPos > check.length || (check(childPos) != basePos)) Nil // none exist child node
       else {
-        // tail recucive?
+        // tail recursive right?
         val currentValue = if (values(childPos) == -1) Nil else values(childPos) :: Nil
         currentValue ::: commonPrefixSearchTail(childPos, chars.tail)
       }
@@ -133,11 +123,11 @@ class DoubleArrayTrie {
     out.close()
   }
 
-  def read(file:File): Unit = {
+  def read(file:File): DoubleArrayTrie = {
     read(new FileInputStream(file))
   }
 
-  def read(inStream:InputStream): Unit = {
+  def read(inStream:InputStream): DoubleArrayTrie = {
     val in = new DataInputStream(new BufferedInputStream(inStream, 16*1024))
     val size = in.readInt()
     base = new Array[Int](size+1)
@@ -148,5 +138,6 @@ class DoubleArrayTrie {
     (0 until size).foreach(values(_) = in.readInt())
     in.close()
 
+    this
   }
 }

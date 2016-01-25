@@ -1,5 +1,6 @@
-package org.bitbucket.eunjeon.seunjeon
+package org.bitbucket.eunjeon.seunjeon.trie
 
+import org.bitbucket.eunjeon.seunjeon.trie.SimpleTrie
 import org.scalatest._
 
 class SimpleTrieTest extends FunSuite {

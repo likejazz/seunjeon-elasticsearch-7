@@ -19,12 +19,10 @@ import java.io.{File, _}
 
 import com.github.tototoshi.csv.CSVParser
 import com.typesafe.scalalogging.slf4j.Logger
+import org.bitbucket.eunjeon.seunjeon.trie.{SimpleTrie, DoubleArrayTrie}
 import org.slf4j.LoggerFactory
-import org.trie4j.doublearray.MapDoubleArray
-import org.trie4j.patricia.MapPatriciaTrie
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 import scala.io.Source
 import scala.util.matching.Regex
 

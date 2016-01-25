@@ -56,7 +56,6 @@ lazy val seunjeon = (project in file(".")).
     version := "1.0.2-SNAPSHOT",
 
     libraryDependencies ++= Seq(
-      "com.github.takawitter" % "trie4j" % "0.9.1",
       "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",

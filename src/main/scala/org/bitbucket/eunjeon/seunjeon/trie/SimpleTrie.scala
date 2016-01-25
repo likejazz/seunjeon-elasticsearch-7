@@ -1,4 +1,4 @@
-package org.bitbucket.eunjeon.seunjeon
+package org.bitbucket.eunjeon.seunjeon.trie
 
 case class TNode(children:java.util.TreeMap[Char, TNode], value:Int)
 
@@ -10,8 +10,9 @@ class SimpleTrie() {
   val root:TNode = TNode(new java.util.TreeMap[Char, TNode](), -1)
   var size = 0
 
-  def add(term:String, value:Int): Unit = {
+  def add(term:String, value:Int): SimpleTrie = {
     add(root, term.toCharArray, value)
+    this
   }
 
   private def add(root:TNode, chars:Array[Char], value:Int): Unit = {
