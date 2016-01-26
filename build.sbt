@@ -1,6 +1,7 @@
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   organization := "org.bitbucket.eunjeon",
+  javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
 
   publishMavenStyle := true,
   publishArtifact in Test := false,
