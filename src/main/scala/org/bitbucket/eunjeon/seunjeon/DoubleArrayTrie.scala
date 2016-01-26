@@ -1,21 +1,55 @@
-package org.bitbucket.eunjeon.seunjeon.trie
+package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
+
 import scala.collection.JavaConverters._
+
+object DoubleArrayTrieBuilder {
+  def apply() = new DoubleArrayTrieBuilder()
+}
+
+case class TNode(children:java.util.TreeMap[Char, TNode], value:Int)
+
+/* this is trie that only have a add function */
+class DoubleArrayTrieBuilder () {
+  val root:TNode = TNode(new java.util.TreeMap[Char, TNode](), -1)
+  var size = 0
+
+  def add(term:String, value:Int): DoubleArrayTrieBuilder = {
+    add(root, term.toCharArray, value)
+    this
+  }
+
+  private def add(root:TNode, chars:Array[Char], value:Int): Unit = {
+    if (chars.length == 0) {
+      size += 1
+    } else {
+      val children = root.children
+      val head = chars.head
+      if (children.containsKey(head)) {
+        val subTrie = children.get(head)
+        add(subTrie, chars.tail, value)
+      } else {
+        val terminalValue = if (chars.length == 1) value else -1
+        val subTrie = TNode(new java.util.TreeMap[Char, TNode](), terminalValue)
+        children.put(head, subTrie)
+        add(subTrie, chars.tail, value)
+      }
+    }
+  }
+
+  def build(): DoubleArrayTrie = {
+    DoubleArrayTrie(this)
+  }
+}
 
 /**
   * http://linux.thai.net/~thep/datrie/datrie.html
   */
 object DoubleArrayTrie {
-  def apply(simpleTrie:SimpleTrie) = new DoubleArrayTrie().build(simpleTrie)
-
-  def apply(file:File) = {
-    new DoubleArrayTrie().read(file)
-  }
-
-  def apply(inStream:InputStream) = {
-    new DoubleArrayTrie().read(inStream)
-  }
+  def apply(simpleTrie: DoubleArrayTrieBuilder) = new DoubleArrayTrie().build(simpleTrie)
+  def apply(file:File) =  new DoubleArrayTrie().read(file)
+  def apply(inStream:InputStream) = new DoubleArrayTrie().read(inStream)
 }
 
 class DoubleArrayTrie {
@@ -29,7 +63,7 @@ class DoubleArrayTrie {
   var check = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
   var values = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
 
-  def build(simpleTrie: SimpleTrie) = {
+  def build(simpleTrie: DoubleArrayTrieBuilder) = {
     base(0) = 0
     totalSize = simpleTrie.size
     val root = simpleTrie.root

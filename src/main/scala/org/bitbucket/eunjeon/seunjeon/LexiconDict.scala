@@ -19,7 +19,6 @@ import java.io.{File, _}
 
 import com.github.tototoshi.csv.CSVParser
 import com.typesafe.scalalogging.slf4j.Logger
-import org.bitbucket.eunjeon.seunjeon.trie.{SimpleTrie, DoubleArrayTrie}
 import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
@@ -143,18 +142,18 @@ class LexiconDict {
 
   def buildTrie(dict:Array[(String, Array[Int])]): DoubleArrayTrie = {
     var startTime = System.nanoTime()
-    val patricia = SimpleTrie()
+    val trieBuilder = DoubleArrayTrieBuilder()
     for (idx <- dict.indices) {
-      patricia.add(dict(idx)._1, idx)
+      trieBuilder.add(dict(idx)._1, idx)
     }
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
-    logger.info(s"simple trie building is completed. ($elapsedTime ms)")
+    logger.info(s"added to trie builder ($elapsedTime ms)")
 
     startTime = System.nanoTime()
-    val result = DoubleArrayTrie(patricia)
+    val doubleArrayTrie = trieBuilder.build()
     elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"double-array trie building is completed. ($elapsedTime ms)")
-    result
+    doubleArrayTrie
   }
 
   def buildSurfaceIndexDict(sortedTerms: Seq[Morpheme]):Array[(String, Array[Int])] = {
