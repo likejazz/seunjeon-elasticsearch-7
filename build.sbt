@@ -59,7 +59,7 @@ lazy val seunjeon = (project in file(".")).
       "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-      "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test",
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test",
       "junit" % "junit" % "4.12" % "test"
     )
   )

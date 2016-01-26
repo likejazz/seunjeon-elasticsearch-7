@@ -99,8 +99,8 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
         if (totalCost < minTotalCost) {
           minTotalCost = totalCost
           startingNode.accumulatedCost = totalCost
-          startingNode.leftNode = endingNode
         }
+        startingNode.leftNode = endingNode
       } else {}
     }
   }
