@@ -103,29 +103,34 @@ class DoubleArrayTrie {
       *         --------------------
       *         | ...    | ...     |
       */
-    // TODO: recursive 하게 넣고 있는게 정확히 이해가 안됨... 잘 돌아가긴 하는데...
     val offset = findEmptyOffset(children)
     children.foreach { child =>
       val char = child._1
       val tnode = child._2
       val checkPos = offset + char.toInt
       check(checkPos) = basePos
-      val childOffset = add(checkPos, tnode.children.asScala.toMap)
-      base(checkPos) = childOffset
+      base(checkPos) = add(checkPos, tnode.children.asScala.toMap)
       values(checkPos) = tnode.value
     }
     offset
   }
 
   private def findEmptyOffset(children:Map[Char, TNode]): Int = {
+    if (nextOffset == 691) {
+      println(nextOffset)
+    }
     val offset = (nextOffset until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
     // TODO: 가끔 4000 이상 offset이 튈때가 있는데 왜 그런지 모르겠음
+    if (offset > 4000) {
+      println(offset)
+    }
     nextOffset = if ((offset - nextOffset) > 100) nextOffset + 1 else offset
     offset
   }
 
   private def tryPosition(offset:Int, children:Map[Char, TNode]): Boolean = {
-    children.toStream.forall(child => check(offset + child._1.toInt) == emptyValue)
+    // FIXME: 뭔가 재귀적으로 도는 느낌이 있음...children에 children까지 들어가서..
+    children.keys.forall(char => check(offset + char.toInt) == emptyValue)
   }
 
   def commonPrefixSearch(text:String): List[Int] = {
