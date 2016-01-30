@@ -2,6 +2,8 @@ package org.bitbucket.eunjeon.seunjeon
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
+import scala.io.Source
+
 
 class AnalyzerTest extends FunSuite with BeforeAndAfter {
   before {
@@ -12,7 +14,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     // FIXME: 분석이 이상하게 나옴.
     Analyzer.parse("하늘을 나는 자동차.").foreach(println)
     // TODO: double-array-trie library bug.
-//    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
+    //    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
   }
 
   test("penalty cost") {
@@ -34,7 +36,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
       "카:NNG",
       "충:NNG",
       "했:XSV+EP",
-      "어:EF","?:SF") == Analyzer.parse("버카충했어?").map(getSurfacePos))
+      "어:EF", "?:SF") == Analyzer.parse("버카충했어?").map(getSurfacePos))
     Analyzer.setUserDictDir("src/test/resources/userdict/")
     assert(Seq(
       "버카충:NNG",
@@ -109,12 +111,13 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     assert("은전+한+닢+프로젝트" == result1.map(_.morpheme.surface).mkString("+"))
     result1.foreach(println)
 
-    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis=false)
+    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis = false)
     assert("은전한닢+프로젝트" == result2.map(_.morpheme.surface).mkString("+"))
     result2.foreach(println)
   }
 
   test("functation") {
+    Analyzer.parse("""F = \frac{10^7}{(4\\pi)^2}""").foreach(println)
     Analyzer.parse("《재규어》.").foreach(println)
     Analyzer.parse(" ^^ 55 《삐리리~ 불어봐! 재규어》.").foreach(println)
   }
@@ -123,7 +126,16 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     Analyzer.parse("가\n나").foreach(println)
   }
 
-  def getSurfacePos(termNode:LNode): String = {
+  test("long text") {
+    val longText = Source.fromInputStream(getClass.getResourceAsStream("/path_disconnect.txt")).mkString
+    val morphemes = Analyzer.parse(longText)
+    morphemes.foreach(println)
+    assert("\"" == morphemes.head.morpheme.surface)
+    assert("오늘밤" == morphemes(1).morpheme.surface)
+    assert("기사" == morphemes.last.morpheme.surface)
+  }
+
+  def getSurfacePos(termNode: LNode): String = {
     println(termNode)
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }

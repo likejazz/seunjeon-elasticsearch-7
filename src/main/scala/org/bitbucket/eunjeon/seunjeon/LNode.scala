@@ -50,7 +50,7 @@ object LNode {
 case class LNode(morpheme:Morpheme,
                  var startPos:Int,
                  var endPos:Int,
-                 var accumulatedCost:Int=Short.MaxValue) {
+                 var accumulatedCost:Int = Int.MaxValue) {
   var leftNode:LNode = null
   var isActive:Boolean=true
 

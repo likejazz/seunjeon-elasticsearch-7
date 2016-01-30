@@ -57,9 +57,7 @@ case class Category(invoke:Boolean, group:Boolean, length:Int)
 // TODO: charset, category 구조가 잘 안잡힌듯.. 교통정리가 필요함.
 object CharDef {
   var defaultCategory:Category = null
-  val charFinder:util.TreeMap[Char, (Category, Morpheme)] = loadChar
-
-  def loadChar = {
+  lazy val charFinder:util.TreeMap[Char, (Category, Morpheme)] =  {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Morpheme)]()
     val inputStream = getClass.getResourceAsStream("/char.def")
@@ -121,7 +119,7 @@ object CharDef {
     charsets
   }
 
-  private def getCategoryTerm(ch: Char): (Category, Morpheme) = {
+  def getCategoryTerm(ch: Char): (Category, Morpheme) = {
     val floor = charFinder.floorEntry(ch)
     val ceiling = charFinder.ceilingEntry(ch)
     if (floor == null || ceiling == null) {
