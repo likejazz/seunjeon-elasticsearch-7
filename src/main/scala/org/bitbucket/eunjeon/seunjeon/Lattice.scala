@@ -18,14 +18,15 @@ package org.bitbucket.eunjeon.seunjeon
 import scala.collection.mutable
 
 object Lattice {
-  def apply(length:Int, connectingCostDict:ConnectionCostDict) = new Lattice(length, connectingCostDict)
+  def apply(text:String, connectingCostDict:ConnectionCostDict) = new Lattice(text, connectingCostDict)
 }
 
-class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
-  var startingNodes = build2DimNodes(length+2)  // for BOS + EOS
-  var endingNodes = build2DimNodes(length+2)    // for BOS + EOS
+class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
+  val text = input
+  var startingNodes = build2DimNodes(text.length+2)  // for BOS + EOS
+  var endingNodes = build2DimNodes(text.length+2)    // for BOS + EOS
   var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), length, length)
+  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), text.length, text.length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -48,6 +49,23 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     this
   }
 
+  def build(): Lattice = {
+    this.fillDisconnectedPath().removeSpace()
+  }
+
+  def fillDisconnectedPath(): Lattice = {
+    for (idx <- text.length-1 to 0 by -1) {
+      val eIdx = idx + 1
+      if (endingNodes(eIdx).isEmpty && startingNodes(eIdx + 1).nonEmpty) {
+        val categoryMorpheme = CharDef.getCategoryTerm(text(eIdx))
+        val morpheme = Morpheme(text(idx).toString, categoryMorpheme._2)
+        // TODO: idx 무지 헷깔림
+        add(LNode(morpheme, idx, idx + 1))
+      }
+    }
+    this
+  }
+
   def removeSpace(): Lattice = {
     startingNodes = startingNodes.filter(termNodes =>
       termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
@@ -61,14 +79,10 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
     for (idx <- 1 until startingNodes.length) {
       // while 하는 것이 foreach 보다 성능이 좋음.
       //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
-      if (endingNodes(idx-1).isEmpty) {
-        startingNodes(idx).foreach(node => node.isActive = false)
-        startingNodes(idx).clear()
-      }
       val iter = startingNodes(idx).iterator
       while (iter.hasNext) {
         // FIXME: endingNodes 가 없으면 startingNode를 지워줘야 할듯?
-        updateCost(endingNodes(idx-1), iter.next())
+        updateCost(endingNodes(idx - 1), iter.next())
       }
     }
 
@@ -88,21 +102,26 @@ class Lattice(length:Int, connectingCostDict:ConnectionCostDict) {
   }
 
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
-    var minTotalCost:Int = 2147483647
+    var minTotalCost:Int = Int.MaxValue
     // while 하는 것이 foreach 보다 성능이 좋음.
     //  https://www.sumologic.com/2012/07/23/3-tips-for-writing-performant-scala/
+    var bestNode:LNode = null
     val iter = endingNodes.iterator
     while (iter.hasNext) {
       val endingNode = iter.next()
       if (endingNode.isActive) {
-        val totalCost: Int = getCost(endingNode, startingNode)
+        val totalCost:Int = getCost(endingNode, startingNode)
         if (totalCost < minTotalCost) {
           minTotalCost = totalCost
           startingNode.accumulatedCost = totalCost
+          bestNode = endingNode
         }
-        startingNode.leftNode = endingNode
       } else {}
     }
+    if (bestNode == null) {
+      throw new Exception(s"disconnected path.\n endingNodes=$endingNodes\n startingNode=$startingNode")
+    }
+    startingNode.leftNode = bestNode
   }
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {

@@ -45,11 +45,10 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   private def buildLattice(text: String): Lattice = {
     val charsets = CharDef.splitCharSet(text)
-    val charsetsLength = charsets.foldLeft(0)(_ + _.str.length)
-    Lattice(charsetsLength, connectionCostDict).
+    Lattice(text, connectionCostDict).
       addAll(getKnownTerms(text)).
       addAll(getUnknownTerms(charsets)).
-      removeSpace()
+      build()
   }
 
   private def getUnknownTerms(charsets: Seq[CharSet]): Seq[LNode] = {
@@ -93,14 +92,6 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     if (userDict != null) {
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
-//    var idx = 0
-//    val nodes = new Array[LNode](searchedTerms.length)
-//    while(idx < searchedTerms.length) {
-//      val term = searchedTerms(idx)
-//      nodes(idx) = LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
-//      idx += 1
-//    }
-//    nodes
     searchedTerms.map(term =>
       LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
     )

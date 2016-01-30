@@ -52,7 +52,7 @@ lazy val seunjeon = (project in file(".")).
     crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
 
-    version := "1.0.1",
+    version := "1.0.2",
 
     libraryDependencies ++= Seq(
       "com.github.takawitter" % "trie4j" % "0.9.1",
@@ -70,7 +70,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.1.1.0",
+    version := "2.1.1.1",
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "2.1.1" % "provided",
