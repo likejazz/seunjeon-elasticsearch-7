@@ -30,7 +30,7 @@ import scala.util.matching.Regex
 
 
 class LexiconDict {
-  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+  val logger = Logger(LoggerFactory.getLogger(classOf[LexiconDict].getName))
 
   var termDict: Array[Morpheme] = null
   var dictMapper: Array[Array[Int]] = null
@@ -214,9 +214,9 @@ class LexiconDict {
   }
 
   def load(): LexiconDict = {
-    val termDictStream = getClass.getResourceAsStream(DictBuilder.TERM_DICT)
-    val dictMapperStream = getClass.getResourceAsStream(DictBuilder.DICT_MAPPER)
-    val trieStream = getClass.getResourceAsStream(DictBuilder.TERM_TRIE)
+    val termDictStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_DICT)
+    val dictMapperStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.DICT_MAPPER)
+    val trieStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_TRIE)
 
     load(termDictStream, dictMapperStream, trieStream)
     this

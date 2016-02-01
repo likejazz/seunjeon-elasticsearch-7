@@ -16,7 +16,7 @@
 
 ## SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.0.2"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.0.3"
 ```
  * Scala 1.10, Scala 1.11
 
