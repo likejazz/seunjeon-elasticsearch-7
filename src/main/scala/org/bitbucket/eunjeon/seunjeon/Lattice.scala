@@ -32,10 +32,10 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   startingNodes.last += eos
   endingNodes.last += eos
 
-  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[LNode]] = {
+  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.ArrayBuffer[LNode]] = {
     // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[LNode])
+    temp.map(l => new mutable.ArrayBuffer[LNode])
   }
 
   def add(node:LNode): Lattice = {
@@ -67,11 +67,17 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   def removeSpace(): Lattice = {
-    startingNodes = startingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
-    endingNodes = endingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
+    assert(startingNodes.length == endingNodes.length)
+    startingNodes = startingNodes.filterNot(isSpace)
+    endingNodes = endingNodes.filterNot(isSpace)
+    assert(startingNodes.length == endingNodes.length)
     this
+  }
+
+  private def isSpace(nodes:mutable.ArrayBuffer[LNode]):Boolean = {
+    // TODO: unknownTerm 을 knownTerm보다 뒤에 넣다보니 꼼수로 마지막것만 비교 함.(성능이슈)
+    // 깨끗하지 않는 코드임. nodes.exists(_.morpheme.surface == " ") 로 해야 깔끔한 코드임
+    nodes.nonEmpty && nodes.last.morpheme.surface == " "
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.

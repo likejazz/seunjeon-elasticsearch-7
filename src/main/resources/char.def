@@ -12,10 +12,10 @@
 #   - LENGTH: n:     1 to n length new words are added
 #
 DEFAULT         0 1 0  # DEFAULT is a mandatory category!
-SPACE           0 1 0  
+SPACE           0 0 1   # don't modify this.
 HANJA           0 1 1
 KANJI           0 1 0
-SYMBOL          1 1 0
+SYMBOL          1 0 1
 NUMERIC         1 1 0
 ALPHA           1 1 0
 HANGUL          0 1 2 # Korean
