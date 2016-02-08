@@ -53,7 +53,7 @@ lazy val seunjeon = (project in file(".")).
     crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
 
-    version := "1.0.2",
+    version := "1.0.3-SNAPSHOT",
 
     libraryDependencies ++= Seq(
       "com.github.takawitter" % "trie4j" % "0.9.1",

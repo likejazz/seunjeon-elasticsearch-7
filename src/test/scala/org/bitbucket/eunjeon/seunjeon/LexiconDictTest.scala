@@ -8,6 +8,7 @@ class LexiconDictTest extends FunSuite {
   test("save and open") {
     val lexicons = """감자,1,2,100,NNG,*,F,감자,*,*,*,*,*
         |고구마,1,2,100,NNG,*,F,고구마,*,*,*,*,*
+        | 고 구 ,1,2,100,NNG,*,F,고구마,*,*,*,*,*
         |고,1,2,100,NNG,*,F,고,*,*,*,*,*
         |구마,1,2,100,NNG,*,F,구마,*,*,*,*,*
         |오징어,1,2,100,NNG,*,F,오징어,*,*,*,*,*""".stripMargin
@@ -21,7 +22,7 @@ class LexiconDictTest extends FunSuite {
     openLexiconDict.load(TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_DICT_FILENAME,
                          TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER_FILENAME,
                          TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE_FILENAME)
-    assert(Seq("고", "고구마") ==
+    assert(Seq("고", "고구", "고구마") ==
       openLexiconDict.commonPrefixSearch("고구마").map(_.surface))
   }
 

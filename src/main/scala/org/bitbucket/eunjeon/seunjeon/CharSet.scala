@@ -33,7 +33,7 @@ object UnkDef {
 
   def buildUnk: mutable.Map[String, Morpheme] = {
     val morphemes = mutable.Map[String, Morpheme]()
-    val inputStream = getClass.getResourceAsStream(DictBuilder.UNK_DEF)
+    val inputStream = classOf[CharSet].getResourceAsStream(DictBuilder.UNK_DEF)
     Source.fromInputStream(inputStream).getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
@@ -60,7 +60,7 @@ object CharDef {
   lazy val charFinder:util.TreeMap[Char, (Category, Morpheme)] =  {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Morpheme)]()
-    val inputStream = getClass.getResourceAsStream("/char.def")
+    val inputStream = classOf[CharSet].getResourceAsStream("/char.def")
     Source.fromInputStream(inputStream).getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>

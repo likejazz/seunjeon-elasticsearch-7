@@ -32,10 +32,10 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   startingNodes.last += eos
   endingNodes.last += eos
 
-  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.MutableList[LNode]] = {
+  private def build2DimNodes(length:Int) : mutable.ArraySeq[mutable.ArrayBuffer[LNode]] = {
     // TODO: immutable 로 바꿔서 성능향상시키자.
     val temp = new mutable.ArraySeq(length)
-    temp.map(l => new mutable.MutableList[LNode])
+    temp.map(l => new mutable.ArrayBuffer[LNode])
   }
 
   def add(node:LNode): Lattice = {
@@ -67,11 +67,15 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   def removeSpace(): Lattice = {
-    startingNodes = startingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
-    endingNodes = endingNodes.filter(termNodes =>
-      termNodes.isEmpty || termNodes.get(0).get.morpheme.surface != " ")
+    assert(startingNodes.length == endingNodes.length)
+    startingNodes = startingNodes.filterNot(isSpace)
+    endingNodes = endingNodes.filterNot(isSpace)
+    assert(startingNodes.length == endingNodes.length)
     this
+  }
+
+  private def isSpace(nodes:mutable.ArrayBuffer[LNode]):Boolean = {
+    nodes.length == 1 && nodes.exists(_.morpheme.surface == " ")
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
@@ -109,14 +113,12 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
     val iter = endingNodes.iterator
     while (iter.hasNext) {
       val endingNode = iter.next()
-      if (endingNode.isActive) {
-        val totalCost:Int = getCost(endingNode, startingNode)
-        if (totalCost < minTotalCost) {
-          minTotalCost = totalCost
-          startingNode.accumulatedCost = totalCost
-          bestNode = endingNode
-        }
-      } else {}
+      val totalCost:Int = getCost(endingNode, startingNode)
+      if (totalCost < minTotalCost) {
+        minTotalCost = totalCost
+        startingNode.accumulatedCost = totalCost
+        bestNode = endingNode
+      }
     }
     if (bestNode == null) {
       throw new Exception(s"disconnected path.\n endingNodes=$endingNodes\n startingNode=$startingNode")
