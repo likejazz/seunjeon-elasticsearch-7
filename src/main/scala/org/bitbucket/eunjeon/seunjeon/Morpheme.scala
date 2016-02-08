@@ -11,7 +11,7 @@ import scala.collection.mutable
 
 
 object Morpheme {
-  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+  val logger = Logger(LoggerFactory.getLogger(classOf[Morpheme].getName))
 
   def apply(surface:String, morpheme: Morpheme): Morpheme = {
     Morpheme(surface,

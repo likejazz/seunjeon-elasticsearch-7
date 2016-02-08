@@ -52,7 +52,6 @@ case class LNode(morpheme:Morpheme,
                  var endPos:Int,
                  var accumulatedCost:Int = Int.MaxValue) {
   var leftNode:LNode = null
-  var isActive:Boolean=true
 
   def deCompound(): Seq[LNode] = {
     LNode.deCompound(this)
