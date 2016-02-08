@@ -9,7 +9,7 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </dependency>
 </dependencies>
 ```
