@@ -64,14 +64,16 @@ class LexiconDict {
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
     // TODO: yield 사용하는 것으로 바꿔보자.
     iterator.dropWhile(_.head == '#').
-      map(CSVParser.parse(_, '"', ',', '"')).foreach { item =>
+      map(CSVParser.parse(_, '\\', ',', '"').getOrElse(Nil)).
+      map(f => f.head.replace(" ", "") :: f.tail).
+      foreach { item =>
       try {
         item match {
-          case Some(List(surface)) =>
+          case List(surface) =>
             terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
-          case Some(List(surface, cost)) =>
+          case List(surface, cost) =>
             terms += buildNNGTerm(surface, cost.toShort)
-          case Some(List(surface, leftId, rightId, cost, feature@_ *)) =>
+          case List(surface, leftId, rightId, cost, feature@_ *) =>
             terms += Morpheme(surface,
               leftId.toShort,
               rightId.toShort,

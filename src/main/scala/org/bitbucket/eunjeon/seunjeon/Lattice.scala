@@ -75,9 +75,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   private def isSpace(nodes:mutable.ArrayBuffer[LNode]):Boolean = {
-    // TODO: unknownTerm 을 knownTerm보다 뒤에 넣다보니 꼼수로 마지막것만 비교 함.(성능이슈)
-    // 깨끗하지 않는 코드임. nodes.exists(_.morpheme.surface == " ") 로 해야 깔끔한 코드임
-    nodes.nonEmpty && nodes.last.morpheme.surface == " "
+    nodes.length == 1 && nodes.exists(_.morpheme.surface == " ")
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
@@ -115,14 +113,12 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
     val iter = endingNodes.iterator
     while (iter.hasNext) {
       val endingNode = iter.next()
-      if (endingNode.isActive) {
-        val totalCost:Int = getCost(endingNode, startingNode)
-        if (totalCost < minTotalCost) {
-          minTotalCost = totalCost
-          startingNode.accumulatedCost = totalCost
-          bestNode = endingNode
-        }
-      } else {}
+      val totalCost:Int = getCost(endingNode, startingNode)
+      if (totalCost < minTotalCost) {
+        minTotalCost = totalCost
+        startingNode.accumulatedCost = totalCost
+        bestNode = endingNode
+      }
     }
     if (bestNode == null) {
       throw new Exception(s"disconnected path.\n endingNodes=$endingNodes\n startingNode=$startingNode")
