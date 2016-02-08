@@ -38,8 +38,7 @@ curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
         "tokenizer": {
           "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
-            "user_words": ["낄끼빠빠,-100", "버카충"],
-            "user_dict_path": "user_dict.csv"
+            "user_words": ["낄끼빠빠,-100", "버카충", "abc마트"]
           }
         }
       }
