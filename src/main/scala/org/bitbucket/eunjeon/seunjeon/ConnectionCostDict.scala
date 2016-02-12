@@ -24,7 +24,7 @@ import scala.io.Source
 
 
 class ConnectionCostDict {
-  val logger = Logger(LoggerFactory.getLogger(this.getClass.getName))
+  val logger = Logger(LoggerFactory.getLogger(classOf[ConnectionCostDict].getName))
 
   var costDict: Array[Int] = null
   var rightSize = 0
@@ -89,7 +89,7 @@ class ConnectionCostDict {
 
   def load(): ConnectionCostDict = {
     val connectionCostFile = DictBuilder.DICT_PATH + DictBuilder.CONNECTION_COST_FILENAME
-    val inputStream = getClass.getResourceAsStream(connectionCostFile)
+    val inputStream = classOf[ConnectionCostDict].getResourceAsStream(connectionCostFile)
     load(inputStream)
     this
   }

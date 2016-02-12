@@ -2,20 +2,21 @@
 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic) 기반으로 만들어진 JVM 상에서 돌아가는 한국어 형태소분석기입니다. 기본적으로 java와 scala 인터페이스를 제공합니다. 사전이 패키지 내에 포함되어 있기 때문에 별도로 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic)을 설치할 필요가 없습니다.
 
 ## 설치
+  * jdk1.7 에서 컴파일되었습니다.
 ## Maven
 ```xml
 <dependencies>
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.3</version>
     </dependency>
 </dependencies>
 ```
 
 ## SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.0.1"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.0.3"
 ```
  * Scala 1.10, Scala 1.11
 
