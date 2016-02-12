@@ -8,6 +8,7 @@ object DoubleArrayTrieBuilder {
   def apply() = new DoubleArrayTrieBuilder()
 }
 
+
 case class TNode(children:java.util.TreeMap[Char, TNode], value:Int)
 
 /* this is trie that only have a add function */
@@ -85,11 +86,12 @@ class DoubleArrayTrie {
     newArray
   }
 
+  // TODO: 성능이 매우 느림. 특히 사용사 사전에는 몇 단어 없는데 쓸데없는 시간을 낭비함.
   private def getMaxPosition: Int = {
     (ARRAY_INIT_SIZE-1 to 0 by -1).toStream.filter(base(_) != -1).head
   }
 
-  private def add(basePos:Int, children:Map[Char, TNode]): Int = {
+  private def add(basePos:Int, children:Map[Char, TNode]): Unit = {
     /**
       * start from basePos. insert 'c'
       *
@@ -104,26 +106,26 @@ class DoubleArrayTrie {
       *         | ...    | ...     |
       */
     val offset = findEmptyOffset(children)
+    base(basePos) = offset
     children.foreach { child =>
       val char = child._1
       val tnode = child._2
       val checkPos = offset + char.toInt
       check(checkPos) = basePos
-      base(checkPos) = add(checkPos, tnode.children.asScala.toMap)
       values(checkPos) = tnode.value
     }
-    offset
+    // 꼭 현재 노드 완성 후에 child 노드 수행해야 함. 한꺼번에 하면 offset이 꼬임
+    children.foreach { child =>
+      val char = child._1
+      val tnode = child._2
+      val checkPos = offset + char.toInt
+      add(checkPos, tnode.children.asScala.toMap)
+    }
   }
 
   private def findEmptyOffset(children:Map[Char, TNode]): Int = {
-    if (nextOffset == 691) {
-      println(nextOffset)
-    }
     val offset = (nextOffset until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
     // TODO: 가끔 4000 이상 offset이 튈때가 있는데 왜 그런지 모르겠음
-    if (offset > 4000) {
-      println(offset)
-    }
     nextOffset = if ((offset - nextOffset) > 100) nextOffset + 1 else offset
     offset
   }
