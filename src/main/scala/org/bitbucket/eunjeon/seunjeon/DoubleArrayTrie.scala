@@ -1,19 +1,19 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
+import scala.collection.mutable
 
-import scala.collection.JavaConverters._
 
 object DoubleArrayTrieBuilder {
   def apply() = new DoubleArrayTrieBuilder()
 }
 
 
-case class TNode(children:java.util.TreeMap[Char, TNode], value:Int)
+case class TNode(children:mutable.Map[Char, TNode], value:Int)
 
 /* this is trie that only have a add function */
 class DoubleArrayTrieBuilder () {
-  val root:TNode = TNode(new java.util.TreeMap[Char, TNode](), -1)
+  val root:TNode = TNode(mutable.Map[Char, TNode](), -1)
   var size = 0
 
   def add(term:String, value:Int): DoubleArrayTrieBuilder = {
@@ -27,12 +27,12 @@ class DoubleArrayTrieBuilder () {
     } else {
       val children = root.children
       val head = chars.head
-      if (children.containsKey(head)) {
-        val subTrie = children.get(head)
+      if (children.contains(head)) {
+        val subTrie = children.getOrElse(head, null)
         add(subTrie, chars.tail, value)
       } else {
         val terminalValue = if (chars.length == 1) value else -1
-        val subTrie = TNode(new java.util.TreeMap[Char, TNode](), terminalValue)
+        val subTrie = TNode(mutable.Map[Char, TNode](), terminalValue)
         children.put(head, subTrie)
         add(subTrie, chars.tail, value)
       }
@@ -54,44 +54,33 @@ object DoubleArrayTrie {
 }
 
 class DoubleArrayTrie {
-  val ARRAY_INIT_SIZE = 30000000
+  val ARRAY_INIT_SIZE = Char.MaxValue.toInt
   val emptyValue = -1
   val startPos = 0
 
-  var totalSize = 0
   var nextOffset = 0
-  var base = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
-  var check = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
-  var values = Array.fill[Int](ARRAY_INIT_SIZE)(emptyValue)
+  var base:Array[Int] = null
+  var check:Array[Int] = null
+  var values:Array[Int] = null
 
   def build(simpleTrie: DoubleArrayTrieBuilder) = {
+    base = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
+    check = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
+    values = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
     base(0) = 0
-    totalSize = simpleTrie.size
     val root = simpleTrie.root
-    add(startPos, root.children.asScala.toMap)
+    add(startPos, root.children)
     packArrays()
     this
   }
 
   private def packArrays(): Unit = {
-    val maxPos = getMaxPosition
-    base = copyArray(base, maxPos)
-    check = copyArray(check, maxPos)
-    values = copyArray(values, maxPos)
+    if (nextOffset+Char.MaxValue < check.length)
+      resizeArrays(nextOffset+Char.MaxValue)
   }
 
-  private def copyArray(array:Array[Int], size:Int): Array[Int] = {
-    val newArray = new Array[Int](size+1)
-    Array.copy(array, 0, newArray, 0, size+1)
-    newArray
-  }
 
-  // TODO: 성능이 매우 느림. 특히 사용사 사전에는 몇 단어 없는데 쓸데없는 시간을 낭비함.
-  private def getMaxPosition: Int = {
-    (ARRAY_INIT_SIZE-1 to 0 by -1).toStream.filter(base(_) != -1).head
-  }
-
-  private def add(basePos:Int, children:Map[Char, TNode]): Unit = {
+  private def add(basePos:Int, children:mutable.Map[Char, TNode]): Unit = {
     /**
       * start from basePos. insert 'c'
       *
@@ -119,19 +108,33 @@ class DoubleArrayTrie {
       val char = child._1
       val tnode = child._2
       val checkPos = offset + char.toInt
-      add(checkPos, tnode.children.asScala.toMap)
+      add(checkPos, tnode.children)
     }
   }
 
-  private def findEmptyOffset(children:Map[Char, TNode]): Int = {
-    val offset = (nextOffset until ARRAY_INIT_SIZE).toStream.filter(tryPosition(_, children)).head
-    // TODO: 가끔 4000 이상 offset이 튈때가 있는데 왜 그런지 모르겠음
-    nextOffset = if ((offset - nextOffset) > 100) nextOffset + 1 else offset
-    offset
+  private def resizeArrays(size:Int): Unit = {
+//    println(s"resize array from ${base.length} to $size")
+    base = resizeArray(base, size)
+    check = resizeArray(check, size)
+    values = resizeArray(values, size)
   }
 
-  private def tryPosition(offset:Int, children:Map[Char, TNode]): Boolean = {
-    // FIXME: 뭔가 재귀적으로 도는 느낌이 있음...children에 children까지 들어가서..
+  private def resizeArray(array:Array[Int], size:Int): Array[Int] = {
+    val newArray = Array.fill[Int](size)(emptyValue)
+    Array.copy(array, 0, newArray, 0, Math.min(array.length, size))
+    newArray
+  }
+
+  private def findEmptyOffset(children:mutable.Map[Char, TNode]): Int = {
+    val result = (nextOffset to check.length).toStream.filter(tryPosition(_, children)).head
+    nextOffset = if (result > nextOffset + 100) nextOffset else result
+    result
+  }
+
+  private def tryPosition(offset:Int, children:mutable.Map[Char, TNode]): Boolean = {
+    if (check.length < offset + Char.MaxValue) {
+      resizeArrays(check.length*2)
+    }
     children.keys.forall(char => check(offset + char.toInt) == emptyValue)
   }
 
