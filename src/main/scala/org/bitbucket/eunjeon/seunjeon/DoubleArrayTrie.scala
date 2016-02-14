@@ -11,7 +11,7 @@ object DoubleArrayTrieBuilder {
 
 case class TNode(children:mutable.Map[Char, TNode], value:Int)
 
-/* this is trie that only have a add function */
+/* this is a very simple trie that only have a add function */
 class DoubleArrayTrieBuilder () {
   val root:TNode = TNode(mutable.Map[Char, TNode](), -1)
   var size = 0
@@ -21,11 +21,11 @@ class DoubleArrayTrieBuilder () {
     this
   }
 
-  private def add(root:TNode, chars:Array[Char], value:Int): Unit = {
+  private def add(tNode:TNode, chars:Array[Char], value:Int): Unit = {
     if (chars.length == 0) {
       size += 1
     } else {
-      val children = root.children
+      val children = tNode.children
       val head = chars.head
       if (children.contains(head)) {
         val subTrie = children.getOrElse(head, null)
