@@ -22,20 +22,20 @@ class DoubleArrayTrieBuilder () {
   }
 
   private def add(tNode:TNode, chars:Array[Char], value:Int): Unit = {
-    if (chars.length == 0) {
+    if (chars.length == 1) {
+      tNode.children.put(chars.head, TNode(mutable.Map[Char, TNode](), value))
       size += 1
     } else {
       val children = tNode.children
       val head = chars.head
+      var subTrie:TNode = null
       if (children.contains(head)) {
-        val subTrie = children.getOrElse(head, null)
-        add(subTrie, chars.tail, value)
+        subTrie = children.getOrElse(head, null)
       } else {
-        val terminalValue = if (chars.length == 1) value else -1
-        val subTrie = TNode(mutable.Map[Char, TNode](), terminalValue)
+        subTrie = TNode(mutable.Map[Char, TNode](), -1)
         children.put(head, subTrie)
-        add(subTrie, chars.tail, value)
       }
+      add(subTrie, chars.tail, value)
     }
   }
 
@@ -43,6 +43,7 @@ class DoubleArrayTrieBuilder () {
     DoubleArrayTrie(this)
   }
 }
+
 
 /**
   * http://linux.thai.net/~thep/datrie/datrie.html
@@ -63,6 +64,9 @@ class DoubleArrayTrie {
   var check:Array[Int] = null
   var values:Array[Int] = null
 
+  var charMapper = Array.fill[Int](Char.MaxValue)(-1)
+  var mapperMaxValue = 0
+
   def build(simpleTrie: DoubleArrayTrieBuilder) = {
     base = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
     check = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
@@ -72,6 +76,15 @@ class DoubleArrayTrie {
     add(startPos, root.children)
     packArrays()
     this
+  }
+
+  private def getCharValue(char:Char): Int = {
+    val result = charMapper(char)
+    if (result == -1) {
+      mapperMaxValue += 1
+      charMapper(char) = mapperMaxValue
+      mapperMaxValue
+    } else result
   }
 
   private def packArrays(): Unit = {
@@ -99,7 +112,7 @@ class DoubleArrayTrie {
     children.foreach { child =>
       val char = child._1
       val tnode = child._2
-      val checkPos = offset + char.toInt
+      val checkPos = offset + getCharValue(char)
       check(checkPos) = basePos
       values(checkPos) = tnode.value
     }
@@ -107,7 +120,7 @@ class DoubleArrayTrie {
     children.foreach { child =>
       val char = child._1
       val tnode = child._2
-      val checkPos = offset + char.toInt
+      val checkPos = offset + getCharValue(char)
       add(checkPos, tnode.children)
     }
   }
@@ -127,7 +140,7 @@ class DoubleArrayTrie {
 
   private def findEmptyOffset(children:mutable.Map[Char, TNode]): Int = {
     val result = (nextOffset to check.length).toStream.filter(tryPosition(_, children)).head
-    nextOffset = if (result > nextOffset + 100) nextOffset else result
+    nextOffset = if (result > nextOffset + 500) nextOffset else result
     result
   }
 
@@ -135,7 +148,7 @@ class DoubleArrayTrie {
     if (check.length < offset + Char.MaxValue) {
       resizeArrays(check.length*2)
     }
-    children.keys.forall(char => check(offset + char.toInt) == emptyValue)
+    children.keys.forall(char => check(offset + getCharValue(char)) == emptyValue)
   }
 
   def commonPrefixSearch(text:String): List[Int] = {
@@ -147,7 +160,7 @@ class DoubleArrayTrie {
     else {
       val char = chars.head
       val offset = base(basePos)
-      val childPos = offset + char.toInt
+      val childPos = offset + getCharValue(char)
       // TODO: 깔끔하게 고치자
       if (childPos > check.length || (check(childPos) != basePos)) Nil // none exist child node
       else {
@@ -164,6 +177,7 @@ class DoubleArrayTrie {
     base.foreach(out.writeInt)
     check.foreach(out.writeInt)
     values.foreach(out.writeInt)
+    charMapper.foreach(out.writeInt)
     out.close()
   }
 
@@ -180,6 +194,8 @@ class DoubleArrayTrie {
     (0 until size).foreach(check(_) = in.readInt())
     values = new Array[Int](size+1)
     (0 until size).foreach(values(_) = in.readInt())
+    charMapper = new Array[Int](Char.MaxValue)
+    (0 until Char.MaxValue.toInt).foreach(charMapper(_) = in.readInt())
     in.close()
 
     this
