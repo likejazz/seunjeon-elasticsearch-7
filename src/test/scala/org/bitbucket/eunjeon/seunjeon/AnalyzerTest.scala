@@ -69,14 +69,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
       ".:SF") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
   }
 
-  test("multi-char-dict") {
-    Analyzer.setUserDict(Seq("삼성SDS", "LG CNS").toIterator)
-    assert(Seq(
-      "삼성SDS:NNG") == Analyzer.parse("삼성SDS").map(getSurfacePos))
-    assert(Seq(
-      "LG CNS:NNG") == Analyzer.parse("LG CNS").map(getSurfacePos))
-  }
-
   test("README example1") {
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
   }

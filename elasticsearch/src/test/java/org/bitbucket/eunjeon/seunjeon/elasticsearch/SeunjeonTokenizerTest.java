@@ -3,6 +3,7 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -28,9 +29,6 @@ public class SeunjeonTokenizerTest {
                 "직무/N:1:1:0:2:N;직무를/EOJ:0:1:0:3:EOJ;행하/V:1:1:4:6:V;행한다/EOJ:0:1:4:7:EOJ;", tokenize("직무를 행한다.", t));
         assertEquals("number, symbol",
                 "55/SN:1:1:0:2:SN;32/SN:1:1:3:5:SN;ms/SL:1:1:5:7:SL;", tokenize("55.32ms", t));
-
-        System.out.println(tokenize("아버지가방에들어가신다.", t));
-        System.out.println(tokenize("무궁화꽃이피었습니다.", t));
     }
 
     @Test
@@ -55,11 +53,22 @@ public class SeunjeonTokenizerTest {
 
     @Test
     public void testDeInflect() throws IOException {
+        assertEquals("빠르/V:1:1:0:2:V;빨라짐/EOJ:0:2:0:3:EOJ;지/V:1:1:2:3:V;",
+                tokenize("빨라짐", new SeunjeonTokenizer(TokenizerOptions.create(""))));
+
         assertEquals("슬프/V:1:1:0:2:V;슬픈/EOJ:0:1:0:2:EOJ;",
                 tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create(""))));
 
         assertEquals("슬픈/V+E:1:1:0:2:V+E;",
                 tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create("").setDeInflect(false))));
+    }
+
+    @Test
+    public void invalidCompoundFeature() throws IOException {
+        // TODO: seunjeon project test 로 가야 함
+        // ex) 데스노트,Compound,*,*,/NNG/*+노트/NNG/*
+        assertEquals("데스노트/N:1:1:0:4:N;",
+                tokenize("데스노트", new SeunjeonTokenizer(TokenizerOptions.create(""))));
     }
 
     @Test
@@ -73,7 +82,7 @@ public class SeunjeonTokenizerTest {
                         setIndexEojeol(false))));
     }
 
-    @Test
+    @Ignore
     public void testPerformance() throws IOException {
         Tokenizer t = new SeunjeonTokenizer(TokenizerOptions.create(""));
         ClassLoader classLoader = getClass().getClassLoader();
