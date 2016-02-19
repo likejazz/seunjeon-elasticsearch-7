@@ -82,6 +82,12 @@ public class SeunjeonTokenizerTest {
                         setIndexEojeol(false))));
     }
 
+    @Test
+    public void testLowerCase() throws IOException {
+        assertEquals("lg/SL:1:1:0:2:SL;전자/N:1:1:2:4:N;",
+                tokenize("LG전자", new SeunjeonTokenizer(TokenizerOptions.create(""))));
+    }
+
     @Ignore
     public void testPerformance() throws IOException {
         Tokenizer t = new SeunjeonTokenizer(TokenizerOptions.create(""));

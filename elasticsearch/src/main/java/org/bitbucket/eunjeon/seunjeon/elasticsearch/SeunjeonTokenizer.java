@@ -86,7 +86,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         while (-1 != (n = input.read(buffer))) {
             sw.write(buffer, 0, n);
         }
-        return sw.toString();
+        return sw.toString().toLowerCase();
     }
 
 }
