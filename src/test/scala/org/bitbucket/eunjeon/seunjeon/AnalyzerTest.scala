@@ -69,39 +69,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
       ".:SF") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
   }
 
-  test("multi-char-dict") {
-    Analyzer.setUserDict(Seq("삼성SDS", "LG CNS").toIterator)
-    assert(Seq(
-      "삼성SDS:NNG") == Analyzer.parse("삼성SDS").map(getSurfacePos))
-    assert(Seq(
-      "LG CNS:NNG") == Analyzer.parse("LG CNS").map(getSurfacePos))
-  }
-
-  test("README example1") {
-    Analyzer.parse("아버지가방에들어가신다.").foreach(println)
-  }
-
-  test("READ example2") {
-    println("# BEFORE")
-    Analyzer.parse("덕후냄새가 난다.").foreach(println)
-    Analyzer.setUserDictDir("src/test/resources/userdict/")
-    println("# AFTER ")
-    Analyzer.parse("덕후냄새가 난다.").foreach(println)
-  }
-
-  test("README example3") {
-    println("# BEFORE")
-    Analyzer.parse("덕후냄새가 난다.").foreach(println)
-    Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
-    println("# AFTER ")
-    Analyzer.parse("덕후냄새가 난다.").foreach(println)
-  }
-
-  test("README eojeol") {
-    Analyzer.parseEojeol("아버지가방에들어가신다.").map(_.surface).foreach(println)
-    Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).foreach(println)
-  }
-
   test("empty eojeol") {
     assert(Seq[Eojeol]() == Analyzer.parseEojeol(""))
   }

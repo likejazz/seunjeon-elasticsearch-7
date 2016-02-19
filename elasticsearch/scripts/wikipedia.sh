@@ -2,6 +2,8 @@
 #curl "https://ko.wikipedia.org/w/api.php?action=cirrus-mapping-dump&format=json" > mapping.json
 #jq .content < mapping.json | curl -XPUT localhost:9200/kowiki_content --data @mapping.json
 
+curl -XDELETE localhost:9200/kowiki_content
+sleep 5
 curl -XPUT localhost:9200/kowiki_content -d '{
   "settings" : {
     "index":{

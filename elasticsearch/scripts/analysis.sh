@@ -31,6 +31,6 @@ sleep 1
 echo "========================================================================"
 curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '슬픈'
+curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '빨라짐'
 echo "========================================================================"
 curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어그로'
