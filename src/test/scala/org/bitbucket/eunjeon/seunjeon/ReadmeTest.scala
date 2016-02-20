@@ -25,7 +25,7 @@ class ReadmeTest  extends FunSuite {
     Analyzer.parse("덕후냄새가 난다.").foreach(println)
 
     // 활용어 원형
-    Analyzer.parse("슬픈").flatMap(_.deInflect()).foreach(println)
+    Analyzer.parse("빨라짐").flatMap(_.deInflect()).foreach(println)
 
     // 복합명사 분해
     Analyzer.parse("삼성전자").flatMap(_.deCompound()).foreach(println)
