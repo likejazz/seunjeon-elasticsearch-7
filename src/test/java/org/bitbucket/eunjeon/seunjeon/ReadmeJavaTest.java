@@ -33,7 +33,7 @@ public class ReadmeJavaTest {
         }
 
         // 활용어 원형
-        for (LNode node : Analyzer.parseJava("슬픈")) {
+        for (LNode node : Analyzer.parseJava("빨라짐")) {
             for (LNode node2: node.deInflectJava()) {
                 System.out.println(node2);
             }

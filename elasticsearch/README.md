@@ -3,16 +3,17 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.1.2
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.1.1.3
 ```
 
 ## Release
-| elasticsearch-analysis-seunjeon | Target elasticsearch version |
-| ------------------------------- | ---------------------------- |
-| 2.1.1.2                         | 2.1.1                        |
-| 2.1.1.1                         | 2.1.1                        |
-| 2.1.1.0                         | 2.1.1                        |
-| 2.1.0.0                         | 2.1.0                        |
+| elasticsearch-analysis-seunjeon | Target elasticsearch version | release note |
+| ------------------------------- | ---------------------------- | - |
+| 2.1.1.3                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.3) |
+| 2.1.1.2                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.2) |
+| 2.1.1.1                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.1) |
+| 2.1.1.0                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.0) |
+| 2.1.0.0                         | 2.1.0                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.0.0) |
 
 ## 사용
 ```bash
@@ -21,11 +22,9 @@
 ES='http://localhost:9200'
 ESIDX='seunjeon-idx'
 
-curl -XDELETE ${ES}/${ESIDX}?pretty
-
+curl -XDELETE "${ES}/${ESIDX}?pretty"
 sleep 1
-
-curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
+curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
   "settings" : {
     "index":{
       "analysis":{
@@ -49,14 +48,13 @@ curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
 sleep 1
 
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '삼성전자'
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '빨라짐'
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '슬픈'
-echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어그로'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어그로'
 ```
+
 ## 옵션인자
 | 옵션인자      | 설명               | 기본값 |
 | ------------- | -----           | ---- |
