@@ -41,8 +41,8 @@ class TokenBuilder(deCompound:Boolean, deInflect:Boolean, indexEojeol:Boolean, p
   }
 
   def tokenize(document:String): java.util.List[LuceneToken] = {
-    val analyzed = Analyzer.parseEojeol(document)
-    val deCompounded = if (this.deCompound) analyzed.map(_.deCompound()) else analyzed
+    val eojeols = Analyzer.parseEojeol(document)
+    val deCompounded = if (this.deCompound) eojeols.map(_.deCompound()) else eojeols
     val deInflected = if (this.deInflect) deCompounded.map(_.deInflect()) else deCompounded
     deInflected.flatMap { eojeol =>
       val nodes = eojeol.nodes.filter(isIndexNode).map(LuceneToken(_, posTagging))

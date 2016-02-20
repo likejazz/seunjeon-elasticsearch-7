@@ -3,9 +3,9 @@
 ES='http://localhost:9200'
 ESIDX='seunjeon-idx'
 
-curl -XDELETE ${ES}/${ESIDX}?pretty
+curl -XDELETE "${ES}/${ESIDX}?pretty"
 sleep 1
-curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
+curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
   "settings" : {
     "index":{
       "analysis":{
@@ -29,8 +29,8 @@ curl -XPUT ${ES}/${ESIDX}/?pretty -d '{
 sleep 1
 
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '삼성전자'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '삼성전자'
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '슬픈'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '빨라짐'
 echo "========================================================================"
-curl -XGET ${ES}/${ESIDX}/_analyze?analyzer=korean\&pretty -d '낄끼빠빠 어그로'
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어그로'

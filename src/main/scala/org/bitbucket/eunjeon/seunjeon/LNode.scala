@@ -26,17 +26,33 @@ object LNode {
     }
 
   def deComposite(node: LNode): Seq[LNode] = {
-    var startPos = node.startPos
-    var endPos = node.endPos
-    node.morpheme.deComposite().map { morpheme =>
-//    Morpheme.deComposition(node.morpheme.feature(7)).map { morpheme =>
-      // TODO: "ㄴ다" 의 경우 startPos 랑 endPos 잘 계산해서 수정해주자.
-      //       성능 걱정으로.. 할 수 있을지 모르겠음.
-      val morphemeStartPos = startPos
-      val morphemeEndPos = startPos+morpheme.surface.length
-      startPos = morphemeEndPos
-      LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
+    var nextPos = node.startPos
+    try {
+      val result = node.morpheme.deComposite().
+        filterNot(m => isHideMorpheme(m)).
+        map { morpheme =>
+        val morphemeStartPos = if (isJamo(morpheme.surface.head)) nextPos - 1 else nextPos
+        val morphemeEndPos = morphemeStartPos + morpheme.surface.length
+        nextPos = morphemeEndPos
+        LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
+      }
+      // TODO: feature(7) 오류로 글자수가 안맞는 경우가 있음 그럴 경우 무시해줘야 함
+      if ((nextPos - node.startPos) != node.morpheme.surface.length) {
+        Seq(node)
+      } else result
+    } catch {
+      // TODO: warning 출력해줄까?
+      case _:Throwable => Seq(node)
     }
+  }
+
+  private def isHideMorpheme(morpheme: Morpheme): Boolean = {
+    morpheme.surface == "아" && morpheme.feature(0) == "EC"
+  }
+
+  private def isJamo(char:Char): Boolean = {
+    ('\u1100' <= char && char <= '\u11FF' /* Hangul Jamo */) ||
+      ('\u3130' <= char && char <= '\u318F' /* Hangul Compatibility Jamo */)
   }
 }
 
