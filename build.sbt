@@ -12,6 +12,7 @@ lazy val commonSettings = Seq(
     else
       Some("releases"  at nexus + "service/local/staging/deploy/maven2")
   },
+  isSnapshot := {if (version.value.trim.endsWith("SNAPSHOT")) true else false},
   pomIncludeRepository := { _ => false },
   pomExtra := (
     <url>http://eunjeon.blogspot.kr/</url>
@@ -53,16 +54,15 @@ lazy val seunjeon = (project in file(".")).
     crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
 
-    version := "1.0.4",
+    version := "1.1.0-SNAPSHOT",
 
     libraryDependencies ++= Seq(
-      "com.github.takawitter" % "trie4j" % "0.9.1",
       "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-      "junit" % "junit" % "4.12" % "test"
-    )
+      "com.novocode" % "junit-interface" % "0.11" % "test"
+)
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
@@ -71,11 +71,11 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.1.1.3",
+    version := "2.1.1.4-SNAPSHOT",
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "2.1.1" % "provided",
-      "junit" % "junit" % "4.12" % "test"
+      "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
     test in assembly := {},

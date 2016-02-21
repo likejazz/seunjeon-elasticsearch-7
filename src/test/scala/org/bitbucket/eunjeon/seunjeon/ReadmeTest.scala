@@ -2,10 +2,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import org.scalatest.FunSuite
 
-/**
-  * Created by parallels on 1/1/16.
-  */
-class ReadmeTest  extends FunSuite {
+class ReadmeTest extends FunSuite {
   test("readme") {
     // 형태소 분석
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)

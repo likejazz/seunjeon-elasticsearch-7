@@ -63,6 +63,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
   }
 
   private def getKnownTerms(text:String): Seq[LNode] = {
+    // TODO: space 들어간 단어는 잘 처리하자.
     val knownTerms = new ListBuffer[LNode]
     for (idx <- 0 until text.length) {
       knownTerms ++= getKnownTerms(0, idx, text.substring(idx))

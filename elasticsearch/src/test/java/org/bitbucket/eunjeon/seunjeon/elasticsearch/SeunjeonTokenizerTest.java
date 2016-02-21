@@ -24,7 +24,7 @@ public class SeunjeonTokenizerTest {
         assertEquals("compound + eojeol",
                 "삼성/N:1:1:0:2:N;삼성전자는/EOJ:0:2:0:5:EOJ;전자/N:1:1:2:4:N;", tokenize("삼성전자는", t));
         assertEquals("noun noun eojeol",
-                "LG/SL:1:1:0:2:SL;전자/N:1:1:2:4:N;전자는/EOJ:0:1:2:5:EOJ;", tokenize("LG전자는", t));
+                "lg/SL:1:1:0:2:SL;전자/N:1:1:2:4:N;전자는/EOJ:0:1:2:5:EOJ;", tokenize("LG전자는", t));
         assertEquals("deInflect",
                 "직무/N:1:1:0:2:N;직무를/EOJ:0:1:0:3:EOJ;행하/V:1:1:4:6:V;행한다/EOJ:0:1:4:7:EOJ;", tokenize("직무를 행한다.", t));
         assertEquals("number, symbol",

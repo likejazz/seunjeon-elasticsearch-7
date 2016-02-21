@@ -15,7 +15,6 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
-
 import scala.collection.JavaConverters._
 
 object Analyzer {
