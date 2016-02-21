@@ -59,12 +59,14 @@ class DoubleArrayTrie {
   val emptyValue = -1
   val startPos = 0
 
+  // for build
   var nextOffset = 0
+
+  // serialized data
   var base:Array[Int] = null
   var check:Array[Int] = null
   var values:Array[Int] = null
-
-  var charMapper = Array.fill[Int](Char.MaxValue)(-1)
+  var charMapper = Array.fill[Int](Char.MaxValue)(emptyValue)
   var mapperMaxValue = 0
 
   def build(simpleTrie: DoubleArrayTrieBuilder) = {
@@ -178,6 +180,7 @@ class DoubleArrayTrie {
     check.foreach(out.writeInt)
     values.foreach(out.writeInt)
     charMapper.foreach(out.writeInt)
+    out.writeInt(mapperMaxValue)
     out.close()
   }
 
@@ -187,15 +190,23 @@ class DoubleArrayTrie {
 
   def read(inStream:InputStream): DoubleArrayTrie = {
     val in = new DataInputStream(new BufferedInputStream(inStream, 16*1024))
+
     val size = in.readInt()
+
     base = new Array[Int](size+1)
     (0 until size).foreach(base(_) = in.readInt())
+
     check = new Array[Int](size+1)
     (0 until size).foreach(check(_) = in.readInt())
+
     values = new Array[Int](size+1)
     (0 until size).foreach(values(_) = in.readInt())
+
     charMapper = new Array[Int](Char.MaxValue)
     (0 until Char.MaxValue.toInt).foreach(charMapper(_) = in.readInt())
+
+    mapperMaxValue = in.readInt()
+
     in.close()
 
     this

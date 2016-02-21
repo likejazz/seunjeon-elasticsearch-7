@@ -61,8 +61,8 @@ lazy val seunjeon = (project in file(".")).
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-      "junit" % "junit" % "4.12" % "test"
-    )
+      "com.novocode" % "junit-interface" % "0.11" % "test"
+)
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
@@ -71,11 +71,11 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.1.1.3",
+    version := "2.1.1.4-SNAPSHOT",
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % "2.1.1" % "provided",
-      "junit" % "junit" % "4.12" % "test"
+      "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
     test in assembly := {},

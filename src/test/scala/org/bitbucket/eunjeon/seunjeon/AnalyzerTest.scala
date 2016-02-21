@@ -96,7 +96,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("long text") {
     val longText = Source.fromInputStream(getClass.getResourceAsStream("/path_disconnect.txt")).mkString
     val morphemes = Analyzer.parse(longText)
-    morphemes.foreach(println)
     assert("\"" == morphemes.head.morpheme.surface)
     assert("오늘밤" == morphemes(1).morpheme.surface)
     assert("기사" == morphemes.last.morpheme.surface)
@@ -123,7 +122,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   def getSurfacePos(termNode: LNode): String = {
-    println(termNode)
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }
 }
