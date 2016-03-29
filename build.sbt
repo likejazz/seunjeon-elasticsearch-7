@@ -71,10 +71,10 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.2.0.0",
+    version := "2.2.1.0",
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "2.1.1" % "provided",
+      "org.elasticsearch" % "elasticsearch" % "2.2.1" % "provided",
       "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
