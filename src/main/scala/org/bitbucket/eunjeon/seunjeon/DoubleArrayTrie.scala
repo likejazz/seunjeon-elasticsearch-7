@@ -1,6 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 
@@ -154,21 +155,22 @@ class DoubleArrayTrie {
   }
 
   def commonPrefixSearch(text:String): List[Int] = {
-    commonPrefixSearchTail(startPos, text)
+    commonPrefixSearchTail(List.empty[Int], startPos, text)
   }
 
-  private def commonPrefixSearchTail(basePos:Int, chars:String): List[Int] = {
-    if (chars.isEmpty) Nil
+  @tailrec
+  private def commonPrefixSearchTail(result:List[Int], basePos:Int, chars:String): List[Int] = {
+    if (chars.isEmpty) result
     else {
       val char = chars.head
       val offset = base(basePos)
       val childPos = offset + getCharValue(char)
       // TODO: 깔끔하게 고치자
-      if (childPos > check.length || (check(childPos) != basePos)) Nil // none exist child node
+      if (childPos > check.length || (check(childPos) != basePos)) result // none exist child node
       else {
         // tail recursive right?
         val currentValue = if (values(childPos) == -1) Nil else values(childPos) :: Nil
-        currentValue ::: commonPrefixSearchTail(childPos, chars.tail)
+        commonPrefixSearchTail(result ::: currentValue, childPos, chars.tail)
       }
     }
   }
