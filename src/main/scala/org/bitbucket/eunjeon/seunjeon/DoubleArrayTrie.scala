@@ -1,8 +1,10 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
+
 import scala.annotation.tailrec
 import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 
 object DoubleArrayTrieBuilder {
@@ -81,6 +83,7 @@ class DoubleArrayTrie {
     this
   }
 
+  @inline
   private def getCharValue(char:Char): Int = {
     val result = charMapper(char)
     if (result == -1) {
@@ -129,7 +132,7 @@ class DoubleArrayTrie {
   }
 
   private def resizeArrays(size:Int): Unit = {
-//    println(s"resize array from ${base.length} to $size")
+    //    println(s"resize array from ${base.length} to $size")
     base = resizeArray(base, size)
     check = resizeArray(check, size)
     values = resizeArray(values, size)
@@ -154,23 +157,24 @@ class DoubleArrayTrie {
     children.keys.forall(char => check(offset + getCharValue(char)) == emptyValue)
   }
 
-  def commonPrefixSearch(text:String): List[Int] = {
-    commonPrefixSearchTail(List.empty[Int], startPos, text)
+  def commonPrefixSearch(text:String): Seq[Int] = {
+    val result = ArrayBuffer[Int]()
+    commonPrefixSearchTail(result, startPos, 0, text)
+    result
   }
 
   @tailrec
-  private def commonPrefixSearchTail(result:List[Int], basePos:Int, chars:String): List[Int] = {
-    if (chars.isEmpty) result
-    else {
-      val char = chars.head
+  private def commonPrefixSearchTail(result:ArrayBuffer[Int], basePos:Int, charIndex: Int, chars:String): Unit = {
+    if (charIndex < chars.length) {
+      val char = chars(charIndex)
       val offset = base(basePos)
       val childPos = offset + getCharValue(char)
       // TODO: 깔끔하게 고치자
-      if (childPos > check.length || (check(childPos) != basePos)) result // none exist child node
-      else {
-        // tail recursive right?
-        val currentValue = if (values(childPos) == -1) Nil else values(childPos) :: Nil
-        commonPrefixSearchTail(result ::: currentValue, childPos, chars.tail)
+      if (childPos <= check.length && check(childPos) == basePos) {
+        if (values(childPos) != -1) {
+          result += values(childPos)
+        }
+        commonPrefixSearchTail(result, childPos, charIndex + 1, chars)
       }
     }
   }

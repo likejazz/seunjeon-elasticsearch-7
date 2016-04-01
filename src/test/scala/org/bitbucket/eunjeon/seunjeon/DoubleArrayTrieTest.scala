@@ -2,6 +2,8 @@ package org.bitbucket.eunjeon.seunjeon
 
 import org.scalatest._
 
+import scala.io.Source
+
 class DoubleArrayTrieTest extends FunSuite {
 
   test("build") {
@@ -29,6 +31,25 @@ class DoubleArrayTrieTest extends FunSuite {
     assert("40,70" == newDaTrie.commonPrefixSearch("가나다").mkString(","))
     assert("" == newDaTrie.commonPrefixSearch(" 가").mkString(","))
     assert("40" == newDaTrie.commonPrefixSearch("가 나다").mkString(","))
+  }
+
+  test("trie performance") {
+    val resourceFile = "long_sentence.txt"
+    val cl = classOf[DoubleArrayTrieTest].getClassLoader
+    val lines = Source.fromInputStream(cl.getResourceAsStream(resourceFile)).getLines().toSeq
+      .filter(_.nonEmpty)
+
+    val builder = DoubleArrayTrieBuilder()
+    lines
+      .foreach(builder.add(_, 0))
+    val trie = builder.build()
+//        Thread.sleep(10000)
+    println(s"trie size = ${trie.base.length}")
+    println(s"trie real size = ${trie.base.count(_>=0)}")
+
+    (0 to 10000).foreach( c =>
+      lines.foreach(trie.commonPrefixSearch)
+    )
   }
 
 }
