@@ -1,5 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
+import java.io.{FileInputStream, InputStream}
+
 import org.scalatest._
 
 import scala.io.Source
@@ -34,21 +36,22 @@ class DoubleArrayTrieTest extends FunSuite {
   }
 
   test("trie performance") {
-    val resourceFile = "long_sentence.txt"
     val cl = classOf[DoubleArrayTrieTest].getClassLoader
-    val lines = Source.fromInputStream(cl.getResourceAsStream(resourceFile)).getLines().toSeq
+    val inputStream = cl.getResourceAsStream("long_sentence.txt")
+
+    val lines = Source.fromInputStream(inputStream).getLines().toSeq
       .filter(_.nonEmpty)
 
     val builder = DoubleArrayTrieBuilder()
     lines
       .foreach(builder.add(_, 0))
     val trie = builder.build()
-//        Thread.sleep(10000)
-    println(s"trie size = ${trie.base.length}")
-    println(s"trie real size = ${trie.base.count(_>=0)}")
+    println(trie.trieInfo)
 
     (0 to 10000).foreach( c =>
-      lines.foreach(trie.commonPrefixSearch)
+      lines.foreach( l =>
+        assert(trie.commonPrefixSearch(l).nonEmpty, s"'$l' not found")
+      )
     )
   }
 

@@ -4,42 +4,34 @@ import java.io._
 
 import scala.annotation.tailrec
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 
 object DoubleArrayTrieBuilder {
   def apply() = new DoubleArrayTrieBuilder()
 }
 
-
-case class TNode(children:mutable.Map[Char, TNode], value:Int)
+case class TNode(children: mutable.Map[Char, TNode] = mutable.Map(), value: Int = -1)
 
 /* this is a very simple trie that only have a add function */
 class DoubleArrayTrieBuilder () {
-  val root:TNode = TNode(mutable.Map[Char, TNode](), -1)
+  val root:TNode = TNode()
   var size = 0
 
-  def add(term:String, value:Int): DoubleArrayTrieBuilder = {
-    add(root, term.toCharArray, value)
-    this
-  }
-
-  private def add(tNode:TNode, chars:Array[Char], value:Int): Unit = {
-    if (chars.length == 1) {
-      tNode.children.put(chars.head, TNode(mutable.Map[Char, TNode](), value))
-      size += 1
-    } else {
-      val children = tNode.children
-      val head = chars.head
-      var subTrie:TNode = null
-      if (children.contains(head)) {
-        subTrie = children.getOrElse(head, null)
+  def add(term: String, value: Int): DoubleArrayTrieBuilder = {
+    @tailrec
+    def add(tNode: TNode, charIndex: Int): Unit = {
+      if (charIndex + 1 == term.length) {
+        tNode.children.put(term(charIndex), TNode(value = value))
+        size += 1
       } else {
-        subTrie = TNode(mutable.Map[Char, TNode](), -1)
-        children.put(head, subTrie)
+        val child = tNode.children.getOrElseUpdate(term(charIndex), TNode())
+        add(child, charIndex + 1)
       }
-      add(subTrie, chars.tail, value)
     }
+
+    add(root, 0)
+    this
   }
 
   def build(): DoubleArrayTrie = {
@@ -63,7 +55,7 @@ class DoubleArrayTrie {
   val startPos = 0
 
   // for build
-  var nextOffset = 0
+  private var nextOffset = 1
 
   // serialized data
   var base:Array[Int] = null
@@ -71,6 +63,10 @@ class DoubleArrayTrie {
   var values:Array[Int] = null
   var charMapper = Array.fill[Int](Char.MaxValue)(emptyValue)
   var mapperMaxValue = 0
+
+  private[seunjeon] def trieInfo: String = {
+    s"#check: ${check.length}, #checkReal: ${check.count(_ >= 0)}, nextOffset: ${nextOffset}"
+  }
 
   def build(simpleTrie: DoubleArrayTrieBuilder) = {
     base = Array.fill[Int](simpleTrie.size+ARRAY_INIT_SIZE)(emptyValue)
@@ -113,21 +109,15 @@ class DoubleArrayTrie {
       *         --------------------
       *         | ...    | ...     |
       */
-    val offset = findEmptyOffset(children)
+    val offset = findEmptyOffset(children.keys.map(getCharValue))
     base(basePos) = offset
-    children.foreach { child =>
-      val char = child._1
-      val tnode = child._2
-      val checkPos = offset + getCharValue(char)
-      check(checkPos) = basePos
-      values(checkPos) = tnode.value
+    children.foreach { case (c, node) =>
+      setCheck(offset + getCharValue(c), basePos)
+      values(offset + getCharValue(c)) = node.value
     }
     // 꼭 현재 노드 완성 후에 child 노드 수행해야 함. 한꺼번에 하면 offset이 꼬임
-    children.foreach { child =>
-      val char = child._1
-      val tnode = child._2
-      val checkPos = offset + getCharValue(char)
-      add(checkPos, tnode.children)
+    children.foreach { case (c, node) =>
+      if (node.children.nonEmpty) add(offset + getCharValue(c), node.children)
     }
   }
 
@@ -217,4 +207,60 @@ class DoubleArrayTrie {
 
     this
   }
+
+  private def setCheck(index: Int, id: Int): Unit = {
+    if (nextOffset == index) {
+      nextOffset = findNextFreeCheck(nextOffset)
+    }
+    check(index) = id
+  }
+
+  @inline
+  private def extendIfNeeded(i: Int): Unit = {
+    if (check.length <= i) {
+      val newSize = Math.max(Char.MaxValue.toInt, (base.length * 1.5).toInt)
+      resizeArrays(newSize)
+    }
+  }
+
+  private def findFirstFreeCheck(): Int = {
+    var i = nextOffset
+    while (0 <= check(i) || base(i) != emptyValue) {
+      i += 1
+    }
+    nextOffset = i
+    i
+  }
+
+  private def findNextFreeCheck(current: Int): Int = {
+    val d = check(current) * -1
+    assert(d > 0)
+    var next = current + d
+    extendIfNeeded(next)
+    while (check(next) >= 0 && next < check.length) {
+      next += 1
+    }
+    extendIfNeeded(next)
+    check(current) = current - next
+    next
+  }
+
+  /**
+    *
+    * @param charValues character values
+    * @return the first empty slot index - smallest character id
+    */
+  private def findEmptyOffset(charValues: Iterable[Int]): Int = {
+    val minChild = charValues.min
+    val maxChild = charValues.max
+    var empty = findFirstFreeCheck()
+    while (true) {
+      val offset = empty - minChild
+      extendIfNeeded(offset + maxChild)
+      if (charValues.forall(c => check(offset + c) < 0)) return offset
+      empty = findNextFreeCheck(empty)
+    }
+    -1
+  }
+
 }
