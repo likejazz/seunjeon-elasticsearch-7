@@ -15,7 +15,7 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
@@ -53,7 +53,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   private def getUnknownTerms(charsets: Seq[CharSet]): Seq[LNode] = {
     // TODO: functional 하게 바꾸고 싶음.
-    val unknownTerms = new ListBuffer[LNode]
+    val unknownTerms = new ArrayBuffer[LNode]
     var charsetOffset = 0
     charsets.foreach { charset: CharSet =>
       unknownTerms ++= getUnknownTerms(charsetOffset, charset)
@@ -64,7 +64,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   private def getKnownTerms(text:String): Seq[LNode] = {
     // TODO: space 들어간 단어는 잘 처리하자.
-    val knownTerms = new ListBuffer[LNode]
+    val knownTerms = new ArrayBuffer[LNode]
     for (idx <- 0 until text.length) {
       knownTerms ++= getKnownTerms(0, idx, text.substring(idx))
     }
@@ -73,7 +73,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
 
   private def getUnknownTerms(charsetOffset: Int, charset: CharSet): Seq[LNode] = {
     // TODO: 성능이 떨어질까봐 immutable 로 못하겠음...
-    val unknownTerms = new ListBuffer[LNode]
+    val unknownTerms = new ArrayBuffer[LNode]
     for (idx <- 0 until charset.str.length) {
       val termOffset = idx
       val suffixSurface = charset.str.substring(idx)
