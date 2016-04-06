@@ -18,51 +18,39 @@ package org.bitbucket.eunjeon.seunjeon
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
 
+object Benchmark {
+  def apply(n: Int, ignoredTimes:Int)(op: => Any): Unit = {
+    val measureTimes = n-ignoredTimes
+    var min = Long.MaxValue
+    val avg = (1 to n).map { i =>
+      val start = System.nanoTime
+      op
+      val end = System.nanoTime
+      val elapsed = (end - start) / 1000 / 1000
+      println(s"$i: $elapsed ms")
+      if (elapsed < min) {
+        min = elapsed
+      }
+      elapsed
+    }.drop(ignoredTimes).sum / measureTimes
+    println(s"measureTimes: $measureTimes, average: $avg ms, min: $min ms")
+  }
+}
+
+object stopwatch {
+  def apply[T](block: => T): (T, Long) = {
+    val start = System.nanoTime()
+    val ret = block
+    val end = System.nanoTime()
+    (ret, (end - start) / 1000000)
+  }
+}
+
 class PerformanceSuite extends FunSuite with BeforeAndAfter {
-  var tokenizer: Tokenizer = null
-
-  before {
-    val lexiconDict = new LexiconDict().load()
-    val connectionCostDict = new ConnectionCostDict().load()
-    tokenizer = new Tokenizer(lexiconDict, connectionCostDict)
-  }
-
-  ignore("performance long term") {
-    var result:Seq[LNode] = null
-    val times = 100
-    val startTime = System.nanoTime()
-    for (i <- 0 until times) {
-      result = tokenizer.parseText("안녕하세요형태소분석기입니다.서울에서살고있습니다.", true)
-    }
-    val endTime = System.nanoTime()
-    val elapsedTime = (endTime - startTime) / times
-    result.foreach(println)
-    println(elapsedTime)
-    println(s"$elapsedTime ns")
-  }
-
-  ignore("performance too_many_special_chars") {
-    filetest("./src/test/resources/too_many_special_chars.txt")
-  }
-
-  ignore("performance long_sentence") {
-    filetest("./src/test/resources/long_sentence.txt")
-  }
-
-  def filetest(path:String): Unit = {
-    println(tokenizer.parseText("dic loading", true))
-    val source = scala.io.Source.fromFile(path)
+  test("long sentence") {
+    val source = scala.io.Source.fromFile("./src/test/resources/too_many_special_chars.txt")
     val lines = try source.mkString finally source.close()
-
-    val times = 100
-    val startTime = System.nanoTime()
-    var result:Seq[LNode] = null
-    for (i <- 0 until times) {
-      result = tokenizer.parseText(lines, true)
-    }
-    val endTime = System.nanoTime()
-    val elapsedTime = (endTime - startTime) / times
-    result.foreach(println)
-    println(s"$elapsedTime us")
+    Benchmark(1, 0)(Analyzer.parse(lines.mkString(" ")))  // dict loading time
+    Benchmark(100, 20)(Analyzer.parse(lines.mkString(" ")))
   }
 }

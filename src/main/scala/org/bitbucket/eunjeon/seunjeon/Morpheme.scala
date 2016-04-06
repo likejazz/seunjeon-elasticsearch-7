@@ -94,5 +94,12 @@ case class Morpheme(var surface:String,
     mType = MorphemeType(in.readInt())
     poses = wrapRefArray(in.readUTF().split(",").map(id => Pos(id.toInt)))
   }
+
+  override def equals(o: Any) = o match {
+    case that: Morpheme => surface == that.surface && leftId == that.leftId && rightId == that.rightId
+    case _ => false
+  }
+
+  override def hashCode = s"$surface $leftId $rightId".hashCode
 }
 

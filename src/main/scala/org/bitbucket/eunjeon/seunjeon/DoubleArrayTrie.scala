@@ -109,7 +109,7 @@ class DoubleArrayTrie {
       *         --------------------
       *         | ...    | ...     |
       */
-    val offset = findEmptyOffset(children.keys.map(getCharValue))
+    val offset = findEmptyOffset(children)
     base(basePos) = offset
     children.foreach { case (c, node) =>
       setCheck(offset + getCharValue(c), basePos)
@@ -159,8 +159,7 @@ class DoubleArrayTrie {
       val char = chars(charIndex)
       val offset = base(basePos)
       val childPos = offset + getCharValue(char)
-      // TODO: 깔끔하게 고치자
-      if (childPos <= check.length && check(childPos) == basePos) {
+      if (check(childPos) == basePos) {
         if (values(childPos) != -1) {
           result += values(childPos)
         }

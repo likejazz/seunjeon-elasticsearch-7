@@ -8,3 +8,5 @@
     * 사용사 사전 로딩 버그 수정
     * scala 2.10, 2.11 cross-compile 지원
     * 특수문자 연속출연시 분석 버그 수정
+* **[장정운](https://bitbucket.org/jujang/)**
+    * double array trie 탐색 성능 개선 및 코드 리팩토링

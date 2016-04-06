@@ -56,7 +56,8 @@ class LexiconDict {
 
   def loadFromIterator(iterator: Iterator[String]): LexiconDict = {
     val startTime = System.nanoTime()
-    val terms = new mutable.MutableList[Morpheme]()
+//    val terms = new mutable.MutableList[Morpheme]()
+    val terms = new mutable.HashSet[Morpheme]()
     // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
     // TODO: yield 사용하는 것으로 바꿔보자.
@@ -65,19 +66,26 @@ class LexiconDict {
       map(f => f.head.replace(" ", "") :: f.tail).
       foreach { item =>
       try {
+        var newTerm:Morpheme = null
         item match {
           case List(surface) =>
-            terms += buildNNGTerm(surface, 1000 - (surface.length * 100))
+            newTerm = buildNNGTerm(surface, 1000 - (surface.length * 100))
           case List(surface, cost) =>
-            terms += buildNNGTerm(surface, cost.toShort)
+            newTerm = buildNNGTerm(surface, cost.toShort)
           case List(surface, leftId, rightId, cost, feature@_ *) =>
-            terms += Morpheme(surface,
+            newTerm = Morpheme(surface,
               leftId.toShort,
               rightId.toShort,
               cost.toShort,
               wrapRefArray(feature.toArray),
               MorphemeType(feature),
               wrapRefArray(Pos.poses(feature)))
+        }
+        if (terms.contains(newTerm)) {
+          logger.warn(s"already has term - $newTerm")
+        } else {
+          terms += newTerm
+
         }
       } catch {
         case _: Throwable => logger.warn(s"invalid format : $item")
@@ -86,7 +94,7 @@ class LexiconDict {
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
-    build(terms.sortBy(_.surface))
+    build(terms.toSeq.sortBy(_.surface))
   }
 
   private def buildNNGTerm(surface:String, cost:Int): Morpheme = {
@@ -181,7 +189,7 @@ class LexiconDict {
   }
 
   def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
-    trie.commonPrefixSearch(keyword).flatMap(dictMapper(_).map(termDict(_)))
+      trie.commonPrefixSearch(keyword).flatMap(dictMapper(_).map(termDict(_)))
   }
 
   def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
