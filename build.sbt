@@ -1,7 +1,9 @@
+val javaVersion = "1.7"
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   organization := "org.bitbucket.eunjeon",
-  javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
+  javacOptions ++= Seq("-source", javaVersion, "-target", javaVersion),
 
   publishMavenStyle := true,
   publishArtifact in Test := false,
@@ -62,26 +64,39 @@ lazy val seunjeon = (project in file(".")).
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test",
       "com.novocode" % "junit-interface" % "0.11" % "test"
-)
+    )
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
+val esVersion = "2.3.0"
+
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
     name := elasticsearchPluginName,
 
-    version := "2.2.1.0",
+    version := s"${esVersion}.0",
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % "2.2.1" % "provided",
+      "org.elasticsearch" % "elasticsearch" % esVersion % "provided",
       "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
     test in assembly := {},
 
     esZip := {
-      val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
+//      val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
+      val propertiesFile = file("elasticsearch/target/plugin-descriptor.properties")
+      IO.writeLines(propertiesFile, Seq(
+        "description=The Korean analysis plugin",
+        s"version=${version.value}",
+        "name=analysis-seunjeon",
+        "site=false",
+        "jvm=true",
+        "classname=org.bitbucket.eunjeon.seunjeon.elasticsearch.plugin.analysis.AnalysisSeunjeonPlugin",
+        s"java.version=${javaVersion}",
+        s"elasticsearch.version=$esVersion",
+        "isolated=true"))
       val assemblyFile = assembly.value
       val zipFile = file(assemblyFile.getPath.substring(0, assemblyFile.getPath.length - assemblyFile.ext.length - 1) + ".zip")
       IO.zip(List(
