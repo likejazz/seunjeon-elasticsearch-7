@@ -1,4 +1,6 @@
-#wget http://dumps.wikimedia.org/other/cirrussearch/20151228/kowiki-20151228-cirrussearch-content.json.gz
+FILE_DATE=20160418
+ZIP_FILE=kowiki-${FILE_DATE}-cirrussearch-content.json.gz
+wget http://dumps.wikimedia.org/other/cirrussearch/${FILE_DATE}/${ZIP_FILE}
 #curl "https://ko.wikipedia.org/w/api.php?action=cirrus-mapping-dump&format=json" > mapping.json
 #jq .content < mapping.json | curl -XPUT localhost:9200/kowiki_content --data @mapping.json
 
@@ -25,5 +27,5 @@ curl -XPUT localhost:9200/kowiki_content -d '{
 }'
 
 date
-zcat kowiki-20151228-cirrussearch-content.json.gz | parallel --pipe -L 2 -N 2000 -j3 'curl -s http://localhost:9200/kowiki_content/_bulk --data-binary @- > /dev/null'
+zcat kowiki-${FILE_DATE}-cirrussearch-content.json.gz | parallel --pipe -L 2 -N 2000 -j3 'curl -s http://localhost:9200/kowiki_content/_bulk --data-binary @- > /dev/null'
 date
