@@ -8,7 +8,8 @@
 
 ## Release
 | elasticsearch-analysis-seunjeon | Target elasticsearch version | release note |
-| ------------------------------- | ---------------------------- | - |
+| ------------------------------- | ---------------------------- | ------------ |
+| 2.3.2.0                         | 2.3.2                        | |
 | 2.3.1.0                         | 2.3.1                        | |
 | 2.3.0.0                         | 2.3.0                        | |
 | 2.2.1.0                         | 2.2.1                        | |
@@ -18,6 +19,7 @@
 | 2.1.1.1                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.1) |
 | 2.1.1.0                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.0) |
 | 2.1.0.0                         | 2.1.0                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.0.0) |
+
 
 ## 사용
 ```bash
@@ -60,8 +62,8 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어
 ```
 
 ## 옵션인자
-| 옵션인자      | 설명               | 기본값 |
-| ------------- | -----           | ---- |
+| 옵션인자      | 설명  | 기본값 |
+| ------------- | ----- | ---- |
 | user_words    | 사용자 사전        | []     |
 | user_dict_path| 사용자 사전 파일. base directory는 ES_HOME/config 입니다. |      |
 | decompound    | 복합명사 분해      | true |
