@@ -8,6 +8,7 @@ public class TokenizerOptions {
     public final static boolean INDEX_EOJEOL = true;
     public final static String[] INDEX_POSES = TokenBuilder.INDEX_POSES_JAVA();
     public final static boolean POS_TAGGING = true;
+    public final static int MAX_UNK_LENGTH = 8;
 
     private String userDictPath = null;
     private String[] userWords = new String[0];
@@ -17,6 +18,7 @@ public class TokenizerOptions {
     private String[] indexPoses = INDEX_POSES;
     private String name = null;
     private boolean posTagging = POS_TAGGING;
+    private int maxUnkLength = MAX_UNK_LENGTH;
 
     public static TokenizerOptions create(String name) {
         return new TokenizerOptions(name);
@@ -29,6 +31,11 @@ public class TokenizerOptions {
 
     public TokenizerOptions setPosTagging(boolean posTagging) {
         this.posTagging = posTagging;
+        return this;
+    }
+
+    public TokenizerOptions setMaxUnkLength(int length) {
+        this.maxUnkLength = length;
         return this;
     }
 
@@ -88,6 +95,10 @@ public class TokenizerOptions {
 
     public boolean getPosTagging() {
         return this.posTagging;
+    }
+
+    public int getMaxUnkLength() {
+        return this.maxUnkLength;
     }
 
     public String getName() {

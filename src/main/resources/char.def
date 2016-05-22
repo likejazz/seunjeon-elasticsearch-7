@@ -11,6 +11,9 @@
 #   - GROUP:  1/0:   make a new word by grouping the same chracter category
 #   - LENGTH: n:     1 to n length new words are added
 #
+# length 가 0이라면 group 은 1이여야 함.
+# group 이 1이라도 length가 0이상이라면 maxUnkLength 에 의해 생성되지 않을수도 있음.
+# TODO: maxUnkLength 설정값이 char.def 파일 안으로 와야하지 않나라고 생각이 듬. 그러면 문자별로 조절이 가능함.
 DEFAULT         0 1 0  # DEFAULT is a mandatory category!
 SPACE           0 0 1   # don't modify this.
 HANJA           0 1 1

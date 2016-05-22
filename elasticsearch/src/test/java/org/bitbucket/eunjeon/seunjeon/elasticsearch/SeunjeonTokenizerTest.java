@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SeunjeonTokenizerTest {
 
@@ -86,6 +87,14 @@ public class SeunjeonTokenizerTest {
     public void testLowerCase() throws IOException {
         assertEquals("lg/SL:1:1:0:2:SL;전자/N:1:1:2:4:N;",
                 tokenize("LG전자", new SeunjeonTokenizer(TokenizerOptions.create(""))));
+    }
+
+    @Test
+    public void testMaxUnkLength() throws IOException {
+        assertNotEquals("농어촌체험휴양하누리마을/UNK:1:1:0:12:UNK;",
+                tokenize("농어촌체험휴양하누리마을", new SeunjeonTokenizer(TokenizerOptions.create(""))));
+        assertEquals("농어촌체험휴양하누리마을/UNK:1:1:0:12:UNK;",
+                tokenize("농어촌체험휴양하누리마을", new SeunjeonTokenizer(TokenizerOptions.create("").setMaxUnkLength(20))));
     }
 
     @Ignore

@@ -40,7 +40,8 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
                 setDeInflect(settings.getAsBoolean("deinflect", TokenizerOptions.DEINFLECT)).
                 setIndexEojeol(settings.getAsBoolean("index_eojeol", TokenizerOptions.INDEX_EOJEOL)).
                 setIndexPoses(settings.getAsArray("index_poses", TokenizerOptions.INDEX_POSES)).
-                setPosTagging(settings.getAsBoolean("pos_tagging", TokenizerOptions.POS_TAGGING));
+                setPosTagging(settings.getAsBoolean("pos_tagging", TokenizerOptions.POS_TAGGING)).
+                setMaxUnkLength(settings.getAsInt("max_unk_length", TokenizerOptions.MAX_UNK_LENGTH));
     }
 
     private String getFullPath(Environment env, String path) {

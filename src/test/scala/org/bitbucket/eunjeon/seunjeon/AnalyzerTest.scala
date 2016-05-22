@@ -12,7 +12,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
 
   test("main test") {
     // FIXME: 분석이 이상하게 나옴.
-    Analyzer.parse("하늘을 나는 자동차.").foreach(println)
+    Analyzer.parse("* 프랑스어: Gabon – République Gabonaise").foreach(println)
     // TODO: double-array-trie library bug.
     //    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
   }
@@ -96,9 +96,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("long text") {
     val longText = Source.fromInputStream(getClass.getResourceAsStream("/path_disconnect.txt")).mkString
     val morphemes = Analyzer.parse(longText)
-    assert("\"" == morphemes.head.morpheme.surface)
-    assert("오늘밤" == morphemes(1).morpheme.surface)
-    assert("기사" == morphemes.last.morpheme.surface)
   }
 
   test("disconnected path") {
@@ -119,6 +116,21 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     val result = Analyzer.parse(text)
     assert("입력" == result.head.morpheme.surface)
     assert("-" == result.last.morpheme.surface)
+  }
+
+  test("unk bug") {
+    var result:Seq[LNode] = null
+
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌")
+
+    Analyzer.setMaxUnkLength(100)
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌체험휴양하누리마을")
+
+    Analyzer.setMaxUnkLength(8)
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌")
   }
 
   def getSurfacePos(termNode: LNode): String = {
