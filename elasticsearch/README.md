@@ -74,7 +74,7 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어
 | index_eojeol  | 어절 추출     | true |
 | index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "UNK"] |
 | pos_tagging   | 품사태깅. 키워드에 품사를 붙여서 토큰을 뽑습니다        | true |
-| max_unk_length  | unknown 키워드로 뽑을 수 있는 최대 길이 | 8 |
+| max_unk_length  | unknown 키워드로 뽑을 수 있는 최대 길이(한글) | 8 |
 
 * 사용사 사전은 하나만 관리하기 떄문에 여러개의 tokenizer를 생성하여도 마지막 로드된 사전만 유지됩니다.
 * user_words와 user_dict_path 를 함께 설정할 경우 user_words 는 무시되고 user_dict_path만 적용됩니다.
