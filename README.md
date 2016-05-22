@@ -11,14 +11,14 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.0.4</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
 ```
 
 ## SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.0.4"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.1.0"
 ```
  * Scala 1.10, Scala 1.11
 

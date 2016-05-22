@@ -121,6 +121,21 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     assert("-" == result.last.morpheme.surface)
   }
 
+  test("unk bug") {
+    var result:Seq[LNode] = null
+
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌")
+
+    Analyzer.setMaxUnkLength(100)
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌체험휴양하누리마을")
+
+    Analyzer.setMaxUnkLength(8)
+    result = Analyzer.parse("농어촌체험휴양하누리마을")
+    assert(result.head.morpheme.surface == "농어촌")
+  }
+
   def getSurfacePos(termNode: LNode): String = {
     s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
   }

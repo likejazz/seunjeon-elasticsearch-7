@@ -32,10 +32,18 @@ object TokenBuilder {
   def setUserDict(file:String): Unit = {
     Analyzer.setUserDictFile(file)
   }
+
+  def setMaxUnkLength(length:Int): Unit = {
+    Analyzer.setMaxUnkLength(length)
+  }
 }
 
 
-class TokenBuilder(deCompound:Boolean, deInflect:Boolean, indexEojeol:Boolean, posTagging:Boolean, indexPoses:Set[Pos]) {
+class TokenBuilder(deCompound:Boolean,
+                   deInflect:Boolean,
+                   indexEojeol:Boolean,
+                   posTagging:Boolean,
+                   indexPoses:Set[Pos]) {
   def this() {
     this(true, true, true, true, TokenBuilder.INDEX_POSES)
   }

@@ -42,4 +42,12 @@ object Analyzer {
   def parseEojeolJava(lnodes: java.util.List[LNode]): java.util.List[Eojeol] = Eojeoler.build(lnodes.asScala).asJava
 
   def resetUserDict(): Unit = tokenizer.setUserDict(new LexiconDict().loadFromIterator(Seq[String]().toIterator))
+
+  /**
+    * UNKNOWN 키워드로 생성할 최대 길이를 설정합니다. 너무 길면 띄어쓰기 없이
+    * 사용된 문장에서 잘못 분석될 가능성이 높습니다. 입력이 "농어촌체험휴양하누리마을"
+    * 이면서 length 가 12로 설정될 경우 "농어촌체험휴양하누리마을/UNK" 으로 분석됩니다.
+    * @param length
+    */
+  def setMaxUnkLength(length:Int) = tokenizer.setMaxUnkLength(length)
 }

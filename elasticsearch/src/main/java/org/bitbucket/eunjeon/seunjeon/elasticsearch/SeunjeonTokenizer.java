@@ -29,6 +29,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         logger = Loggers.getLogger(options.getName());
 
         initAttribute();
+        TokenBuilder.setMaxUnkLength(options.getMaxUnkLength());
         if (options.getUserDictPath() != null) {
             TokenBuilder.setUserDict(options.getUserDictPath());
             logger.info(options.getUserDictPath() + " loading was successful.");

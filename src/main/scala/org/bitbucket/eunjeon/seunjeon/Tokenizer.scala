@@ -19,11 +19,12 @@ import scala.collection.mutable.ArrayBuffer
 
 class Tokenizer (lexiconDict: LexiconDict = null,
                  connectionCostDict: ConnectionCostDict = null) {
-  var userDict:LexiconDict = null
+  // TODO: atomic 해야 하지만.. 아직은.. 어떻게 해야할지 고민이 필요함.
+  private[this] var userDict:LexiconDict = null
+  private[this] var maxUnkLength = 8
 
-  def setUserDict(dict:LexiconDict): Unit = {
-    userDict = dict
-  }
+  def setUserDict(dict:LexiconDict) = { userDict = dict }
+  def setMaxUnkLength(length:Int) = { maxUnkLength = length }
 
   def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
     val text = input.intern()
@@ -80,7 +81,7 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       unknownTerms ++= get1NLengthTerms(charsetOffset, termOffset, suffixSurface, charset)
     }
 
-    if (charset.category.group) {
+    if (charset.category.group && charset.str.length <= maxUnkLength) {
       unknownTerms += getGroupTermNode(charsetOffset, charset)
     }
     unknownTerms
@@ -98,14 +99,15 @@ class Tokenizer (lexiconDict: LexiconDict = null,
     )
   }
 
-  private def get1NLengthTerms(charsetOffset: Int,
+  private[this] def get1NLengthTerms(charsetOffset: Int,
                                termOffset: Int,
                                suffixSurface: String,
                                charset:CharSet): Seq[LNode] = {
     if (charset.category.group && charset.category.length == 0) {
       return Seq.empty[LNode]
     }
-    var categoryLength = if (suffixSurface.length < charset.category.length) suffixSurface.length else charset.category.length
+    var categoryLength = math.min(math.min(suffixSurface.length, charset.category.length), maxUnkLength)
+
     if (categoryLength == 0) {
       categoryLength = 1
     }
