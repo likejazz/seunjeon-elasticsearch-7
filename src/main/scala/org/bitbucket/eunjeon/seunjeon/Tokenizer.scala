@@ -81,9 +81,15 @@ class Tokenizer (lexiconDict: LexiconDict = null,
       unknownTerms ++= get1NLengthTerms(charsetOffset, termOffset, suffixSurface, charset)
     }
 
-    if (charset.category.group && charset.str.length <= maxUnkLength) {
+
+    if (charset.category.length == 0) {
       unknownTerms += getGroupTermNode(charsetOffset, charset)
+    } else {
+      if (charset.category.group && charset.str.length <= maxUnkLength) {
+        unknownTerms += getGroupTermNode(charsetOffset, charset)
+      }
     }
+
     unknownTerms
   }
 
