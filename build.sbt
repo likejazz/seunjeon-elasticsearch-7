@@ -68,7 +68,7 @@ lazy val seunjeon = (project in file(".")).
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "2.3.3"
+val esVersion = "2.3.5"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
@@ -85,7 +85,6 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
     test in assembly := {},
 
     esZip := {
-//      val propertiesFile = file("elasticsearch/src/main/resources/plugin-descriptor.properties")
       val propertiesFile = file("elasticsearch/target/plugin-descriptor.properties")
       IO.writeLines(propertiesFile, Seq(
         "description=The Korean analysis plugin",
