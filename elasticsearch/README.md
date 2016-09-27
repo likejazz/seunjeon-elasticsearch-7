@@ -3,12 +3,13 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.3.1.0
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
 ```
 
 ## Release
 | elasticsearch-analysis-seunjeon | Target elasticsearch version | release note |
 | ------------------------------- | ---------------------------- | ------------ |
+| 2.4.0.1                         | 2.4.0                        | |
 | 2.4.0.0                         | 2.4.0                        | |
 | 2.3.5.0                         | 2.3.5                        | |
 | 2.3.3.0                         | 2.3.3                        | |

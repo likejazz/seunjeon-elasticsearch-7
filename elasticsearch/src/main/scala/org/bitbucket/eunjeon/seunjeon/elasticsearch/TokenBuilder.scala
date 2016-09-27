@@ -16,6 +16,7 @@ object TokenBuilder {
     Pos.UNK)
 
   lazy val INDEX_POSES_JAVA = INDEX_POSES.map(_.toString).toArray
+  lazy val ALL_POSES_JAVA = Pos.values.map(_.toString).toArray
 
   def convertPos(poses: Array[String]): Set[Pos] = {
     poses.map(Pos.withName).toSet

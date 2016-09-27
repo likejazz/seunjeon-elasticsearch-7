@@ -2,9 +2,12 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
+import org.bitbucket.eunjeon.seunjeon.Pos;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import scala.Enumeration;
+import scala.collection.Seq;
 
 import java.io.*;
 
@@ -54,14 +57,27 @@ public class SeunjeonTokenizerTest {
 
     @Test
     public void testDeInflect() throws IOException {
+        SeunjeonTokenizer deflectTokenizer =
+                new SeunjeonTokenizer(TokenizerOptions.create("").
+                        setDeInflect(true).
+                        setIndexEojeol(false).
+                        setIndexPoses(TokenBuilder.ALL_POSES_JAVA()));
+
+        SeunjeonTokenizer nonDeflectTokenizer =
+                new SeunjeonTokenizer(TokenizerOptions.create("").
+                        setDeInflect(false).
+                        setIndexEojeol(false).
+                        setIndexPoses(TokenBuilder.ALL_POSES_JAVA()));
         assertEquals("빠르/V:1:1:0:2:V;빨라짐/EOJ:0:2:0:3:EOJ;지/V:1:1:2:3:V;",
                 tokenize("빨라짐", new SeunjeonTokenizer(TokenizerOptions.create(""))));
 
-        assertEquals("슬프/V:1:1:0:2:V;슬픈/EOJ:0:1:0:2:EOJ;",
-                tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create(""))));
+        assertEquals("슬프/V:1:1:0:2:V;ᆫ/E:1:1:1:2:E;", tokenize("슬픈", deflectTokenizer));
+        assertEquals("슬픈/V+E:1:1:0:2:V+E;", tokenize("슬픈", nonDeflectTokenizer));
 
-        assertEquals("슬픈/V+E:1:1:0:2:V+E;",
-                tokenize("슬픈", new SeunjeonTokenizer(TokenizerOptions.create("").setDeInflect(false))));
+        assertEquals("새롭/V:1:1:0:2:V;ᆫ/E:1:1:1:2:E;사전/N:1:1:4:6:N;생성/N:1:1:7:9:N;",
+                tokenize("새로운 사전 생성", deflectTokenizer));
+        assertEquals("새로운/V+E:1:1:0:3:V+E;사전/N:1:1:4:6:N;생성/N:1:1:7:9:N;",
+                tokenize("새로운 사전 생성", nonDeflectTokenizer));
     }
 
     @Test
@@ -80,6 +96,13 @@ public class SeunjeonTokenizerTest {
         assertEquals("꽃/N:1:1:0:1:N;",
                 tokenize("꽃이피다", new SeunjeonTokenizer(TokenizerOptions.create("").
                         setIndexPoses(new String[]{"N"}).
+                        setIndexEojeol(false))));
+
+        assertEquals("새롭/V:1:1:0:2:V;사전/N:1:1:4:6:N;생성/N:1:1:7:9:N;",
+                tokenize("새로운 사전 생성", new SeunjeonTokenizer(TokenizerOptions.create("").
+                        setIndexPoses(new String[]{"V", "N"}).
+                        setDeCompound(true).
+                        setDeInflect(true).
                         setIndexEojeol(false))));
     }
 
