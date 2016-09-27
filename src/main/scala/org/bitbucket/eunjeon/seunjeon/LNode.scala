@@ -38,7 +38,7 @@ object LNode {
         }
       // 방어코드
       if ((nextPos - node.startPos) > node.morpheme.surface.length) {
-        Seq(node)
+        result.dropRight(1)
       } else result
     } catch {
       // TODO: warning 출력해줄까?

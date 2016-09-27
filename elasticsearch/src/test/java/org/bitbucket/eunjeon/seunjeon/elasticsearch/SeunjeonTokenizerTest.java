@@ -104,6 +104,12 @@ public class SeunjeonTokenizerTest {
                         setDeCompound(true).
                         setDeInflect(true).
                         setIndexEojeol(false))));
+
+        assertEquals("왕/N:1:1:0:1:N;딸/N:1:1:3:4:N;",
+                tokenize("왕의 딸로 태어났다고 합니다", new SeunjeonTokenizer(TokenizerOptions.create("").
+                        setIndexPoses(new String[]{"N"}).
+                        setDeInflect(true).
+                        setIndexEojeol(false))));
     }
 
     @Test
