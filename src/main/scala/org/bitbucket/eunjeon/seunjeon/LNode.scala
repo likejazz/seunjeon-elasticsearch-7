@@ -31,13 +31,13 @@ object LNode {
       val result = node.morpheme.deComposite().
         filterNot(m => isHideMorpheme(m)).
         map { morpheme =>
-        val morphemeStartPos = if (isJamo(morpheme.surface.head)) nextPos - 1 else nextPos
-        val morphemeEndPos = morphemeStartPos + morpheme.surface.length
-        nextPos = morphemeEndPos
-        LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
-      }
-      // TODO: feature(7) 오류로 글자수가 안맞는 경우가 있음 그럴 경우 무시해줘야 함
-      if ((nextPos - node.startPos) != node.morpheme.surface.length) {
+          val morphemeStartPos = if (isJamo(morpheme.surface.head)) nextPos - 1 else nextPos
+          val morphemeEndPos = morphemeStartPos + morpheme.surface.length
+          nextPos = morphemeEndPos
+          LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
+        }
+      // 방어코드
+      if ((nextPos - node.startPos) > node.morpheme.surface.length) {
         Seq(node)
       } else result
     } catch {

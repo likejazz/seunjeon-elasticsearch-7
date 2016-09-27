@@ -18,6 +18,7 @@ curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
         "tokenizer": {
           "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
+            "index_eojeol": false,
             "user_words": ["낄끼빠빠,-100", "버카충", "abc마트"]
           }
         }
@@ -32,5 +33,9 @@ echo "========================================================================"
 curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '삼성전자'
 echo "========================================================================"
 curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '빨라짐'
+echo "========================================================================"
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '슬픈'
+echo "========================================================================"
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '새로운사전생성'
 echo "========================================================================"
 curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어그로'
