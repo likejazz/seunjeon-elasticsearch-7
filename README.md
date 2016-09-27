@@ -2,28 +2,31 @@
 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic) 기반으로 만들어진 JVM 상에서 돌아가는 한국어 형태소분석기입니다. 기본적으로 java와 scala 인터페이스를 제공합니다. 사전이 패키지 내에 포함되어 있기 때문에 별도로 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic)을 설치할 필요가 없습니다.
 특징으로는 (시스템 사전에 등록되어 있는 단어에 한하여) 복합명사 분해와 활용어 원형 찾기가 가능합니다. (속도도 빨라염)
 
-## 설치
+## elasticsearch
+[여기](https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/)를 참고하세요.
+
+## dependency
   * jdk1.7 에서 컴파일되었습니다.
 
-## Maven
+### Maven
 ```xml
 <dependencies>
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </dependency>
 </dependencies>
 ```
 
-## SBT
+### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.1.0"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.1.1"
 ```
  * Scala 1.10, Scala 1.11
 
-## 사용
-### scala
+### 사용
+#### scala
 ```scala
 import org.bitbucket.eunjeon.seunjeon.Analyzer
 
@@ -52,7 +55,7 @@ Analyzer.parse("삼성전자").flatMap(_.deCompound()).foreach(println)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
-### java
+#### java
 ```java
 import org.bitbucket.eunjeon.seunjeon.Analyzer;
 
