@@ -17,7 +17,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io._
 
-import com.typesafe.scalalogging.slf4j.Logger
+import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
 import scala.io.Source

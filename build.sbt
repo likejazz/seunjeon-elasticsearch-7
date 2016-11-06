@@ -1,10 +1,7 @@
-val javaVersion = "1.7"
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.7",
   organization := "org.bitbucket.eunjeon",
-  javacOptions ++= Seq("-source", javaVersion, "-target", javaVersion),
-
+  scalaVersion := "2.12.0",   // default
   publishMavenStyle := true,
   publishArtifact in Test := false,
   publishTo := {
@@ -53,54 +50,62 @@ lazy val commonSettings = Seq(
 lazy val seunjeon = (project in file(".")).
   settings(commonSettings: _*).
   settings(
-    crossScalaVersions := Seq("2.11.7", "2.10.6"),
     name := "seunjeon",
-
-    version := "1.1.1",
-
+    version := "1.2.0",
+    crossScalaVersions := Seq("2.11.7", "2.12.0"),
+    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
-      "com.github.tototoshi" %% "scala-csv" % "1.2.2",
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
-      "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-      "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+      "org.scalatest" %% "scalatest" % "3.0.0" % "test",
       "com.novocode" % "junit-interface" % "0.11" % "test"
     )
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "2.4.0"
+val esVersion = "5.0.0"
+val esJavaVersion = "1.8"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
   settings(commonSettings: _*).
   settings(
     name := elasticsearchPluginName,
 
-    version := s"${esVersion}.1",
+    scalaVersion := "2.12.0",
+
+    version := s"${esVersion}.0",
+
+    javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
+
+    compileOrder := CompileOrder.ScalaThenJava,
 
     libraryDependencies ++= Seq(
       "org.elasticsearch" % "elasticsearch" % esVersion % "provided",
+      "org.apache.logging.log4j" % "log4j-api" % "2.6.2" % "provided",
       "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
     test in assembly := {},
 
     esZip := {
+      // craete properties file
       val propertiesFile = file("elasticsearch/target/plugin-descriptor.properties")
       IO.writeLines(propertiesFile, Seq(
-        "description=The Korean analysis plugin",
+        "description=The Korean(seunjeon) analysis plugin.",
         s"version=${version.value}",
         "name=analysis-seunjeon",
-        "site=false",
-        "jvm=true",
         "classname=org.bitbucket.eunjeon.seunjeon.elasticsearch.plugin.analysis.AnalysisSeunjeonPlugin",
-        s"java.version=${javaVersion}",
-        s"elasticsearch.version=$esVersion",
-        "isolated=true"))
-      val assemblyFile = assembly.value
-      val zipFile = file(assemblyFile.getPath.substring(0, assemblyFile.getPath.length - assemblyFile.ext.length - 1) + ".zip")
-      IO.zip(List(
-        (propertiesFile, propertiesFile.toPath.getFileName.toString),
-        (assemblyFile, assemblyFile.toPath.getFileName.toString)), zipFile)
+        s"java.version=${esJavaVersion}",
+        s"elasticsearch.version=$esVersion"))
+
+      val jarFile = assembly.value
+      // create zip file
+      val zipFile = file(jarFile.getPath.substring(0, jarFile.getPath.length - jarFile.ext.length - 1) + ".zip")
+      IO.zip(
+        List(
+          (propertiesFile, s"elasticsearch/${propertiesFile.getName}"),
+          (jarFile, s"elasticsearch/${jarFile.getName}")),
+        zipFile)
       zipFile
     },
 
