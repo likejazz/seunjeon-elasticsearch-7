@@ -1,11 +1,14 @@
 #!/bin/bash -e
 
+script_dir=$(cd "$(dirname "$0")" && pwd)
+
 elastic_path=~/Programs/elasticsearch
-${elastic_path}/bin/plugin list
-${elastic_path}/bin/plugin remove analysis-seunjeon
-${elastic_path}/bin/plugin list
-${elastic_path}/bin/plugin install file:../target/elasticsearch-analysis-seunjeon-assembly-2.4.0.0.zip
-${elastic_path}/bin/plugin list
+plugin_bin=bin/elasticsearch-plugin
+${elastic_path}/${plugin_bin} list
+${elastic_path}/${plugin_bin} remove analysis-seunjeon
+${elastic_path}/${plugin_bin} list
+${elastic_path}/${plugin_bin} install file://${script_dir}/../target/elasticsearch-analysis-seunjeon-assembly-5.0.0.0.zip
+${elastic_path}/${plugin_bin} list
 cp user_dict.csv ${elastic_path}/config
 ls -al ${elastic_path}/config/user_dict.csv
 

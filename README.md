@@ -5,8 +5,12 @@
 ## elasticsearch
 [여기](https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/)를 참고하세요.
 
-## dependency
-  * jdk1.7 에서 컴파일되었습니다.
+## Release
+| version | scala(java)          |
+|---------|----------------------|
+| 1.2.0   | 2.11(1.7), 2.12(1.8) |
+| 1.1.1   | 2.10(1.7), 2.11(1.7) |
+
 
 ### Maven
 ```xml
@@ -14,16 +18,15 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.1.1</version>
+        <version>1.2.0</version>
     </dependency>
 </dependencies>
 ```
 
 ### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.1.1"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.2.0"
 ```
- * Scala 1.10, Scala 1.11
 
 ### 사용
 #### scala

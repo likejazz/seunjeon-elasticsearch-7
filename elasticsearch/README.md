@@ -3,27 +3,28 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
+./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/5.0.0.0
 ```
 
 ## Release
-| elasticsearch-analysis-seunjeon | Target elasticsearch version | release note |
-| ------------------------------- | ---------------------------- | ------------ |
-| 2.4.0.1                         | 2.4.0                        | |
-| 2.4.0.0                         | 2.4.0                        | |
-| 2.3.5.0                         | 2.3.5                        | |
-| 2.3.3.0                         | 2.3.3                        | |
-| 2.3.2.1                         | 2.3.2                        | |
-| 2.3.2.0                         | 2.3.2                        | |
-| 2.3.1.0                         | 2.3.1                        | |
-| 2.3.0.0                         | 2.3.0                        | |
-| 2.2.1.0                         | 2.2.1                        | |
-| 2.2.0.1                         | 2.2.0                        | |
-| 2.2.0.0                         | 2.2.0                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.2.0.0) |
-| 2.1.1.3                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.3) |
-| 2.1.1.2                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.2) |
-| 2.1.1.1                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.1) |
-| 2.1.1.0                         | 2.1.1                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.0) |
+| elasticsearch-analysis-seunjeon | target elasticsearch | release note |
+| ------------------------------- | ---------------------| ------------ |
+| 5.0.0.0                         | 5.0.0                | 추가 기능 없음 |
+| 2.4.0.1                         | 2.4.0                | |
+| 2.4.0.0                         | 2.4.0                | |
+| 2.3.5.0                         | 2.3.5                | |
+| 2.3.3.0                         | 2.3.3                | |
+| 2.3.2.1                         | 2.3.2                | |
+| 2.3.2.0                         | 2.3.2                | |
+| 2.3.1.0                         | 2.3.1                | |
+| 2.3.0.0                         | 2.3.0                | |
+| 2.2.1.0                         | 2.2.1                | |
+| 2.2.0.1                         | 2.2.0                | |
+| 2.2.0.0                         | 2.2.0                | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.2.0.0) |
+| 2.1.1.3                         | 2.1.1                | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.3) |
+| 2.1.1.2                         | 2.1.1                | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.2) |
+| 2.1.1.1                         | 2.1.1                | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.1) |
+| 2.1.1.0                         | 2.1.1                | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.1.0) |
 | 2.1.0.0                         | 2.1.0                        | [note](http://eunjeon.blogspot.kr/search?q=elasticsearch-analysis-seunjeon+2.1.0.0) |
 
 
@@ -118,5 +119,7 @@ sbt
 > project elasticsearch
 > esZip
 ```
+  * elasticsearch5.0.0 에서 `esZip` 한번 실행하면 에러가 나고, 두번 실행해야 제대로 zip파일이 생성됩니다.
+  
 ## License
 Copyright 2015 유영호, 이용운. 아파치 라이센스 2.0에 따라 소프트웨어를 사용, 재배포 할 수 있습니다. 더 자세한 사항은 http://www.apache.org/licenses/LICENSE-2.0 을 참조하시기 바랍니다.

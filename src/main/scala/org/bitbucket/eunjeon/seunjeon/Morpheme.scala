@@ -2,7 +2,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{IOException, ObjectInputStream, ObjectOutputStream}
 
-import com.typesafe.scalalogging.slf4j.Logger
+import com.typesafe.scalalogging.Logger
 import org.bitbucket.eunjeon.seunjeon.MorphemeType.MorphemeType
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 import org.slf4j.LoggerFactory

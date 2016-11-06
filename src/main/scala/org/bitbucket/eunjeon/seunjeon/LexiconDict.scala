@@ -17,8 +17,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
 
-import com.github.tototoshi.csv.CSVParser
-import com.typesafe.scalalogging.slf4j.Logger
+import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
@@ -62,7 +61,8 @@ class LexiconDict {
     // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
     // TODO: yield 사용하는 것으로 바꿔보자.
     iterator.dropWhile(_.head == '#').
-      map(CSVParser.parse(_, '\\', ',', '"').getOrElse(Nil)).
+      // TODO: regex 이해해보자
+      map(_.split(",(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))").toList.map(_.replaceFirst("^\"", "").replaceFirst("\"$", ""))).
       map(f => f.head.replace(" ", "") :: f.tail).
       foreach { item =>
       try {

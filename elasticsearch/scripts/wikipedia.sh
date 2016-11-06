@@ -19,19 +19,14 @@ curl -XPUT localhost:9200/${INDEX_NAME} -d '{
     "index":{
       "analysis":{
         "analyzer":{
-          "default":{
-            "type":"custom",
-            "tokenizer":"seunjeon_tokenizer"
-          }
+          "default":{ "type":"custom", "tokenizer":"seunjeon_tokenizer" }
         },
         "tokenizer": {
-          "seunjeon_tokenizer": {
-            "type": "seunjeon_tokenizer"
-          }
+          "seunjeon_tokenizer": { "type": "seunjeon_tokenizer" }
         }
       },
-      number_of_shards: 1,
-      number_of_replicas: 0
+      "number_of_shards": 1,
+      "number_of_replicas": 0
     }
   }
 }'

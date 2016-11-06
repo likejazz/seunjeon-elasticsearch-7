@@ -1,12 +1,11 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.apache.lucene.util.AttributeFactory;
-import org.elasticsearch.common.logging.ESLogger;
-import org.elasticsearch.common.logging.Loggers;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -22,11 +21,11 @@ public class SeunjeonTokenizer extends Tokenizer {
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
     private TokenBuilder tokenBuilder;
-    ESLogger logger = null;
+    Logger logger = null;
 
     public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
-        logger = Loggers.getLogger(options.getName());
+        logger = ESLoggerFactory.getLogger(options.getName());
 
         initAttribute();
         TokenBuilder.setMaxUnkLength(options.getMaxUnkLength());
