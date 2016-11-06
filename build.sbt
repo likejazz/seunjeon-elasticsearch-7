@@ -51,7 +51,7 @@ lazy val seunjeon = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "seunjeon",
-    version := "1.2.0-SNAPSHOT",
+    version := "1.2.0",
     crossScalaVersions := Seq("2.11.7", "2.12.0"),
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
