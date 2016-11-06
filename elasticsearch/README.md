@@ -3,7 +3,11 @@
 
 ## 설치
 ```bash
-./bin/plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/5.0.0.0
+# elasticsearch 5.0.0 이상
+./bin/elasticsearch-plugin install https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.0.0.0/elasticsearch-analysis-seunjeon-5.0.0.0.zip
+
+# elasticsearch 2.4.1 이하
+./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
 ```
 
 ## Release
