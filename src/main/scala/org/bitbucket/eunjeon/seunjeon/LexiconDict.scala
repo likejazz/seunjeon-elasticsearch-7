@@ -16,6 +16,7 @@
 package org.bitbucket.eunjeon.seunjeon
 
 import java.io.{File, _}
+import java.util.regex.Pattern
 
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
@@ -23,6 +24,49 @@ import org.slf4j.LoggerFactory
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.matching.Regex
+
+object LexiconDict {
+  val compoundDelimiter = "+"
+  val compoundDelimiterRegex = "(?<!\\\\)" + Pattern.quote(compoundDelimiter)
+
+  def buildNNGTerm(surface:String, cost:Int): Morpheme = {
+    val jongsung = if (isHangul(surface.last)) {
+      if (hasJongsung(surface.last)) "T" else "F"
+    } else "*"
+    val surfaces = surface.split(compoundDelimiterRegex)
+    val escapedSurfaces = surfaces.map(_.replaceAllLiterally("\\+", "+"))
+    val compositionFeature = if (surfaces.length >= 2) escapedSurfaces.map(_ + "/NNG/*" ).mkString("+") else "*"
+    val morphemeType = if (surfaces.length >= 2) "Compound" else "*"
+
+    val feature = Array("NNG","*", jongsung, surfaces.mkString("+"), morphemeType, "*", "*", compositionFeature)
+    Morpheme(
+      escapedSurfaces.mkString(""),
+      NngUtil.nngLeftId,
+      NngUtil.nngRightId,
+      cost,
+      wrapRefArray(feature),
+      MorphemeType(feature),
+      wrapRefArray(Pos.poses(feature)))
+  }
+
+  private def hasJongsung(ch:Char): Boolean = {
+    if (((ch - 0xAC00) % 0x001C) == 0) {
+      false
+    } else {
+      true
+    }
+  }
+
+  private def isHangul(ch:Char): Boolean = {
+    if ((0x0AC00 <= ch && ch <= 0xD7A3)
+      || (0x1100 <= ch && ch <= 0x11FF)
+      || (0x3130 <= ch && ch <= 0x318F)) {
+      true
+    } else {
+      false
+    }
+  }
+}
 
 
 class LexiconDict {
@@ -68,10 +112,12 @@ class LexiconDict {
       try {
         var newTerm:Morpheme = null
         item match {
+          // "단어"
           case List(surface) =>
-            newTerm = buildNNGTerm(surface, 1000 - (surface.length * 100))
+            newTerm = LexiconDict.buildNNGTerm(surface, 1000 - (surface.length * 100))
+          // "단어,-100"  # 단어,비용
           case List(surface, cost) =>
-            newTerm = buildNNGTerm(surface, cost.toShort)
+            newTerm = LexiconDict.buildNNGTerm(surface, cost.toShort)
           case List(surface, leftId, rightId, cost, feature@_ *) =>
             newTerm = Morpheme(surface,
               leftId.toShort,
@@ -95,45 +141,6 @@ class LexiconDict {
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
     build(terms.toSeq.sortBy(_.surface))
-  }
-
-  private def buildNNGTerm(surface:String, cost:Int): Morpheme = {
-    val lastChar = surface.last
-    val feature = if (isHangul(lastChar)) {
-      if (hasJongsung(lastChar)) {
-        Array("NNG","*","T", surface, "*", "*", "*", "*")
-      } else {
-        Array("NNG","*","F", surface, "*", "*", "*", "*")
-      }
-    } else {
-      Array("NNG","*","*", surface, "*", "*", "*", "*")
-    }
-    Morpheme(
-      surface,
-      NngUtil.nngLeftId,
-      NngUtil.nngRightId,
-      cost,
-      wrapRefArray(feature),
-      MorphemeType(feature),
-      wrapRefArray(Pos.poses(feature)))
-  }
-
-  private def hasJongsung(ch:Char): Boolean = {
-    if (((ch - 0xAC00) % 0x001C) == 0) {
-      false
-    } else {
-      true
-    }
-  }
-
-  private def isHangul(ch:Char): Boolean = {
-    if ((0x0AC00 <= ch && ch <= 0xD7A3)
-        || (0x1100 <= ch && ch <= 0x11FF)
-        || (0x3130 <= ch && ch <= 0x318F)) {
-      true
-    } else {
-      false
-    }
   }
 
   private def build(sortedTerms: Seq[Morpheme]): LexiconDict = {
