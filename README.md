@@ -8,8 +8,9 @@
 ## Release
 | version | scala(java)          | note          |
 |---------|----------------------|---------------|
+| 1.3.0   | 2.11(1.7), 2.12(1.8) | 사용자 사전에 복합명사 등록 기능 추가  |
 | 1.2.0   | 2.11(1.7), 2.12(1.8) | 추가기능 없음 |
-| 1.1.1   | 2.10(1.7), 2.11(1.7) | |
+| 1.1.1   | 2.10(1.7), 2.11(1.7) |               |
 
 
 ### Maven
@@ -18,14 +19,14 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0</version>
     </dependency>
 </dependencies>
 ```
 
 ### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.2.0"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.3.0"
 ```
 
 ### 사용
@@ -44,17 +45,22 @@ Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).forea
 /**
   * 사용자 사전 추가
   * surface,cost
-  *   surface: 단어
+  *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
+  *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
   *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
   */
-Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼빠빠").toIterator)
+Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼+빠빠,-100", """C\+\+""").toIterator)
 Analyzer.parse("덕후냄새가 난다.").foreach(println)
 
 // 활용어 원형
 Analyzer.parse("빨라짐").flatMap(_.deInflect()).foreach(println)
 
 // 복합명사 분해
-Analyzer.parse("삼성전자").flatMap(_.deCompound()).foreach(println)
+val ggilggi = Analyzer.parse("낄끼빠빠")
+ggilggi.foreach(println)  // 낄끼빠빠
+ggilggi.flatMap(_.deCompound()).foreach(println)  // 낄끼+빠빠
+
+Analyzer.parse("C++").flatMap(_.deInflect()).foreach(println) // C++
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -80,10 +86,11 @@ class Smaple {
         /**
          * 사용자 사전 추가
          * surface,cost
-         *   surface: 단어
+         *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
+         *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
          *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
          */
-        Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼빠빠").iterator());
+        Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼+빠빠,-100").iterator());
         for (LNode node : Analyzer.parseJava("덕후냄새가 난다.")) {
             System.out.println(node);
         }
@@ -96,14 +103,14 @@ class Smaple {
         }
 
         // 복합명사 분해
-        for (LNode node : Analyzer.parseJava("삼성전자")) {
+        for (LNode node : Analyzer.parseJava("낄끼빠빠")) {
+            System.out.println(node);   // 낄끼빠빠
             for (LNode node2: node.deCompoundJava()) {
-                System.out.println(node2);
+                System.out.println(node2);  // 낄끼+빠빠
             }
         }
     }
 }
-
 ```
 
 ## Group

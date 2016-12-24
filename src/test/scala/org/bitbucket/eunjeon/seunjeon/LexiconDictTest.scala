@@ -5,6 +5,23 @@ import org.scalatest.FunSuite
 class LexiconDictTest extends FunSuite {
   val TEST_RESOURCES_PATH = "src/test/resources"
 
+  test("buildNNGTerm") {
+    assert(
+      "Morpheme(삼성전자,1784,3535,-100,WrappedArray(NNG, *, F, 삼성전자, *, *, *, *),COMMON,WrappedArray(N))" ==
+      LexiconDict.buildNNGTerm("삼성전자", -100).toString
+    )
+
+    assert(
+      "Morpheme(삼성전자,1784,3535,-100,WrappedArray(NNG, *, F, 삼성+전자, Compound, *, *, 삼성/NNG/*+전자/NNG/*),COMPOUND,WrappedArray(N))" ==
+      LexiconDict.buildNNGTerm("삼성+전자", -100).toString
+    )
+
+    assert(
+      "Morpheme(C++,1784,3535,-100,WrappedArray(NNG, *, *, C\\+\\+, *, *, *, *),COMMON,WrappedArray(N))" ==
+      LexiconDict.buildNNGTerm("""C\+\+""", -100).toString
+    )
+  }
+
   test("load") {
     val csvs = Seq(
       "!,1794,3555,3559,SF,*,*,*,*,*,*,*",
