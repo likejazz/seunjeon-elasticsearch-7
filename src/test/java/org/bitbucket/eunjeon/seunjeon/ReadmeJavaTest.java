@@ -25,6 +25,7 @@ public class ReadmeJavaTest {
          * 사용자 사전 추가
          * surface,cost
          *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
+         *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
          *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
          */
         Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼+빠빠,-100").iterator());

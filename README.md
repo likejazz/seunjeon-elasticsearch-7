@@ -19,14 +19,14 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.11</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0</version>
     </dependency>
 </dependencies>
 ```
 
 ### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.2.0"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.3.0"
 ```
 
 ### 사용
@@ -46,9 +46,10 @@ Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).forea
   * 사용자 사전 추가
   * surface,cost
   *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
+  *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
   *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
   */
-Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼+빠빠,-100").toIterator)
+Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼+빠빠,-100", """C\+\+""").toIterator)
 Analyzer.parse("덕후냄새가 난다.").foreach(println)
 
 // 활용어 원형
@@ -59,6 +60,7 @@ val ggilggi = Analyzer.parse("낄끼빠빠")
 ggilggi.foreach(println)  // 낄끼빠빠
 ggilggi.flatMap(_.deCompound()).foreach(println)  // 낄끼+빠빠
 
+Analyzer.parse("C++").flatMap(_.deInflect()).foreach(println) // C++
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
@@ -85,6 +87,7 @@ class Smaple {
          * 사용자 사전 추가
          * surface,cost
          *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
+         *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
          *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
          */
         Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼+빠빠,-100").iterator());
@@ -108,7 +111,6 @@ class Smaple {
         }
     }
 }
-
 ```
 
 ## Group

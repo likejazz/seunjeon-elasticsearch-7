@@ -17,15 +17,8 @@ class LexiconDictTest extends FunSuite {
     )
 
     assert(
-      "" ==
+      "Morpheme(C++,1784,3535,-100,WrappedArray(NNG, *, *, C\\+\\+, *, *, *, *),COMMON,WrappedArray(N))" ==
       LexiconDict.buildNNGTerm("""C\+\+""", -100).toString
-    )
-  }
-
-  test("buildNNGTerm deCompound") {
-    assert(
-      "" ==
-      LexiconDict.buildNNGTerm("""삼성전자""", -100).deComposite().toString
     )
   }
 

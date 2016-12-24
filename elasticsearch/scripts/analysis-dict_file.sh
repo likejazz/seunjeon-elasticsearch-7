@@ -19,7 +19,7 @@ curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
           "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
             "index_eojeol": false,
-            "user_words": ["낄끼+빠빠,-100", "c\\+\\+", "어그로", "버카충", "abc마트"]
+            "user_dict_path": "user_dict.csv"
           }
         }
       }
