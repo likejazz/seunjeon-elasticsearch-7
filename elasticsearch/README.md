@@ -4,7 +4,7 @@
 ## 설치
 ```bash
 # elasticsearch 5.0.0 이상
-./bin/elasticsearch-plugin install https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.1.1.0/elasticsearch-analysis-seunjeon-5.1.1.0.zip
+./bin/elasticsearch-plugin install https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.1.1.1/elasticsearch-analysis-seunjeon-5.1.1.1.zip
 
 # elasticsearch 2.4.1 이하
 ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
@@ -56,7 +56,8 @@ curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
         "tokenizer": {
           "seunjeon_default_tokenizer": {
             "type": "seunjeon_tokenizer",
-            "user_words": ["낄끼빠빠,-100", "버카충", "abc마트"]
+            "index_eojeol": false,
+            "user_words": ["낄끼+빠빠,-100", "c\\+\\+", "어그로", "버카충", "abc마트"]
           }
         }
       }
@@ -66,12 +67,20 @@ curl -XPUT "${ES}/${ESIDX}/?pretty" -d '{
 
 sleep 1
 
-echo "========================================================================"
+echo "# 삼성/N 전자/N"
 curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '삼성전자'
-echo "========================================================================"
+
+echo "# 빠르/V 지/V"
 curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '빨라짐'
-echo "========================================================================"
-curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 어그로'
+
+echo "# 슬프/V"
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '슬픈'
+
+echo "# 새롭/V 사전/N 생성/N"
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '새로운사전생성'
+
+echo "# 낄끼/N 빠빠/N c++/N"
+curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++'
 ```
 
 ## 옵션인자
