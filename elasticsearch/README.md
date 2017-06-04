@@ -2,12 +2,21 @@
 [seunjeon](https://bitbucket.org/eunjeon/seunjeon) 한국어 형태소분석기를 elasticsearch에 사용할 수 있도록 만든 plugin입니다.
 
 ## 설치
+### elasticsearch 5.0.0 이상
 ```bash
-# elasticsearch 5.0.0 이상
-./bin/elasticsearch-plugin install https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.1.1.1/elasticsearch-analysis-seunjeon-5.1.1.1.zip
+# download plugin
+$ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e <es-version> -p <plugin-version>
 
-# elasticsearch 2.4.1 이하
-./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
+# install plugin
+$ ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-<plugin-version>.zip
+```
+  * downloader.sh 가 하는 일은 elasticsearch-analysis-seunjeon-<plugin-version>.zip 파일을 내려받은 후 plugin-descriptor.properties 의 elasticsearch.version 을 변경하여 재압축합니다.
+  * elasticsearch가 버전 업 될때마다 플러그인을 재배포하는데 어려움이 있어 스크립트를 제공합니다.
+  * 다운로드 받는데 문제가 있다면 최신버전을 직접 다운받으세요. [elasticsearch-analysis-seunjeon-5.1.1.1.zip](https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.1.1.1/elasticsearch-analysis-seunjeon-5.1.1.1.zip)
+
+### elasticsearch 2.4.1 이하
+```bash
+$ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
 ```
 
 ## Release
