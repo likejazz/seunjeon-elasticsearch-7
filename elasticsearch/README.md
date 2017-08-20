@@ -5,6 +5,7 @@
 ### elasticsearch 5.0.0 이상
 ```bash
 # download plugin
+#   에제) bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e 5.5.0 -p 5.1.1.1
 $ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e <es-version> -p <plugin-version>
 
 # install plugin
@@ -100,7 +101,7 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 | decompound    | 복합명사 분해      | true |
 | deinflect     | 활용어의 원형 추출 | true |
 | index_eojeol  | 어절 추출     | true |
-| index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "UNK"] |
+| index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "M", "UNK"] |
 | pos_tagging   | 품사태깅. 키워드에 품사를 붙여서 토큰을 뽑습니다        | true |
 | max_unk_length  | unknown 키워드로 뽑을 수 있는 최대 길이(한글) | 8 |
 
@@ -128,6 +129,7 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 | XP  | 접두사 |
 | XS  | 접미사 |
 | XR  | 어근 |
+  * [mecab-ko-dic 2.0 품사태그표](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit?usp=sharing)
 
 
 ## elasticsearch 플러그인 개발

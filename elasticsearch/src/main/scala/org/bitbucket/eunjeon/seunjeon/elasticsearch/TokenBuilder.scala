@@ -12,9 +12,9 @@ object TokenBuilder {
     Pos.SH, // 한자
     Pos.SN, // 숫자
     Pos.XR, // 어근
-    Pos.V, // 용언
-    Pos.UNK,
-    Pos.M)
+    Pos.V,  // 용언
+    Pos.M,  // 수식언(관형사, 부사)
+    Pos.UNK)
 
   lazy val INDEX_POSES_JAVA = INDEX_POSES.map(_.toString).toArray
   lazy val ALL_POSES_JAVA = Pos.values.map(_.toString).toArray
