@@ -20,7 +20,7 @@ import scala.collection.JavaConverters._
 object Analyzer {
   lazy val tokenizer:Tokenizer = initTokenizer()
 
-  private def initTokenizer(): Tokenizer = {
+  def initTokenizer(): Tokenizer = {
     val lexiconDict = new LexiconDict().load()
     val connectionCostDict = new ConnectionCostDict().load()
     new Tokenizer(lexiconDict, connectionCostDict)

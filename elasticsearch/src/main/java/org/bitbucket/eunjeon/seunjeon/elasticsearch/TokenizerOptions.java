@@ -1,12 +1,10 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
-import java.util.List;
-
 public class TokenizerOptions {
     public final static boolean DECOMPOUND = true;
     public final static boolean DEINFLECT = true;
     public final static boolean INDEX_EOJEOL = true;
-    public final static String[] INDEX_POSES = TokenBuilder.INDEX_POSES_JAVA();
+    public final static String[] INDEX_POSES = TokenizerHelper.INDEX_POSES_JAVA();
     public final static boolean POS_TAGGING = true;
     public final static int MAX_UNK_LENGTH = 8;
 
