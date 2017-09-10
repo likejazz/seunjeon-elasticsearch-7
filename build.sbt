@@ -1,9 +1,12 @@
+// http://www.scala-sbt.org/release/docs/Using-Sonatype.html
+// linux command pgp2랑 헛깔리지말고 sbt의 pgp-cmd 만 사용하면 됨
 
 lazy val commonSettings = Seq(
   organization := "org.bitbucket.eunjeon",
   scalaVersion := "2.12.0",   // default
   publishMavenStyle := true,
   publishArtifact in Test := false,
+  useGpg := true,
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
     if (version.value.trim.endsWith("SNAPSHOT"))
@@ -63,7 +66,7 @@ lazy val seunjeon = (project in file(".")).
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "5.1.1"
+val esVersion = "5.4.1"
 val esJavaVersion = "1.8"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
@@ -73,7 +76,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 
     scalaVersion := "2.12.0",
 
-    version := s"${esVersion}.1",
+    version := s"${esVersion}.0",
 
     javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
 

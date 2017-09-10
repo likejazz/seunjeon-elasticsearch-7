@@ -20,7 +20,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     private OffsetAttribute offsetAtt;
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
-    private TokenBuilder tokenBuilder;
+    private TokenizerHelper tokenizerHelper;
     Logger logger = null;
 
     public SeunjeonTokenizer(TokenizerOptions options) {
@@ -28,22 +28,24 @@ public class SeunjeonTokenizer extends Tokenizer {
         logger = ESLoggerFactory.getLogger(options.getName());
 
         initAttribute();
-        TokenBuilder.setMaxUnkLength(options.getMaxUnkLength());
+        tokenizerHelper = new TokenizerHelper(
+                options.getDeCompound(),
+                options.getDeInflect(),
+                options.getIndexEojeol(),
+                options.getPosTagging(),
+                TokenizerHelper.convertPos(options.getIndexPoses()));
+
+        tokenizerHelper.setMaxUnkLength(options.getMaxUnkLength());
+
         if (options.getUserDictPath() != null) {
-            TokenBuilder.setUserDict(options.getUserDictPath());
+            tokenizerHelper.setUserDict(options.getUserDictPath());
             logger.info(options.getUserDictPath() + " loading was successful.");
             if (options.getUserWords().length > 0) {
                 logger.warn("ignored \"user_words\". because settings of \"user_dict_path\"");
             }
         } else {
-            TokenBuilder.setUserDict(Arrays.asList(options.getUserWords()).iterator());
+            tokenizerHelper.setUserDict(options.getUserWords());
         }
-        tokenBuilder = new TokenBuilder(
-                options.getDeCompound(),
-                options.getDeInflect(),
-                options.getIndexEojeol(),
-                options.getPosTagging(),
-                TokenBuilder.convertPos(options.getIndexPoses()));
     }
 
     private void initAttribute() {
@@ -57,7 +59,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     @Override
     public void reset() throws IOException {
         super.reset();
-        tokensQueue = new LinkedList(tokenBuilder.tokenize(getDocument()));
+        tokensQueue = new LinkedList(tokenizerHelper.tokenize(getDocument()));
     }
 
     @Override

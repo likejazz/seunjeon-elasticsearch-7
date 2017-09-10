@@ -2,12 +2,9 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
-import org.bitbucket.eunjeon.seunjeon.Pos;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import scala.Enumeration;
-import scala.collection.Seq;
 
 import java.io.*;
 
@@ -61,13 +58,13 @@ public class SeunjeonTokenizerTest {
                 new SeunjeonTokenizer(TokenizerOptions.create("").
                         setDeInflect(true).
                         setIndexEojeol(false).
-                        setIndexPoses(TokenBuilder.ALL_POSES_JAVA()));
+                        setIndexPoses(TokenizerHelper.ALL_POSES_JAVA()));
 
         SeunjeonTokenizer nonDeflectTokenizer =
                 new SeunjeonTokenizer(TokenizerOptions.create("").
                         setDeInflect(false).
                         setIndexEojeol(false).
-                        setIndexPoses(TokenBuilder.ALL_POSES_JAVA()));
+                        setIndexPoses(TokenizerHelper.ALL_POSES_JAVA()));
         assertEquals("빠르/V:1:1:0:2:V;빨라짐/EOJ:0:2:0:3:EOJ;지/V:1:1:2:3:V;",
                 tokenize("빨라짐", new SeunjeonTokenizer(TokenizerOptions.create(""))));
 

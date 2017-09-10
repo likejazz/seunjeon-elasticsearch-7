@@ -17,8 +17,7 @@ package org.bitbucket.eunjeon.seunjeon
 
 import scala.collection.mutable.ArrayBuffer
 
-class Tokenizer (lexiconDict: LexiconDict = null,
-                 connectionCostDict: ConnectionCostDict = null) {
+class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict) {
   // TODO: atomic 해야 하지만.. 아직은.. 어떻게 해야할지 고민이 필요함.
   private[this] var userDict:LexiconDict = null
   private[this] var maxUnkLength = 8
