@@ -65,7 +65,8 @@ testSeunjeon "seunjeon-idx2" '{
             "tokenizer": {
               "seunjeon_default_tokenizer": {
                 "type": "seunjeon_tokenizer",
-                "index_eojeol": false
+                "index_eojeol": false,
+                "user_words": ["abc마트"]
               }
             }
           }

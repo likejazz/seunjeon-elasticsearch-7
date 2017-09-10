@@ -5,15 +5,16 @@
 ### elasticsearch 5.0.0 이상
 ```bash
 # download plugin
-#   에제) bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e 5.5.0 -p 5.1.1.1
-$ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e <es-version> -p <plugin-version>
+bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e <es-version> -p <plugin-version>
+  에제) $ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e 5.5.0 -p 5.4.1.0
 
 # install plugin
-$ ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-<plugin-version>.zip
+./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-<plugin-version>.zip
+  예제) $ ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-5.4.1.0.zip
 ```
   * downloader.sh 가 하는 일은 elasticsearch-analysis-seunjeon-<plugin-version>.zip 파일을 내려받은 후 plugin-descriptor.properties 의 elasticsearch.version 을 변경하여 재압축합니다.
   * elasticsearch가 버전 업 될때마다 플러그인을 재배포하는데 어려움이 있어 스크립트를 제공합니다.
-  * 다운로드 받는데 문제가 있다면 최신버전을 직접 다운받으세요. [elasticsearch-analysis-seunjeon-5.1.1.1.zip](https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.1.1.1/elasticsearch-analysis-seunjeon-5.1.1.1.zip)
+  * 다운로드 받는데 문제가 있다면 최신버전을 직접 다운받으세요. [elasticsearch-analysis-seunjeon-5.4.1.0.zip](https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/5.4.1.0/elasticsearch-analysis-seunjeon-5.4.1.0.zip)
 
 ### elasticsearch 2.4.1 이하
 ```bash
@@ -23,6 +24,7 @@ $ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysi
 ## Release
 | elasticsearch-analysis-seunjeon | target elasticsearch | release note |
 | ------------------------------- | ---------------------| ------------ |
+| 5.4.1.0                         | 5.4.1                | 사용자사전 인덱스별로 별도 로딩(시스템 사전만 singleton) |
 | 5.1.1.1                         | 5.1.1                | 사용자 사전에 복합명사 등록 기능 추가  |
 | 5.1.1.0                         | 5.1.1                | 추가 기능 없음 |
 | 5.0.0.0                         | 5.0.0                | 추가 기능 없음 |
@@ -97,11 +99,11 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 | 옵션인자      | 설명  | 기본값 |
 | ------------- | ----- | ---- |
 | user_words    | 사용자 사전        | []     |
-| user_dict_path| 사용자 사전 파일. base directory는 ES_HOME/config 입니다. |      |
+| user_dict_path| 사용자 사전 파일. base directory는 ES_HOME/config 입니다. 사전파일 예제는 [user_dict.csv](https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/user_dict.csv)를 참고하세요. |      |
 | decompound    | 복합명사 분해      | true |
 | deinflect     | 활용어의 원형 추출 | true |
 | index_eojeol  | 어절 추출     | true |
-| index_poses   | 추출할 품사        | ["N","SL", "SH", "SN", "XR", "V", "M", "UNK"] |
+| index_poses   | 추출할 품사        | ["N", "SL", "SH", "SN", "XR", "V", "M", "UNK"] |
 | pos_tagging   | 품사태깅. 키워드에 품사를 붙여서 토큰을 뽑습니다        | true |
 | max_unk_length  | unknown 키워드로 뽑을 수 있는 최대 길이(한글) | 8 |
 
@@ -145,7 +147,6 @@ sbt
 > project elasticsearch
 > esZip
 ```
-  * elasticsearch5.0.0 에서 `esZip` 한번 실행하면 에러가 나고, 두번 실행해야 제대로 zip파일이 생성됩니다.
-  
+
 ## License
 Copyright 2015 유영호, 이용운. 아파치 라이센스 2.0에 따라 소프트웨어를 사용, 재배포 할 수 있습니다. 더 자세한 사항은 http://www.apache.org/licenses/LICENSE-2.0 을 참조하시기 바랍니다.
