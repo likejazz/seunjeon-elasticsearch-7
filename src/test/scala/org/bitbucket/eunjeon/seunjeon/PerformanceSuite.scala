@@ -47,7 +47,7 @@ object stopwatch {
 }
 
 class PerformanceSuite extends FunSuite with BeforeAndAfter {
-  test("long sentence") {
+  ignore("long sentence") {
     val source = scala.io.Source.fromFile("./src/test/resources/too_many_special_chars.txt")
     val lines = try source.mkString finally source.close()
     Benchmark(1, 0)(Analyzer.parse(lines.mkString(" ")))  // dict loading time

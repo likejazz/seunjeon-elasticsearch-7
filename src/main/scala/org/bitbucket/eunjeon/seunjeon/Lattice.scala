@@ -127,9 +127,10 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
-    val penaltyCost = if (endingNode.endPos != startingNode.startPos) {
-      SpacePenalty(startingNode.morpheme.poses(0))
-    } else 0
+    val penaltyCost =
+      if (endingNode.endPos != startingNode.startPos)
+        SpacePenalty(startingNode.morpheme.poses(0))
+      else 0
 
     endingNode.accumulatedCost +
       endingNode.morpheme.cost +

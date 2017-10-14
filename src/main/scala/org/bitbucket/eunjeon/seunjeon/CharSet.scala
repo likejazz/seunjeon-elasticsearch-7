@@ -34,7 +34,7 @@ object UnkDef {
   def buildUnk: mutable.Map[String, Morpheme] = {
     val morphemes = mutable.Map[String, Morpheme]()
     val inputStream = classOf[CharSet].getResourceAsStream(DictBuilder.UNK_DEF)
-    Source.fromInputStream(inputStream).getLines().foreach { line =>
+    Source.fromInputStream(inputStream, "UTF-8").getLines().foreach { line =>
       val l = line.split(",")
       if (l(0) == "DEFAULT") {
         val feature = l.slice(4, l.size)
@@ -61,7 +61,7 @@ object CharDef {
     val categories = mutable.Map[String, Category]()
     val charMap = new util.TreeMap[Char, (Category, Morpheme)]()
     val inputStream = classOf[CharSet].getResourceAsStream("/char.def")
-    Source.fromInputStream(inputStream).getLines().
+    Source.fromInputStream(inputStream, "UTF-8").getLines().
       filterNot(line => line.startsWith("#") || line.length == 0).
       foreach { line =>
         val l = line.split("\\s+")

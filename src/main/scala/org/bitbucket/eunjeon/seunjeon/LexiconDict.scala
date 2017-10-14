@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
 import scala.io.Source
+import scala.util.Try
 import scala.util.matching.Regex
 
 object LexiconDict {
@@ -97,50 +98,79 @@ class LexiconDict {
     loadFromIterator(iterator)
   }
 
+  def csvParse(str: String): List[String] =
+    str.split(",(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))").toList.map(_.replaceFirst("^\"", "").replaceFirst("\"$", ""))
+
   def loadFromIterator(iterator: Iterator[String]): LexiconDict = {
     val startTime = System.nanoTime()
-//    val terms = new mutable.MutableList[Morpheme]()
-    val terms = new mutable.HashSet[Morpheme]()
-    // TODO: split(",")로는 "," Term 을 읽을수 없어 csv library 를 사용함.
-    // 직접 구현해서 library 의존성을 줄였으면 좋겠음.
-    // TODO: yield 사용하는 것으로 바꿔보자.
-    iterator.dropWhile(_.head == '#').
-      // TODO: regex 이해해보자
-      map(_.split(",(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))").toList.map(_.replaceFirst("^\"", "").replaceFirst("\"$", ""))).
-      map(f => f.head.replace(" ", "") :: f.tail).
-      foreach { item =>
-      try {
-        var newTerm:Morpheme = null
-        item match {
-          // "단어"
-          case List(surface) =>
-            newTerm = LexiconDict.buildNNGTerm(surface, 1000 - (surface.length * 100))
-          // "단어,-100"  # 단어,비용
-          case List(surface, cost) =>
-            newTerm = LexiconDict.buildNNGTerm(surface, cost.toShort)
-          case List(surface, leftId, rightId, cost, feature@_ *) =>
-            newTerm = Morpheme(surface,
-              leftId.toShort,
-              rightId.toShort,
-              cost.toShort,
-              wrapRefArray(feature.toArray),
-              MorphemeType(feature),
-              wrapRefArray(Pos.poses(feature)))
-        }
-        if (terms.contains(newTerm)) {
-          logger.warn(s"already has term - $newTerm")
-        } else {
-          terms += newTerm
+    val parsedLine: Seq[Try[Morpheme]] =
+      iterator.dropWhile(_.head == '#').
+        map(_.replaceAll(" ", "")).
+        map(csvParse).
+        map { x =>
+          Try {
+            x match {
+              // "단어"
+              case List(surface) =>
+                LexiconDict.buildNNGTerm(surface, 1000 - (surface.length * 100))
+              // "단어,-100"  # 단어,비용
+              case List(surface, cost) =>
+                LexiconDict.buildNNGTerm(surface, cost.toShort)
+              case List(surface, leftId, rightId, cost, feature@_ *) =>
+                Morpheme(surface,
+                  leftId.toShort,
+                  rightId.toShort,
+                  cost.toShort,
+                  wrapRefArray(feature.toArray),
+                  MorphemeType(feature),
+                  wrapRefArray(Pos.poses(feature)))
+            }
+          }
+        }.toSeq
 
-        }
-      } catch {
-        case _: Throwable => logger.warn(s"invalid format : $item")
-      }
-    }
+    val morphemes: Seq[Morpheme] = parsedLine.filter(_.isSuccess).map(_.get)
+
+//      foreach { item =>
+//      try {
+//        var newTerm: Morpheme = null
+//        item match {
+//          // "단어"
+//          case List(surface) =>
+//            newTerm = LexiconDict.buildNNGTerm(surface, 1000 - (surface.length * 100))
+//          // "단어,-100"  # 단어,비용
+//          case List(surface, cost) =>
+//            newTerm = LexiconDict.buildNNGTerm(surface, cost.toShort)
+//          case List(surface, leftId, rightId, cost, feature@_ *) =>
+//            newTerm = Morpheme(surface,
+//              leftId.toShort,
+//              rightId.toShort,
+//              cost.toShort,
+//              wrapRefArray(feature.toArray),
+//              MorphemeType(feature),
+//              wrapRefArray(Pos.poses(feature)))
+//        }
+////        if (termsMap.contains(newTerm.key)) {
+////          val oldTerm = termsMap(newTerm.key)
+////          val validTerm =
+////            if (oldTerm.cost < newTerm.cost)
+////              oldTerm
+////            else if (oldTerm.cost == newTerm.cost)
+////              if (oldTerm.mType == MorphemeType.INFLECT) newTerm
+////              else oldTerm
+////            else newTerm
+////          logger.warn(s"conflict term - $oldTerm,  $newTerm")
+////          termsMap.update(validTerm.key, validTerm)
+////        } else {
+////          termsMap += newTerm.key -> newTerm
+////        }
+//      } catch {
+//        case _: Throwable => logger.warn(s"invalid format : $item")
+//      }
+//    }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 
-    build(terms.toSeq.sortBy(_.surface))
+    build(morphemes.sortBy(_.surface))
   }
 
   private def build(sortedTerms: Seq[Morpheme]): LexiconDict = {
