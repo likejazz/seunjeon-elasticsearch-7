@@ -8,6 +8,7 @@
 ## Release
 | version | scala(java)          | note          |
 |---------|----------------------|---------------|
+| 1.3.1   | 2.11(1.7), 2.12(1.8) | 사전 누락으로 인한 오분석 수정, 한자 분석 버그 수정  |
 | 1.3.0   | 2.11(1.7), 2.12(1.8) | 사용자 사전에 복합명사 등록 기능 추가  |
 | 1.2.0   | 2.11(1.7), 2.12(1.8) | 추가기능 없음 |
 | 1.1.1   | 2.10(1.7), 2.11(1.7) |               |
@@ -18,15 +19,15 @@
 <dependencies>
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
-        <artifactId>seunjeon_2.11</artifactId>
-        <version>1.3.0</version>
+        <artifactId>seunjeon_2.12</artifactId>
+        <version>1.3.1</version>
     </dependency>
 </dependencies>
 ```
 
 ### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.3.0"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.3.1"
 ```
 
 ### 사용

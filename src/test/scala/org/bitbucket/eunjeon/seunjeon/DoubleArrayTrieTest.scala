@@ -39,20 +39,17 @@ class DoubleArrayTrieTest extends FunSuite {
     val cl = classOf[DoubleArrayTrieTest].getClassLoader
     val inputStream = cl.getResourceAsStream("long_sentence.txt")
 
-    val lines = Source.fromInputStream(inputStream).getLines().toSeq
-      .filter(_.nonEmpty)
-
+    val lines = Source.fromInputStream(inputStream, "UTF-8").getLines().toSeq.filter(_.nonEmpty)
     val builder = DoubleArrayTrieBuilder()
-    lines
-      .foreach(builder.add(_, 0))
+    lines.foreach(builder.add(_, 0))
     val trie = builder.build()
     println(trie.trieInfo)
 
-    (0 to 10000).foreach( c =>
+    (0 to 10000).foreach { c =>
       lines.foreach( l =>
         assert(trie.commonPrefixSearch(l).nonEmpty, s"'$l' not found")
       )
-    )
+    }
   }
 
 }

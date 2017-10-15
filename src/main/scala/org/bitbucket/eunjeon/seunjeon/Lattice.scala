@@ -57,7 +57,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
     for (idx <- text.length-1 to 0 by -1) {
       val eIdx = idx + 1
       if (endingNodes(eIdx).isEmpty && startingNodes(eIdx + 1).nonEmpty) {
-        val categoryMorpheme = CharDef.getCategoryTerm(text(eIdx))
+        val categoryMorpheme = CharSetDef.getCategoryTerm(text(eIdx))
         val morpheme = Morpheme(text(idx).toString, categoryMorpheme._2)
         // TODO: idx 무지 헷깔림
         add(LNode(morpheme, idx, idx + 1))
@@ -127,9 +127,10 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
-    val penaltyCost = if (endingNode.endPos != startingNode.startPos) {
-      SpacePenalty(startingNode.morpheme.poses(0))
-    } else 0
+    val penaltyCost =
+      if (endingNode.endPos != startingNode.startPos)
+        SpacePenalty(startingNode.morpheme.poses(0))
+      else 0
 
     endingNode.accumulatedCost +
       endingNode.morpheme.cost +

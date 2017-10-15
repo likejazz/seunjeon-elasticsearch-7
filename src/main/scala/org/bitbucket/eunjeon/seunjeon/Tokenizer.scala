@@ -44,14 +44,15 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
   }
 
   private def buildLattice(text: String): Lattice = {
-    val charsets = CharDef.splitCharSet(text)
+//    val charsets = CharDef.splitCharSet(text)
     Lattice(text, connectionCostDict).
       addAll(getKnownTerms(text)).
-      addAll(getUnknownTerms(charsets)).
+      addAll(getUnknownTerms(text)).
       build()
   }
 
-  private def getUnknownTerms(charsets: Seq[CharSet]): Seq[LNode] = {
+  private def getUnknownTerms(text: String): Seq[LNode] = {
+    val charsets = CharSetDef.splitCharSet(text)
     // TODO: functional 하게 바꾸고 싶음.
     val unknownTerms = new ArrayBuffer[LNode]
     var charsetOffset = 0

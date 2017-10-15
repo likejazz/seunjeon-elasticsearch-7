@@ -100,6 +100,8 @@ case class Morpheme(var surface:String,
     case _ => false
   }
 
+  def key: String = s"$surface $leftId $rightId"
+
   override def hashCode = s"$surface $leftId $rightId".hashCode
 }
 
