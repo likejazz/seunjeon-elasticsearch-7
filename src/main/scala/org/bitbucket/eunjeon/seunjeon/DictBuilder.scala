@@ -40,6 +40,9 @@ object DictBuilder {
 
   val UNK_DEF_FILENAME = "/unk.def"
   val UNK_DEF = DICT_PATH + UNK_DEF_FILENAME
+
+  val CHAR_DEF_FILENAME = "/char.def"
+
   val LEFT_ID_DEF_FILENAME = "/left-id.def"
   val LEFT_ID_DEF = DICT_PATH + LEFT_ID_DEF_FILENAME
   val RIGHT_ID_DEF_FILENAME = "/right-id.def"

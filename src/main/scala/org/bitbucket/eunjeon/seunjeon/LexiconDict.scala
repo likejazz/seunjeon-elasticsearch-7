@@ -127,46 +127,7 @@ class LexiconDict {
             }
           }
         }.toSeq
-
     val morphemes: Seq[Morpheme] = parsedLine.filter(_.isSuccess).map(_.get)
-
-//      foreach { item =>
-//      try {
-//        var newTerm: Morpheme = null
-//        item match {
-//          // "단어"
-//          case List(surface) =>
-//            newTerm = LexiconDict.buildNNGTerm(surface, 1000 - (surface.length * 100))
-//          // "단어,-100"  # 단어,비용
-//          case List(surface, cost) =>
-//            newTerm = LexiconDict.buildNNGTerm(surface, cost.toShort)
-//          case List(surface, leftId, rightId, cost, feature@_ *) =>
-//            newTerm = Morpheme(surface,
-//              leftId.toShort,
-//              rightId.toShort,
-//              cost.toShort,
-//              wrapRefArray(feature.toArray),
-//              MorphemeType(feature),
-//              wrapRefArray(Pos.poses(feature)))
-//        }
-////        if (termsMap.contains(newTerm.key)) {
-////          val oldTerm = termsMap(newTerm.key)
-////          val validTerm =
-////            if (oldTerm.cost < newTerm.cost)
-////              oldTerm
-////            else if (oldTerm.cost == newTerm.cost)
-////              if (oldTerm.mType == MorphemeType.INFLECT) newTerm
-////              else oldTerm
-////            else newTerm
-////          logger.warn(s"conflict term - $oldTerm,  $newTerm")
-////          termsMap.update(validTerm.key, validTerm)
-////        } else {
-////          termsMap += newTerm.key -> newTerm
-////        }
-//      } catch {
-//        case _: Throwable => logger.warn(s"invalid format : $item")
-//      }
-//    }
     val elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"csv parsing is completed. ($elapsedTime ms)")
 

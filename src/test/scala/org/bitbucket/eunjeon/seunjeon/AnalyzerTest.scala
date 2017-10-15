@@ -14,7 +14,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     // FIXME: 분석이 이상하게 나옴.
     Analyzer.parse("* 프랑스어: Gabon – République Gabonaise").foreach(println)
     // TODO: double-array-trie library bug.
-    //    Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
+//        Analyzer.parse("모두의마블\uffff전설의 5시간 및 보석 교체").foreach(println)
   }
 
   test("penalty cost") {
@@ -117,10 +117,11 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
     assert(result.head.morpheme.surface == "농어촌")
   }
 
-  test("hanjs") {
-    val result = Analyzer.parse("柳英浩 郭鎬英 abc")
-    result.foreach(println)
-
+  test("hanja") {
+    assert(
+      Analyzer.parse("柳英浩 郭鎬英 abc").map(getSurfacePos) ===
+        List("柳英浩:SH", "郭鎬英:SH", "abc:SL")
+    )
   }
 
   def getSurfacePos(termNode: LNode): String = {
