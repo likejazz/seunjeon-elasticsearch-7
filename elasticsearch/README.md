@@ -6,11 +6,11 @@
 ```bash
 # download plugin
 bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e <es-version> -p <plugin-version>
-  에제) $ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e 5.5.0 -p 5.4.1.1
+  에제) $ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/downloader.sh) -e 6.0.0 -p 6.0.0.0
 
 # install plugin
 ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-<plugin-version>.zip
-  예제) $ ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-5.4.1.1.zip
+  예제) $ ./bin/elasticsearch-plugin install file://`pwd`/elasticsearch-analysis-seunjeon-6.0.0.0.zip
 ```
   * downloader.sh 가 하는 일은 elasticsearch-analysis-seunjeon-<plugin-version>.zip 파일을 내려받은 후 plugin-descriptor.properties 의 elasticsearch.version 을 변경하여 재압축합니다.
   * elasticsearch가 버전 업 될때마다 플러그인을 재배포하는데 어려움이 있어 스크립트를 제공합니다.
@@ -24,6 +24,7 @@ $ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysi
 ## Release
 | elasticsearch-analysis-seunjeon | target elasticsearch | release note |
 | ------------------------------- | ---------------------| ------------ |
+| 6.0.0.0                         | 6.0.0                | list 필드 형태소분석시 offset 오류로 es6.0에서 에러나서 죽던 문제 해결 |
 | 5.4.1.1                         | 5.4.1                | 사전 로딩 오류로 오분석 되던 문제 수정<br/>한자 SY로 분석되는 오류 수정 |
 | 5.4.1.0                         | 5.4.1                | 사용자사전 인덱스별로 별도 로딩(시스템 사전만 singleton) |
 | 5.1.1.1                         | 5.1.1                | 사용자 사전에 복합명사 등록 기능 추가  |
@@ -141,6 +142,7 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 ./scripts/download-dict.sh mecab-ko-dic-2.0.1-20150920
 
 # 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
+#   src/main/resources/ 디렉토리에 컴파일된 사전들이 만들어집니다.
 sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DictBuilder"
 
 # zip 생성

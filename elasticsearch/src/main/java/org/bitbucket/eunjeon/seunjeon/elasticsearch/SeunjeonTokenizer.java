@@ -3,6 +3,7 @@ package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
+import org.apache.lucene.analysis.util.RollingCharBuffer;
 import org.apache.lucene.util.AttributeFactory;
 import org.elasticsearch.common.logging.ESLoggerFactory;
 
@@ -21,6 +22,9 @@ public class SeunjeonTokenizer extends Tokenizer {
     private TypeAttribute typeAtt;
     private Queue<LuceneToken> tokensQueue;
     private TokenizerHelper tokenizerHelper;
+    private final RollingCharBuffer buffer = new RollingCharBuffer();
+    private int finalOffset;
+
     Logger logger = null;
 
     public SeunjeonTokenizer(TokenizerOptions options) {
@@ -57,12 +61,6 @@ public class SeunjeonTokenizer extends Tokenizer {
     }
 
     @Override
-    public void reset() throws IOException {
-        super.reset();
-        tokensQueue = new LinkedList(tokenizerHelper.tokenize(getDocument()));
-    }
-
-    @Override
     public final boolean incrementToken() throws IOException {
         if (tokensQueue.isEmpty()) {
             return false;
@@ -70,15 +68,27 @@ public class SeunjeonTokenizer extends Tokenizer {
             LuceneToken pos = tokensQueue.poll();
             posIncrAtt.setPositionIncrement(pos.positionIncr());
             posLenAtt.setPositionLength(pos.positionLength());
-            offsetAtt.setOffset(
-                    correctOffset(pos.startOffset()),
-                    correctOffset(pos.endOffset()));
+            finalOffset = correctOffset(pos.endOffset());
+            offsetAtt.setOffset(correctOffset(pos.startOffset()), finalOffset );
             String term = pos.charTerm();
             charTermAtt.copyBuffer(term.toCharArray(), 0, term.length());
             typeAtt.setType(pos.poses());
 
             return true;
         }
+    }
+
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        tokensQueue = new LinkedList(tokenizerHelper.tokenize(getDocument()));
+    }
+
+    @Override
+    public final void end() throws IOException {
+        super.end();
+        // set final offset
+        offsetAtt.setOffset(finalOffset, finalOffset);
     }
 
     private String getDocument() throws IOException {
@@ -88,7 +98,8 @@ public class SeunjeonTokenizer extends Tokenizer {
         while (-1 != (n = input.read(buffer))) {
             sw.write(buffer, 0, n);
         }
-        return sw.toString().toLowerCase();
+        String docString = sw.toString().toLowerCase();
+        return docString;
     }
 
 }
