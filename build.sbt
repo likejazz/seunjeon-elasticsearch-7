@@ -58,15 +58,15 @@ lazy val seunjeon = (project in file(".")).
     crossScalaVersions := Seq("2.11.7", "2.12.0"),
     javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
     libraryDependencies ++= Seq(
-      "org.slf4j" % "slf4j-jdk14" % "1.7.12" % "runtime",
+      "org.slf4j" % "slf4j-jdk14" % "1.7.12" % Runtime,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-      "org.scalatest" %% "scalatest" % "3.0.0" % "test",
-      "com.novocode" % "junit-interface" % "0.11" % "test"
+      "org.scalatest" %% "scalatest" % "3.0.0" % Test,
+      "com.novocode" % "junit-interface" % "0.11" % Test
     )
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "5.4.1"
+val esVersion = "6.0.0"
 val esJavaVersion = "1.8"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
@@ -76,17 +76,23 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 
     scalaVersion := "2.12.0",
 
-    version := s"${esVersion}.1",
+    version := s"${esVersion}.0",
 
     javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
 
     compileOrder := CompileOrder.ScalaThenJava,
 
     libraryDependencies ++= Seq(
-      "org.elasticsearch" % "elasticsearch" % esVersion % "provided",
-      "org.apache.logging.log4j" % "log4j-api" % "2.6.2" % "provided",
-      "com.novocode" % "junit-interface" % "0.11" % "test"
+      "org.elasticsearch" % "elasticsearch" % esVersion % Provided,
+      "org.apache.logging.log4j" % "log4j-api" % "2.9.1" % Test,
+      "org.apache.logging.log4j" % "log4j-core" % "2.9.1" % Test,
+//      "org.apache.lucene" % "lucene-test-framework" % "7.0.1" % Test,
+//      "org.elasticsearch.test" % "framework" % esVersion % Test,
+      "junit" % "junit" % "4.12" % Test,
+      "com.novocode" % "junit-interface" % "0.11" % Test
     ),
+
+    testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v"),
 
     test in assembly := {},
 
@@ -98,7 +104,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
         s"version=${version.value}",
         "name=analysis-seunjeon",
         "classname=org.bitbucket.eunjeon.seunjeon.elasticsearch.plugin.analysis.AnalysisSeunjeonPlugin",
-        s"java.version=${esJavaVersion}",
+        s"java.version=$esJavaVersion",
         s"elasticsearch.version=$esVersion"))
 
       val jarFile = assembly.value
