@@ -55,8 +55,7 @@ lazy val seunjeon = (project in file(".")).
   settings(
     name := "seunjeon",
     version := "1.4.0",
-    crossScalaVersions := Seq("2.11.7", "2.12.0"),
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"),
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % Runtime,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
