@@ -4,30 +4,35 @@ import org.bitbucket.eunjeon.seunjeon.{Eojeol, LNode}
 
 
 object LuceneToken {
-  def apply(lnode:LNode, taggingPos:Boolean): LuceneToken = {
+
+  def apply(lnode: LNode, taggingPos: Boolean): LuceneToken = {
+    val poses = lnode.morpheme.poses.mkString("+")
     LuceneToken(
-      buildCharTerm(lnode.morpheme.surface, lnode.morpheme.poses.mkString("+"), taggingPos),
+      buildCharTerm(lnode.morpheme.surface, poses, taggingPos),
       1, 1,
-      lnode.startPos, lnode.endPos,
-      lnode.morpheme.poses.mkString("+"))
+      lnode.beginOffset, lnode.endOffset,
+      poses)
   }
 
-  def apply(eojeol:Eojeol, nodeLength:Int, taggingPos:Boolean) : LuceneToken = {
+  def apply(eojeol:Eojeol, positionIncr: Int, posistionLength:Int, taggingPos:Boolean) : LuceneToken = {
     val eojeolTag = "EOJ"
     LuceneToken(
       buildCharTerm(eojeol.surface, eojeolTag, taggingPos),
-      0, nodeLength,
-      eojeol.startPos, eojeol.endPos,
+      positionIncr, posistionLength,
+      eojeol.beginOffset, eojeol.endOffset,
       eojeolTag)
   }
 
   def buildCharTerm(surface:String, poses:String, taggingPos:Boolean): String = {
-    if (taggingPos) s"$surface/$poses" else surface
+    if (taggingPos) s"$surface/$poses"
+    else surface
   }
 }
 
 case class LuceneToken(charTerm:String,
-                       positionIncr:Int, positionLength:Int,
-                       startOffset:Int, endOffset:Int,
+                       positionIncr:Int,
+                       positionLength:Int,
+                       beginOffset:Int,
+                       endOffset:Int,
                        poses:String)
 

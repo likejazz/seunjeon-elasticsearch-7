@@ -9,7 +9,6 @@ import org.elasticsearch.common.logging.ESLoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -69,7 +68,7 @@ public class SeunjeonTokenizer extends Tokenizer {
             posIncrAtt.setPositionIncrement(pos.positionIncr());
             posLenAtt.setPositionLength(pos.positionLength());
             finalOffset = correctOffset(pos.endOffset());
-            offsetAtt.setOffset(correctOffset(pos.startOffset()), finalOffset );
+            offsetAtt.setOffset(correctOffset(pos.beginOffset()), finalOffset );
             String term = pos.charTerm();
             charTermAtt.copyBuffer(term.toCharArray(), 0, term.length());
             typeAtt.setType(pos.poses());

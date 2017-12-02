@@ -1,28 +1,12 @@
 package org.bitbucket.eunjeon.seunjeon
 
+
 import scala.collection.mutable
-import scala.collection.JavaConverters._
 
-case class Eojeol(var nodes:Seq[LNode]) {
-  val surface = nodes.map(_.morpheme.surface).mkString
-  val startPos = nodes.head.startPos
-  val endPos = nodes.last.endPos
-
-  def nodesJava = nodes.asJava
-
-  def deCompound(): Eojeol = {
-    nodes = nodes.flatMap(_.deCompound())
-    this
-  }
-
-  def deInflect(): Eojeol = {
-    nodes = nodes.flatMap(_.deInflect())
-    this
-  }
-}
 
 object Eojeoler {
-  def build(nodes:Seq[LNode]):Seq[Eojeol] = {
+
+  def build(nodes:Seq[LNode]): Seq[Eojeol] = {
     if (nodes.isEmpty) {
       Seq()
     } else if (nodes.length == 1) {

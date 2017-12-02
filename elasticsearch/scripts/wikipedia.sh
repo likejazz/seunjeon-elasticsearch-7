@@ -1,20 +1,21 @@
-FILE_DATE=20160905
+FILE_DATE=20171127
 #WIKI_TYPE="kowikibooks"
 #WIKI_TYPE="kowiktionary"
 WIKI_TYPE="kowikinews"
 INDEX_NAME=${WIKI_TYPE}_content
 ZIP_FILE=${WIKI_TYPE}-${FILE_DATE}-cirrussearch-content.json.gz
+CURL="curl --silent -H Content-Type:application/json"
 if [ ! -f $ZIP_FILE ]; then
     wget http://dumps.wikimedia.org/other/cirrussearch/${FILE_DATE}/${ZIP_FILE}
 fi
 
-curl -XDELETE localhost:9200/${INDEX_NAME}
+$CURL -XDELETE localhost:9200/${INDEX_NAME}
 sleep 5
 
-#curl "https://ko.wikipedia.org/w/api.php?action=cirrus-mapping-dump&format=json" > mapping.json
-#jq .content < mapping.json | curl -XPUT localhost:9200/${INDEX_NAME} --data @mapping.json
+#$CURL "https://ko.wikipedia.org/w/api.php?action=cirrus-mapping-dump&format=json" > mapping.json
+#jq .content < mapping.json | $CURL -XPUT localhost:9200/${INDEX_NAME} --data @mapping.json
 
-curl -XPUT localhost:9200/${INDEX_NAME} -d '{
+$CURL -XPUT localhost:9200/${INDEX_NAME} -d '{
   "settings" : {
     "index":{
       "analysis":{
@@ -32,13 +33,13 @@ curl -XPUT localhost:9200/${INDEX_NAME} -d '{
 }'
 
 sleep 5
-curl -XPUT "localhost:9200/${INDEX_NAME}/_settings?pretty" -d '{
-    "index" : {
-        "refresh_interval" : -1
-    }
-}'
+#$CURL -XPUT "localhost:9200/${INDEX_NAME}/_settings?pretty" -d '{
+#    "index" : {
+#        "refresh_interval" : -1
+#    }
+#}'
 
 date
-zcat ${ZIP_FILE} | parallel --pipe -L 2 -N 2000 -j3 "curl -s http://localhost:9200/${INDEX_NAME}/_bulk --data-binary @- > /dev/null"
+zcat < ${ZIP_FILE} | $CURL http://localhost:9200/${INDEX_NAME}/_bulk --data-binary @-
 date
 

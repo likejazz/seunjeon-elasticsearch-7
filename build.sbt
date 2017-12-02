@@ -76,7 +76,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 
     scalaVersion := "2.12.0",
 
-    version := s"${esVersion}.0",
+    version := s"${esVersion}.1",
 
     javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
 
@@ -89,7 +89,8 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 //      "org.apache.lucene" % "lucene-test-framework" % "7.0.1" % Test,
 //      "org.elasticsearch.test" % "framework" % esVersion % Test,
       "junit" % "junit" % "4.12" % Test,
-      "com.novocode" % "junit-interface" % "0.11" % Test
+      "com.novocode" % "junit-interface" % "0.11" % Test,
+      "org.scalatest" %% "scalatest" % "3.0.0" % Test,
     ),
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v"),

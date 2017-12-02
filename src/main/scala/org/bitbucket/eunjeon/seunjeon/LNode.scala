@@ -26,7 +26,7 @@ object LNode {
     }
 
   def deComposite(node: LNode): Seq[LNode] = {
-    var nextPos = node.startPos
+    var nextPos = node.beginOffset
     try {
       val result = node.morpheme.deComposite().
         filterNot(m => isHideMorpheme(m)).
@@ -37,7 +37,7 @@ object LNode {
           LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
         }
       // 방어코드
-      if ((nextPos - node.startPos) > node.morpheme.surface.length) {
+      if ((nextPos - node.beginOffset) > node.morpheme.surface.length) {
         result.dropRight(1)
       } else result
     } catch {
@@ -59,14 +59,14 @@ object LNode {
 /**
   * Lattice 노드
   * @param morpheme   Morpheme
-  * @param startPos  시작 offset
-  * @param endPos   끝 offset
+  * @param beginOffset  시작 offset
+  * @param endOffset   끝 offset
   * @param accumulatedCost  누적비용
   */
 case class LNode(morpheme:Morpheme,
-                 var startPos:Int,
-                 var endPos:Int,
-                 var accumulatedCost:Int = Int.MaxValue) {
+                 beginOffset: Int, // TODO: startOffset 으로 바꾸자.
+                 endOffset: Int,
+                 var accumulatedCost:Int = Int.MaxValue) extends OffsetNode {
   var leftNode:LNode = null
 
   def deCompound(): Seq[LNode] = {

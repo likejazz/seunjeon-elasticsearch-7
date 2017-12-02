@@ -39,8 +39,8 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   def add(node:LNode): Lattice = {
-    startingNodes(node.startPos+1) += node
-    endingNodes(node.endPos) += node
+    startingNodes(node.beginOffset+1) += node
+    endingNodes(node.endOffset) += node
     this
   }
 
@@ -100,9 +100,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   def addOffset(offset: Int, node: LNode): LNode = {
-    node.startPos += offset
-    node.endPos += offset
-    node
+    LNode(node.morpheme, node.beginOffset + offset, node.endOffset + offset, node.accumulatedCost)
   }
 
   private def updateCost(endingNodes:Seq[LNode], startingNode:LNode): Unit = {
@@ -128,7 +126,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
 
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
     val penaltyCost =
-      if (endingNode.endPos != startingNode.startPos)
+      if (endingNode.endOffset != startingNode.beginOffset)
         SpacePenalty(startingNode.morpheme.poses(0))
       else 0
 
