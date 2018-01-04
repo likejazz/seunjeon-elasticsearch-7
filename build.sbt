@@ -59,6 +59,8 @@ lazy val seunjeon = (project in file(".")).
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % Runtime,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+      "org.xerial.snappy" % "snappy-java" % "1.1.7.1",
+      "org.lz4" % "lz4-java" % "1.4.0",
       "org.scalatest" %% "scalatest" % "3.0.0" % Test,
       "com.novocode" % "junit-interface" % "0.11" % Test
     )
@@ -106,6 +108,13 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
         "classname=org.bitbucket.eunjeon.seunjeon.elasticsearch.plugin.analysis.AnalysisSeunjeonPlugin",
         s"java.version=$esJavaVersion",
         s"elasticsearch.version=$esVersion"))
+      val policyFile = file("elasticsearch/target/plugin-security.policy")
+      // adding policy file which allows the plugin to load custom jars i.e snappy library etc
+      IO.writeLines(policyFile, Seq(
+        """grant {
+        permission java.lang.RuntimePermission "getClassLoader";
+        permission java.lang.RuntimePermission "loadLibrary.*";
+        };"""))
 
       val jarFile = assembly.value
       // create zip file

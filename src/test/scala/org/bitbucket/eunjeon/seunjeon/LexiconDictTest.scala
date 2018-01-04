@@ -68,7 +68,7 @@ class LexiconDictTest extends FunSuite {
       openLexiconDict.commonPrefixSearch("고구마").map(_.surface))
   }
 
-  ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict load performance") {
+  ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict save performance") {
     {
       val startTime = System.nanoTime()
       val lexiconDict = new LexiconDict
@@ -80,6 +80,9 @@ class LexiconDictTest extends FunSuite {
         TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER_FILENAME,
         TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE_FILENAME)
     }
+  }
+
+  ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict load performance") {
     {
       val startTime = System.nanoTime()
       val lexiconDict = new LexiconDict

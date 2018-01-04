@@ -21,6 +21,7 @@ import java.util.regex.Pattern
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
+import scala.collection.parallel.immutable.ParVector
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.Try
@@ -73,9 +74,11 @@ object LexiconDict {
 class LexiconDict {
   val logger = Logger(LoggerFactory.getLogger(classOf[LexiconDict].getName))
 
-  var termDict: Array[Morpheme] = null
+  var termDict: Array[CompressedMorpheme] = null
+
   var dictMapper: Array[Array[Int]] = null
   var trie: DoubleArrayTrie = null
+
 
   def getDictionaryInfo(): String = {
     s"termSize = ${termDict.length} mapper size = ${dictMapper.length}"
@@ -135,7 +138,8 @@ class LexiconDict {
   }
 
   private def build(sortedTerms: Seq[Morpheme]): LexiconDict = {
-    termDict = sortedTerms.toArray
+
+    termDict = CompressedMorpheme.compress(sortedTerms)
     val startTime = System.nanoTime()
     val surfaceIndexDict = buildSurfaceIndexDict(sortedTerms)
 
@@ -187,27 +191,28 @@ class LexiconDict {
   }
 
   def commonPrefixSearch(keyword: String): Seq[Morpheme] = {
-      trie.commonPrefixSearch(keyword).flatMap(dictMapper(_).map(termDict(_)))
+      trie.commonPrefixSearch(keyword).flatMap(dictMapper(_).map(termDict(_).uncompressed))
   }
 
   def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
 
-    val termDictStore = new ObjectOutputStream(
-      new BufferedOutputStream(new FileOutputStream(termDictPath), 16*1024))
-    termDictStore.writeObject(termDict)
+    val termDictStore =
+      new BufferedOutputStream(new FileOutputStream(termDictPath), 32*1024)
+    CompressionHelper.compressObjectAndSave(termDict, termDictStore)
     termDictStore.close()
 
-    val dictMapperStore = new ObjectOutputStream(
-      new BufferedOutputStream(new FileOutputStream(dictMapperPath), 16*1024))
-    dictMapperStore.writeObject(dictMapper)
+    val dictMapperStore =
+      new BufferedOutputStream(new FileOutputStream(dictMapperPath), 32*1024)
+    CompressionHelper.compressObjectAndSave(dictMapper, dictMapperStore)
     dictMapperStore.close()
 
     trie.write(new java.io.File(triePath))
   }
 
   def load(): LexiconDict = {
-    val termDictStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_DICT)
-    val dictMapperStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.DICT_MAPPER)
+
+    val termDictStream = new BufferedInputStream(classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_DICT), 32*1024)
+    val dictMapperStream = new BufferedInputStream(classOf[LexiconDict].getResourceAsStream(DictBuilder.DICT_MAPPER), 32*1024)
     val trieStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_TRIE)
 
     load(termDictStream, dictMapperStream, trieStream)
@@ -227,22 +232,21 @@ class LexiconDict {
                    dictMapperStream: InputStream,
                    trieStream: InputStream): Unit = {
     // FIXME: 사전 로딩이 3초에서 9초로 느려짐... posid 추가하면서 느려짐..
-    var startTime = System.nanoTime()
-    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
-    termDict = termDictIn.readObject().asInstanceOf[Array[Morpheme]]
-    termDictIn.close()
-    var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
-    logger.info(s"terms loading is completed. ($elapsedTime ms)")
 
-    startTime = System.nanoTime()
-    val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
-    dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
-    dictMapperIn.close()
-    elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
-    logger.info(s"mapper loading is completed. ($elapsedTime ms)")
+    /* creating parallel vector containing the termDictStream, dictMapperStream so that they can
+     be loaded parallel by decompressing them */
+    val pv: ParVector[InputStream] = ParVector(termDictStream, dictMapperStream).par
+    var startTime = System.nanoTime()
+    val uncompressedObjects = pv.map(CompressionHelper.uncompressAndReadObject(_).asInstanceOf[Any])
+    var elapsedTime = System.nanoTime() - startTime
+    logger.info(s"Loading termDict and dictMapper from archives is completed. ($elapsedTime ns)")
+
+    termDict = uncompressedObjects(0).asInstanceOf[Array[CompressedMorpheme]]
+    dictMapper = uncompressedObjects(1).asInstanceOf[Array[Array[Int]]]
 
     startTime = System.nanoTime()
     trie = DoubleArrayTrie(trieStream)
-    logger.info(s"double-array trie loading is completed. ($elapsedTime ms)")
+    elapsedTime = System.nanoTime() - startTime
+    logger.info(s"double-array trie loading is completed. ($elapsedTime ns)")
   }
 }
