@@ -121,6 +121,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
       val zipFile = file(jarFile.getPath.substring(0, jarFile.getPath.length - jarFile.ext.length - 1) + ".zip")
       IO.zip(
         List(
+          (policyFile, s"elasticsearch/${policyFile.getName}"),
           (propertiesFile, s"elasticsearch/${propertiesFile.getName}"),
           (jarFile, s"elasticsearch/${jarFile.getName}")),
         zipFile)
