@@ -1,19 +1,22 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
+import java.util.Collections;
+import java.util.List;
+
 public class TokenizerOptions {
     public final static boolean DECOMPOUND = true;
     public final static boolean DEINFLECT = true;
     public final static boolean INDEX_EOJEOL = true;
-    public final static String[] INDEX_POSES = TokenizerHelper.INDEX_POSES_JAVA();
+    public final static List<String> INDEX_POSES = TokenizerHelper.INDEX_POSES_JAVA();
     public final static boolean POS_TAGGING = true;
     public final static int MAX_UNK_LENGTH = 8;
 
     private String userDictPath = null;
-    private String[] userWords = new String[0];
+    private List<String> userWords = Collections.emptyList();
     private boolean deCompound = DECOMPOUND;
     private boolean deInflect = DEINFLECT;
     private boolean indexEojeol = INDEX_EOJEOL;
-    private String[] indexPoses = INDEX_POSES;
+    private List<String> indexPoses = INDEX_POSES;
     private String name = null;
     private boolean posTagging = POS_TAGGING;
     private int maxUnkLength = MAX_UNK_LENGTH;
@@ -42,7 +45,7 @@ public class TokenizerOptions {
         return this;
     }
 
-    public TokenizerOptions setUserWords(String[] userWords) {
+    public TokenizerOptions setUserWords(List<String> userWords) {
         this.userWords = userWords;
         return this;
     }
@@ -62,7 +65,7 @@ public class TokenizerOptions {
         return this;
     }
 
-    public TokenizerOptions setIndexPoses(String[] indexPoses) {
+    public TokenizerOptions setIndexPoses(List<String> indexPoses) {
         this.indexPoses = indexPoses;
         return this;
     }
@@ -71,7 +74,7 @@ public class TokenizerOptions {
         return this.userDictPath;
     }
 
-    public String[] getUserWords() {
+    public List<String> getUserWords() {
         return this.userWords;
     }
 
@@ -87,7 +90,7 @@ public class TokenizerOptions {
         return this.indexEojeol;
     }
 
-    public String[] getIndexPoses() {
+    public List<String> getIndexPoses() {
         return this.indexPoses;
     }
 

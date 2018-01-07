@@ -9,6 +9,8 @@ import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenizerFactory;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
@@ -22,11 +24,11 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
 
         this.options = TokenizerOptions.create(name).
                 setUserDictPath(getFullPath(env, settings.get("user_dict_path", null))).
-                setUserWords(settings.getAsArray("user_words", new String[0])).
+                setUserWords(settings.getAsList("user_words", Collections.emptyList())).
                 setDeCompound(settings.getAsBoolean("decompound", TokenizerOptions.DECOMPOUND)).
                 setDeInflect(settings.getAsBoolean("deinflect", TokenizerOptions.DEINFLECT)).
                 setIndexEojeol(settings.getAsBoolean("index_eojeol", TokenizerOptions.INDEX_EOJEOL)).
-                setIndexPoses(settings.getAsArray("index_poses", TokenizerOptions.INDEX_POSES)).
+                setIndexPoses(settings.getAsList("index_poses", TokenizerOptions.INDEX_POSES)).
                 setPosTagging(settings.getAsBoolean("pos_tagging", TokenizerOptions.POS_TAGGING)).
                 setMaxUnkLength(settings.getAsInt("max_unk_length", TokenizerOptions.MAX_UNK_LENGTH));
     }

@@ -7,6 +7,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -42,7 +44,7 @@ public class SeunjeonTokenizerTest {
         assertEquals("user words",
                 "버카충/UNK:1:1:0:3:UNK;", tokenize("버카충", t));
 
-        Tokenizer ut = new SeunjeonTokenizer(TokenizerOptions.create("user-dict").setUserWords(new String[]{"버카충"}));
+        Tokenizer ut = new SeunjeonTokenizer(TokenizerOptions.create("user-dict").setUserWords(Collections.singletonList("버카충")));
         assertEquals("user words",
                 "버카충/N:1:1:0:3:N;", tokenize("버카충", ut));
     }
@@ -96,19 +98,19 @@ public class SeunjeonTokenizerTest {
 
         assertEquals("꽃/N:1:1:0:1:N;",
                 tokenize("꽃이피다", new SeunjeonTokenizer(TokenizerOptions.create("").
-                        setIndexPoses(new String[]{"N"}).
+                        setIndexPoses(Arrays.asList("N")).
                         setIndexEojeol(false))));
 
         assertEquals("새롭/V:1:1:0:2:V;사전/N:1:1:4:6:N;생성/N:1:1:7:9:N;",
                 tokenize("새로운 사전 생성", new SeunjeonTokenizer(TokenizerOptions.create("").
-                        setIndexPoses(new String[]{"V", "N"}).
+                        setIndexPoses(Arrays.asList("V", "N")).
                         setDeCompound(true).
                         setDeInflect(true).
                         setIndexEojeol(false))));
 
         assertEquals("왕/N:1:1:0:1:N;딸/N:1:1:3:4:N;",
                 tokenize("왕의 딸로 태어났다고 합니다", new SeunjeonTokenizer(TokenizerOptions.create("").
-                        setIndexPoses(new String[]{"N"}).
+                        setIndexPoses(Arrays.asList("N")).
                         setDeInflect(true).
                         setIndexEojeol(false))));
     }

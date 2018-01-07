@@ -65,7 +65,7 @@ lazy val seunjeon = (project in file(".")).
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "6.0.0"
+val esVersion = "6.1.1"
 val esJavaVersion = "1.8"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
@@ -75,7 +75,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 
     scalaVersion := "2.12.0",
 
-    version := s"${esVersion}.1",
+    version := s"${esVersion}.0",
 
     javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
 

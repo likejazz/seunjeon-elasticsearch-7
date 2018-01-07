@@ -43,7 +43,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         if (options.getUserDictPath() != null) {
             tokenizerHelper.setUserDict(options.getUserDictPath());
             logger.info(options.getUserDictPath() + " loading was successful.");
-            if (options.getUserWords().length > 0) {
+            if (options.getUserWords().size() > 0) {
                 logger.warn("ignored \"user_words\". because settings of \"user_dict_path\"");
             }
         } else {

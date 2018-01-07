@@ -1,5 +1,7 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch
 
+import java.util
+
 import org.bitbucket.eunjeon.seunjeon._
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
 
@@ -21,12 +23,10 @@ object TokenizerHelper {
     Pos.M,  // 수식언(관형사, 부사)
     Pos.UNK)
 
-  lazy val INDEX_POSES_JAVA: Array[String] = INDEX_POSES.map(_.toString).toArray
-  lazy val ALL_POSES_JAVA: Array[String] = Pos.values.map(_.toString).toArray
+  lazy val INDEX_POSES_JAVA: util.List[String] = INDEX_POSES.map(_.toString).toList.asJava
+  lazy val ALL_POSES_JAVA: util.List[String] = Pos.values.map(_.toString).toList.asJava
 
-  def convertPos(poses: Array[String]): Set[Pos] = {
-    poses.map(Pos.withName).toSet
-  }
+  def convertPos(poses: util.List[String]): Set[Pos] = poses.asScala.map(Pos.withName).toSet
 
   def toLuceneTokens(eojeols: Seq[Eojeol], indexEojeol: Boolean, posTagging: Boolean): Seq[LuceneToken] = {
     eojeols.flatMap { eojeol: Eojeol =>
@@ -85,11 +85,11 @@ class TokenizerHelper(deCompound:Boolean,
 
   val tokenizer: Tokenizer = new Tokenizer(TokenizerHelper.lexiconDict, TokenizerHelper.connectionCostDict)
 
-  def setUserDict(userWords:Array[String]): Unit = {
-    tokenizer.setUserDict(new LexiconDict().loadFromIterator(userWords.iterator))
+  def setUserDict(userWords: util.List[String]): Unit = {
+    tokenizer.setUserDict(new LexiconDict().loadFromIterator(userWords.asScala.iterator))
   }
 
-  def setUserDict(file:String): Unit = {
+  def setUserDict(file: String): Unit = {
     tokenizer.setUserDict(new LexiconDict().loadFromFile(file))
   }
 
