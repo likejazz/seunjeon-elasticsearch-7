@@ -12,13 +12,13 @@ import java.nio.ByteBuffer
 import java.util
 
 object CompressedMorpheme {
-  def compressFeatureArray(feature: Array[String]): Array[Array[Byte]] = {
-    val result_features = ArrayBuffer[Array[Byte]]();
+  def deDupeFeatureArray(feature: mutable.WrappedArray[String]): mutable.WrappedArray[String] = {
+    val result_features = ArrayBuffer[String]();
     for (i <- 0 until feature.length) {
       val feature_value = feature(i)
-      result_features.append(CompressionHelper.compressStr(feature_value));
+      result_features.append(CompressionHelper.getStrCached(feature_value));
     }
-    return result_features.toArray
+    return wrapRefArray(result_features.toArray)
   }
 
   def unCompressFeatureArray(compressedArray: Array[Array[Byte]]): Array[String] = {
@@ -78,13 +78,13 @@ class CompressedMorpheme(morpheme: Morpheme) extends Serializable {
 
   def surface_=(value: String) = _surface = CompressionHelper.compressStr(value)
 
-  private var _feature: Array[Array[Byte]] = CompressedMorpheme.compressFeatureArray(morpheme.feature.toArray)
+  private var _feature: mutable.WrappedArray[String] = CompressedMorpheme.deDupeFeatureArray(morpheme.feature)
 
-  def feature: Array[String] = CompressedMorpheme.unCompressFeatureArray(_feature)
+  def feature: mutable.WrappedArray[String] =_feature
 
-  def feature_=(value: Array[String]) = _feature = CompressedMorpheme.compressFeatureArray(value)
+  def feature_=(value: mutable.WrappedArray[String]) = _feature = CompressedMorpheme.deDupeFeatureArray(value)
 
-  def uncompressed = new Morpheme(surface, leftId, rightId, cost, wrapRefArray(feature), mType, poses)
+  def uncompressed = new Morpheme(surface, leftId, rightId, cost, feature, mType, poses)
 
   @throws(classOf[IOException])
   private def writeObject(out: ObjectOutputStream): Unit = {
@@ -105,7 +105,7 @@ class CompressedMorpheme(morpheme: Morpheme) extends Serializable {
     rightId = in.readShort()
     cost = in.readInt()
 
-    _feature = in.readObject().asInstanceOf[Array[Array[Byte]]]
+    _feature = in.readObject().asInstanceOf[mutable.WrappedArray[String]]
     _mType = in.readByte()
     _poses = in.readObject().asInstanceOf[Array[Byte]]
   }

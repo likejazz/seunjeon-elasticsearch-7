@@ -28,6 +28,7 @@ public class CompressionHelper {
     private static final Charset UTF_8 = Charset.forName("UTF8");
 
     private static Map<String, byte[]> stringCache = new ConcurrentHashMap<String, byte[]>(1000);
+    private static Map<String, String> dedupeStringCache = new ConcurrentHashMap<String,String>(1000);
 
     public static byte[] compress(byte[] inputBytes) {
 
@@ -87,6 +88,15 @@ public class CompressionHelper {
         return compressedStringBytes;
 
     }
+
+    public static String getStrCached(String str) {
+        if (dedupeStringCache.containsKey(str)) {
+            return dedupeStringCache.get(str);
+        }
+        dedupeStringCache.putIfAbsent(str, str);
+        return str;
+    }
+
 
     /**
      * Uncompress the compressed byte array provided to respective string
