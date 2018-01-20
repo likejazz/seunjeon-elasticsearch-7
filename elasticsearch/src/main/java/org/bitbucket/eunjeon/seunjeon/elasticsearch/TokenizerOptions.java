@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TokenizerOptions {
+    public final static boolean COMPRESS = false;
     public final static boolean DECOMPOUND = true;
     public final static boolean DEINFLECT = true;
     public final static boolean INDEX_EOJEOL = true;
@@ -11,6 +12,7 @@ public class TokenizerOptions {
     public final static boolean POS_TAGGING = true;
     public final static int MAX_UNK_LENGTH = 8;
 
+    private boolean compress = false;
     private String userDictPath = null;
     private List<String> userWords = Collections.emptyList();
     private boolean deCompound = DECOMPOUND;
@@ -29,6 +31,10 @@ public class TokenizerOptions {
         this.name = name;
     }
 
+    public TokenizerOptions setCompress(boolean compress) {
+        this.compress = compress;
+        return this;
+    }
 
     public TokenizerOptions setPosTagging(boolean posTagging) {
         this.posTagging = posTagging;
@@ -68,6 +74,10 @@ public class TokenizerOptions {
     public TokenizerOptions setIndexPoses(List<String> indexPoses) {
         this.indexPoses = indexPoses;
         return this;
+    }
+
+    public boolean getCompress() {
+        return this.compress;
     }
 
     public String getUserDictPath() {

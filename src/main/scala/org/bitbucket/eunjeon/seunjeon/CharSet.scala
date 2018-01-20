@@ -31,7 +31,6 @@ object CharSetDef {
     cateMorphemeIndex: Array[(Category, Morpheme)]) = loadResource
 
   def loadResource: (Array[Byte], Array[(Category, Morpheme)]) = {
-
     val lines: Seq[String] =
     Source.fromInputStream(classOf[CharSet].getResourceAsStream(DictBuilder.CHAR_DEF_FILENAME), "UTF-8").getLines().
       filterNot(line => line.startsWith("#") || line.replaceAll("\\s", "").isEmpty).toSeq
@@ -52,7 +51,7 @@ object CharSetDef {
   }
 
   private def buildCategoryMorphemes(parsedRanges: Seq[(Char, Char, (Category, Morpheme))]) = {
-    val tmp = parsedRanges.map(_._3).distinct.partition(_._2.surface == "DEFAULT")
+    val tmp = parsedRanges.map(_._3).distinct.partition(_._2.getSurface == "DEFAULT")
     (tmp._1 ++ tmp._2).toArray
   }
 

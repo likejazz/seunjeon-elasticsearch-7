@@ -5,21 +5,21 @@ import scala.collection.JavaConverters._
 
 object LNode {
   def dePreAnalysis(node: LNode): Seq[LNode] =
-    if (node.morpheme.mType == MorphemeType.PREANALYSIS) {
+    if (node.morpheme.getMType == MorphemeType.PREANALYSIS) {
       deComposite(node)
     } else {
       Seq(node)
     }
 
   def deCompound(node: LNode): Seq[LNode] =
-    if (node.morpheme.mType == MorphemeType.COMPOUND) {
+    if (node.morpheme.getMType == MorphemeType.COMPOUND) {
       deComposite(node)
     } else {
       Seq(node)
     }
 
   def deInflect(node: LNode): Seq[LNode] =
-    if (node.morpheme.mType == MorphemeType.INFLECT) {
+    if (node.morpheme.getMType == MorphemeType.INFLECT) {
       deComposite(node)
     } else {
       Seq(node)
@@ -31,13 +31,13 @@ object LNode {
       val result = node.morpheme.deComposite().
         filterNot(m => isHideMorpheme(m)).
         map { morpheme =>
-          val morphemeStartPos = if (isJamo(morpheme.surface.head)) nextPos - 1 else nextPos
-          val morphemeEndPos = morphemeStartPos + morpheme.surface.length
+          val morphemeStartPos = if (isJamo(morpheme.getSurface.head)) nextPos - 1 else nextPos
+          val morphemeEndPos = morphemeStartPos + morpheme.getSurface.length
           nextPos = morphemeEndPos
           LNode(morpheme, morphemeStartPos, morphemeEndPos, node.accumulatedCost)
         }
       // 방어코드
-      if ((nextPos - node.beginOffset) > node.morpheme.surface.length) {
+      if ((nextPos - node.beginOffset) > node.morpheme.getSurface.length) {
         result.dropRight(1)
       } else result
     } catch {
@@ -47,7 +47,7 @@ object LNode {
   }
 
   private def isHideMorpheme(morpheme: Morpheme): Boolean = {
-    morpheme.surface == "아" && morpheme.feature(0) == "EC"
+    morpheme.getSurface == "아" && morpheme.getFeature(0) == "EC"
   }
 
   private def isJamo(char:Char): Boolean = {

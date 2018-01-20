@@ -55,6 +55,7 @@ lazy val seunjeon = (project in file(".")).
   settings(
     name := "seunjeon",
     version := "1.4.0",
+    isSnapshot := true,
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-jdk14" % "1.7.12" % Runtime,

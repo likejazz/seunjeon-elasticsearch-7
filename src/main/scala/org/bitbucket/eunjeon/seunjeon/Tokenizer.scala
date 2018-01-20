@@ -15,9 +15,12 @@
  **/
 package org.bitbucket.eunjeon.seunjeon
 
-import scala.collection.mutable.ArrayBuffer
+import java.lang
 
-class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict) {
+import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConverters._
+
+class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict, compress: Boolean) {
   // TODO: atomic 해야 하지만.. 아직은.. 어떻게 해야할지 고민이 필요함.
   private[this] var userDict:LexiconDict = null
   private[this] var maxUnkLength = 8
@@ -25,19 +28,22 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
   def setUserDict(dict:LexiconDict) = { userDict = dict }
   def setMaxUnkLength(length:Int) = { maxUnkLength = length }
 
-  def parseText(input:String, dePreAnalysis:Boolean): Seq[LNode] = {
+  def parseText(input:String, dePreAnalysis:Boolean): Iterable[Paragraph] = {
     val text = input.intern()
     var offset = 0
     val lineSeparator = System.lineSeparator()
-    val bestPath = text.split(lineSeparator).map{str =>
+    val bestPath: Iterable[Paragraph] = text.split(lineSeparator).toStream.map { str =>
         val path = buildLattice(str).getBestPath(offset)
         offset += str.length + lineSeparator.length
         path
-      }.flatMap(removeHeadLast)
+      }.map(x => Paragraph(removeHeadLast(x)))
 
-    if (dePreAnalysis) bestPath.flatMap(LNode.dePreAnalysis)//.flatMap(LNode.deInflect)
+    if (dePreAnalysis) bestPath.map(x => Paragraph(x.nodes.flatMap(LNode.dePreAnalysis))) // flatMap(LNode.dePreAnalysis)//.flatMap(LNode.deInflect)
     else bestPath
   }
+
+  def parseTextJava(input:String, dePreAnalysis:Boolean): lang.Iterable[Paragraph] =
+    parseText(input, dePreAnalysis).asJava
 
   private def removeHeadLast(nodes:Seq[LNode]): Seq[LNode] = {
     nodes.slice(1, nodes.length - 1)
@@ -101,7 +107,7 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
       searchedTerms ++= userDict.commonPrefixSearch(suffixSurface)
     }
     searchedTerms.map(term =>
-      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.surface.length)
+      LNode(term, charsetOffset + termOffset, charsetOffset + termOffset + term.getSurface.length)
     )
   }
 
@@ -122,16 +128,17 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
     var unknownIdx = 1
     val nodes = new Array[LNode](categoryLength)
     while (unknownIdx <= categoryLength) {
-      val unknownTerm = Morpheme(charset.str.substring(termOffset, termOffset + unknownIdx), charset.morpheme)
-      nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.surface.length)
+      val tmp: Morpheme = BasicMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx), charset.morpheme)
+      val unknownTerm = if (compress) new CompressedMorpheme(tmp) else tmp
+      nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.getSurface.length)
       unknownIdx += 1
     }
     nodes
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
-    val fullLengthTerm = Morpheme.apply(charset.str, charset.morpheme)
-    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.surface.length)
+    val fullLengthTerm = BasicMorpheme.apply(charset.str, charset.morpheme)
+    LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.getSurface.length)
   }
 }
 

@@ -10,8 +10,9 @@ import scala.collection.JavaConverters._
 
 object TokenizerHelper {
 
-  val lexiconDict: LexiconDict = new LexiconDict().load()
-  val connectionCostDict: ConnectionCostDict = new ConnectionCostDict().load()
+  lazy val lexiconDict: LexiconDict = new LexiconDict().load(termDictCompress = false)
+  lazy val compressedLexiconDict: LexiconDict = new LexiconDict().load(termDictCompress = true)
+  lazy val connectionCostDict: ConnectionCostDict = new ConnectionCostDict().load()
 
   val INDEX_POSES: Set[Pos] = Set[Pos](
     Pos.N,  // 체언
@@ -28,12 +29,12 @@ object TokenizerHelper {
 
   def convertPos(poses: util.List[String]): Set[Pos] = poses.asScala.map(Pos.withName).toSet
 
-  def toLuceneTokens(eojeols: Seq[Eojeol], indexEojeol: Boolean, posTagging: Boolean): Seq[LuceneToken] = {
+  def toLuceneTokens(eojeols: Iterable[Eojeol], indexEojeol: Boolean, posTagging: Boolean): Iterable[LuceneToken] = {
     eojeols.flatMap { eojeol: Eojeol =>
       val luceneTokens = eojeol.nodes.map { node =>
-        val poses = node.morpheme.poses.mkString("+")
-        val surface = if (posTagging) s"${node.morpheme.surface}/${poses}" else node.morpheme.surface
-        LuceneToken(surface, 1, 1, node.beginOffset, node.endOffset, node.morpheme.poses.mkString("+"))
+        val poses = node.morpheme.getPoses.mkString("+")
+        val surface = if (posTagging) s"${node.morpheme.getSurface}/${poses}" else node.morpheme.getSurface
+        LuceneToken(surface, 1, 1, node.beginOffset, node.endOffset, node.morpheme.getPoses.mkString("+"))
       }
 
       if (indexEojeol) { mergeEojeol(luceneTokens, eojeol, posTagging) } else luceneTokens
@@ -74,16 +75,19 @@ object TokenizerHelper {
 }
 
 
-class TokenizerHelper(deCompound:Boolean,
+class TokenizerHelper(compress: Boolean,
+                      deCompound:Boolean,
                       deInflect:Boolean,
                       indexEojeol:Boolean,
                       posTagging:Boolean,
                       indexPoses:Set[Pos]) {
   def this() {
-    this(true, true, true, true, TokenizerHelper.INDEX_POSES)
+    this(false, true, true, true, true, TokenizerHelper.INDEX_POSES)
   }
 
-  val tokenizer: Tokenizer = new Tokenizer(TokenizerHelper.lexiconDict, TokenizerHelper.connectionCostDict)
+  val tokenizer: Tokenizer =
+    if (compress) new Tokenizer(TokenizerHelper.compressedLexiconDict, TokenizerHelper.connectionCostDict, compress)
+    else new Tokenizer(TokenizerHelper.lexiconDict, TokenizerHelper.connectionCostDict, compress)
 
   def setUserDict(userWords: util.List[String]): Unit = {
     tokenizer.setUserDict(new LexiconDict().loadFromIterator(userWords.asScala.iterator))
@@ -97,11 +101,11 @@ class TokenizerHelper(deCompound:Boolean,
     tokenizer.setMaxUnkLength(length)
   }
 
-  def tokenize(document:String): java.util.List[LuceneToken] = {
-    val eojeols: Seq[Eojeol] = Eojeoler.build(tokenizer.parseText(document, dePreAnalysis=true))
-    val deCompounded: Seq[Eojeol] = if (this.deCompound) eojeols.map(_.deCompound()) else eojeols
-    val deInflected: Seq[Eojeol] = if (this.deInflect) deCompounded.map(_.deInflect()) else deCompounded
-    val posFiltered: Seq[Eojeol] = deInflected.map { eojeol =>
+  def tokenize(document:String): java.lang.Iterable[LuceneToken] = {
+    val eojeols: Iterable[Eojeol] = Eojeoler.build(tokenizer.parseText(document, dePreAnalysis=true)).flatMap(_.eojeols)
+    val deCompounded: Iterable[Eojeol] = if (this.deCompound) eojeols.map(_.deCompound()) else eojeols
+    val deInflected: Iterable[Eojeol] = if (this.deInflect) deCompounded.map(_.deInflect()) else deCompounded
+    val posFiltered: Iterable[Eojeol] = deInflected.map { eojeol =>
       Eojeol(eojeol.surface, eojeol.beginOffset, eojeol.endOffset, eojeol.nodes.filter(isIndexNode))
     }
 
@@ -111,9 +115,9 @@ class TokenizerHelper(deCompound:Boolean,
   }
 
   private def isIndexNode(node:LNode): Boolean = {
-    node.morpheme.mType == MorphemeType.COMPOUND ||
-      node.morpheme.mType == MorphemeType.INFLECT ||
-      (node.morpheme.mType == MorphemeType.COMMON && indexPoses.contains(node.morpheme.poses.head))
+    node.morpheme.getMType == MorphemeType.COMPOUND ||
+      node.morpheme.getMType == MorphemeType.INFLECT ||
+      (node.morpheme.getMType == MorphemeType.COMMON && indexPoses.contains(node.morpheme.getPoses.head))
   }
 
 

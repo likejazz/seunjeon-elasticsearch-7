@@ -25,8 +25,8 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   val text = input
   var startingNodes = build2DimNodes(text.length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(text.length+2)    // for BOS + EOS
-  var bos = new LNode(new Morpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(new Morpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), text.length, text.length)
+  var bos = new LNode(BasicMorpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(BasicMorpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), text.length, text.length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -58,7 +58,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
       val eIdx = idx + 1
       if (endingNodes(eIdx).isEmpty && startingNodes(eIdx + 1).nonEmpty) {
         val categoryMorpheme = CharSetDef.getCategoryTerm(text(eIdx))
-        val morpheme = Morpheme(text(idx).toString, categoryMorpheme._2)
+        val morpheme = BasicMorpheme(text(idx).toString, categoryMorpheme._2)
         // TODO: idx 무지 헷깔림
         add(LNode(morpheme, idx, idx + 1))
       }
@@ -75,7 +75,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   }
 
   private def isSpace(nodes:mutable.ArrayBuffer[LNode]):Boolean = {
-    nodes.length == 1 && nodes.exists(_.morpheme.surface == " ")
+    nodes.length == 1 && nodes.exists(_.morpheme.getSurface == " ")
   }
 
   // FIXME: space 패널티 cost 계산해줘야 함.
@@ -127,12 +127,12 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   private def getCost(endingNode: LNode, startingNode: LNode): Int = {
     val penaltyCost =
       if (endingNode.endOffset != startingNode.beginOffset)
-        SpacePenalty(startingNode.morpheme.poses(0))
+        SpacePenalty(startingNode.morpheme.getPoses(0))
       else 0
 
     endingNode.accumulatedCost +
-      endingNode.morpheme.cost +
-      connectingCostDict.getCost(endingNode.morpheme.rightId, startingNode.morpheme.leftId) +
+      endingNode.morpheme.getCost +
+      connectingCostDict.getCost(endingNode.morpheme.getRightId, startingNode.morpheme.getLeftId) +
       penaltyCost
   }
 }

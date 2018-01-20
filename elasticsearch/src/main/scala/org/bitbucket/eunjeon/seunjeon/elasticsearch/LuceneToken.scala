@@ -6,9 +6,9 @@ import org.bitbucket.eunjeon.seunjeon.{Eojeol, LNode}
 object LuceneToken {
 
   def apply(lnode: LNode, taggingPos: Boolean): LuceneToken = {
-    val poses = lnode.morpheme.poses.mkString("+")
+    val poses = lnode.morpheme.getPoses.mkString("+")
     LuceneToken(
-      buildCharTerm(lnode.morpheme.surface, poses, taggingPos),
+      buildCharTerm(lnode.morpheme.getSurface, poses, taggingPos),
       1, 1,
       lnode.beginOffset, lnode.endOffset,
       poses)

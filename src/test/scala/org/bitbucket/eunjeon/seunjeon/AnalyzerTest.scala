@@ -20,11 +20,11 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("penalty cost") {
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
     assert(
-      Analyzer.parse("아버지가 방에 들어가신다.").map(_.morpheme.surface).mkString(",") ===
+      Analyzer.parse("아버지가 방에 들어가신다.").map(_.morpheme.getSurface).mkString(",") ===
         "아버지,가,방,에,들어가,신다,.")
 
     assert(
-      Analyzer.parse("아버지 가방에 들어가신다.").map(_.morpheme.surface).mkString(",") ===
+      Analyzer.parse("아버지 가방에 들어가신다.").map(_.morpheme.getSurface).mkString(",") ===
         "아버지,가방,에,들어가,신다,.")
   }
 
@@ -78,12 +78,12 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("dePreAnalysis") {
-    val result1 = Analyzer.parse("은전한닢프로젝트")
-    assert("은전+한+닢+프로젝트" == result1.map(_.morpheme.surface).mkString("+"))
+    val result1 = Analyzer.parse("은전한닢프로젝트").toSeq
+    assert("은전+한+닢+프로젝트" == result1.map(_.morpheme.getSurface).mkString("+"))
     result1.foreach(println)
 
-    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis = false)
-    assert("은전한닢+프로젝트" == result2.map(_.morpheme.surface).mkString("+"))
+    val result2 = Analyzer.parse("은전한닢프로젝트", preAnalysis = false).toSeq
+    assert("은전한닢+프로젝트" == result2.map(_.morpheme.getSurface).mkString("+"))
     result2.foreach(println)
   }
 
@@ -105,16 +105,16 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("unk bug") {
     var result:Seq[LNode] = null
 
-    result = Analyzer.parse("농어촌체험휴양하누리마을")
-    assert(result.head.morpheme.surface == "농어촌")
+    result = Analyzer.parse("농어촌체험휴양하누리마을").toSeq
+    assert(result.head.morpheme.getSurface == "농어촌")
 
     Analyzer.setMaxUnkLength(100)
-    result = Analyzer.parse("농어촌체험휴양하누리마을")
-    assert(result.head.morpheme.surface == "농어촌체험휴양하누리마을")
+    result = Analyzer.parse("농어촌체험휴양하누리마을").toSeq
+    assert(result.head.morpheme.getSurface == "농어촌체험휴양하누리마을")
 
     Analyzer.setMaxUnkLength(8)
-    result = Analyzer.parse("농어촌체험휴양하누리마을")
-    assert(result.head.morpheme.surface == "농어촌")
+    result = Analyzer.parse("농어촌체험휴양하누리마을").toSeq
+    assert(result.head.morpheme.getSurface == "농어촌")
   }
 
   test("hanja") {
@@ -125,6 +125,6 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   def getSurfacePos(termNode: LNode): String = {
-    s"${termNode.morpheme.surface}:${termNode.morpheme.feature.head}"
+    s"${termNode.morpheme.getSurface}:${termNode.morpheme.getFeature.head}"
   }
 }

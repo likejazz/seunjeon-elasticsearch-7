@@ -123,7 +123,7 @@ class TokenizerHelperTest extends FunSuite {
   }
   */
 
-  def DummyMorpheme(surface: String, pos: Pos) =
-    Morpheme(surface, 0.toShort, 0.toShort, 0, Array.empty[String], MorphemeType.COMMON, Array(pos))
+  def DummyMorpheme(surface: String, pos: Pos): Morpheme =
+    BasicMorpheme(surface, 0.toShort, 0.toShort, 0, Array.empty[String], MorphemeType.COMMON, Array(pos))
 
 }

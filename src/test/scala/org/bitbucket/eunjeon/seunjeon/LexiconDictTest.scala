@@ -6,20 +6,18 @@ class LexiconDictTest extends FunSuite {
   val TEST_RESOURCES_PATH = "src/test/resources"
 
   test("buildNNGTerm") {
-    assert(
-      "Morpheme(삼성전자,1784,3535,-100,WrappedArray(NNG, *, F, 삼성전자, *, *, *, *),COMMON,WrappedArray(N))" ==
-      LexiconDict.buildNNGTerm("삼성전자", -100).toString
-    )
+    val nngCommonTerm = LexiconDict.buildNNGTerm("삼성전자", -100)
+    assert(nngCommonTerm.getSurface === "삼성전자")
+    assert(nngCommonTerm.getCost === -100)
+    assert(nngCommonTerm.getMType === MorphemeType.COMMON)
 
-    assert(
-      "Morpheme(삼성전자,1784,3535,-100,WrappedArray(NNG, *, F, 삼성+전자, Compound, *, *, 삼성/NNG/*+전자/NNG/*),COMPOUND,WrappedArray(N))" ==
-      LexiconDict.buildNNGTerm("삼성+전자", -100).toString
-    )
+    val nngCompoundTerm = LexiconDict.buildNNGTerm("삼성+전자", -100)
+    assert(nngCompoundTerm.getSurface === "삼성전자")
+    assert(nngCompoundTerm.getFeature.toString === "WrappedArray(NNG, *, F, 삼성+전자, Compound, *, *, 삼성/NNG/*+전자/NNG/*)")
+    assert(nngCompoundTerm.getMType === MorphemeType.COMPOUND)
 
-    assert(
-      "Morpheme(C++,1784,3535,-100,WrappedArray(NNG, *, *, C\\+\\+, *, *, *, *),COMMON,WrappedArray(N))" ==
-      LexiconDict.buildNNGTerm("""C\+\+""", -100).toString
-    )
+    val nngEscapeTerm = LexiconDict.buildNNGTerm("""C\+\+""", -100)
+    assert(nngEscapeTerm.getSurface === "C++")
   }
 
   test("load") {
@@ -65,7 +63,7 @@ class LexiconDictTest extends FunSuite {
                          TEST_RESOURCES_PATH + "/" + DictBuilder.DICT_MAPPER_FILENAME,
                          TEST_RESOURCES_PATH + "/" + DictBuilder.TERM_TRIE_FILENAME)
     assert(Seq("고", "고구", "고구마") ==
-      openLexiconDict.commonPrefixSearch("고구마").map(_.surface))
+      openLexiconDict.commonPrefixSearch("고구마").map(_.getSurface))
   }
 
   ignore("org.bitbucket.org.eunjeon.seunjeon.LexiconDict save performance") {

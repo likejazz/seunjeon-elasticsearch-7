@@ -9,6 +9,7 @@ import org.elasticsearch.common.logging.ESLoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -19,7 +20,7 @@ public class SeunjeonTokenizer extends Tokenizer {
     private PositionLengthAttribute posLenAtt;
     private OffsetAttribute offsetAtt;
     private TypeAttribute typeAtt;
-    private Queue<LuceneToken> tokensQueue;
+    private Iterator<LuceneToken> tokensQueue;
     private TokenizerHelper tokenizerHelper;
     private final RollingCharBuffer buffer = new RollingCharBuffer();
     private int finalOffset;
@@ -32,6 +33,7 @@ public class SeunjeonTokenizer extends Tokenizer {
 
         initAttribute();
         tokenizerHelper = new TokenizerHelper(
+                options.getCompress(),
                 options.getDeCompound(),
                 options.getDeInflect(),
                 options.getIndexEojeol(),
@@ -61,10 +63,8 @@ public class SeunjeonTokenizer extends Tokenizer {
 
     @Override
     public final boolean incrementToken() throws IOException {
-        if (tokensQueue.isEmpty()) {
-            return false;
-        } else {
-            LuceneToken pos = tokensQueue.poll();
+        if (tokensQueue.hasNext()) {
+            LuceneToken pos = tokensQueue.next();
             posIncrAtt.setPositionIncrement(pos.positionIncr());
             posLenAtt.setPositionLength(pos.positionLength());
             finalOffset = correctOffset(pos.endOffset());
@@ -74,13 +74,15 @@ public class SeunjeonTokenizer extends Tokenizer {
             typeAtt.setType(pos.poses());
 
             return true;
+        } else {
+            return false;
         }
     }
 
     @Override
     public void reset() throws IOException {
         super.reset();
-        tokensQueue = new LinkedList(tokenizerHelper.tokenize(getDocument()));
+        tokensQueue = tokenizerHelper.tokenize(getDocument()).iterator();
     }
 
     @Override

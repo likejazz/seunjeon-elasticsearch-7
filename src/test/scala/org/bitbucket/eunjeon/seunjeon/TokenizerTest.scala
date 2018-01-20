@@ -27,25 +27,25 @@ class TokenizerTest extends FunSuite with BeforeAndAfter {
         |3564 0 100""".stripMargin
     // TODO: apply factory function
     val lexiconDict = new LexiconDict
-    lexiconDict.loadFromString(lexicons)
+    lexiconDict.loadFromString(lexicons, compress = false)
 
     val connectionCostDict = new ConnectionCostDict
     connectionCostDict.loadFromString(connectionCosts)
 
-    tokenizer = new Tokenizer(lexiconDict, connectionCostDict)
+    tokenizer = new Tokenizer(lexiconDict, connectionCostDict, false)
   }
 
   test("testParseOneEojeol") {
     assert("감자,고구마,오징어" ==
-      tokenizer.parseText("감자고구마오징어", true).map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고구마오징어", dePreAnalysis = true).flatMap(_.nodes).map(_.morpheme.getSurface).mkString(","))
   }
 
   test("testParseMultipleEojeol") {
     assert("감자,고구마,오징어" ==
-      tokenizer.parseText("감자고구마 오징어", true).map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고구마 오징어", dePreAnalysis = true).flatMap(_.nodes).map(_.morpheme.getSurface).mkString(","))
 
     assert("감자,고,구마,오징어" ==
-      tokenizer.parseText("감자고 구마 오징어", true).map(_.morpheme.surface).mkString(","))
+      tokenizer.parseText("감자고 구마 오징어", dePreAnalysis = true).flatMap(_.nodes).map(_.morpheme.getSurface).mkString(","))
   }
 
   /* TODO: 나중에 정리하자.

@@ -6,28 +6,31 @@ import scala.collection.mutable
 
 object Eojeoler {
 
-  def build(nodes:Seq[LNode]): Seq[Eojeol] = {
-    if (nodes.isEmpty) {
-      Seq()
-    } else if (nodes.length == 1) {
-      Seq(Eojeol(nodes))
-    } else {
-      val result = mutable.ListBuffer[Eojeol]()
-      var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
-      nodes.sliding(2).foreach { slid =>
-        val pre = slid.head
-        val cur = slid.last
-        // TODO: contains 더 빠르게 자료구조 바꿔야 함.
-        if (appendable.contains(pre.morpheme.poses.last -> cur.morpheme.poses.head)) {
-          eojeolNodes = eojeolNodes :+ cur
-        } else {
-          result.append(Eojeol(eojeolNodes))
-          eojeolNodes = mutable.LinearSeq[LNode](cur)
+  def build(paragraphs: Iterable[Paragraph]): Iterable[EojeolParagraph] = {
+    paragraphs.map { paragraph =>
+      val nodes = paragraph.nodes
+      if (nodes.isEmpty) {
+        EojeolParagraph(Seq.empty)
+      } else if (nodes.lengthCompare(1) == 0) {
+        EojeolParagraph(Seq(Eojeol(nodes.toSeq)))
+      } else {
+        val result = mutable.ListBuffer[Eojeol]()
+        var eojeolNodes = mutable.LinearSeq[LNode](nodes.head)
+        nodes.sliding(2).foreach { slid =>
+          val pre = slid.head
+          val cur = slid.last
+          // TODO: contains 더 빠르게 자료구조 바꿔야 함.
+          if (appendable.contains(pre.morpheme.getPoses.last -> cur.morpheme.getPoses.head)) {
+            eojeolNodes = eojeolNodes :+ cur
+          } else {
+            result.append(Eojeol(eojeolNodes))
+            eojeolNodes = mutable.LinearSeq[LNode](cur)
+          }
         }
+        // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
+        result.append(Eojeol(eojeolNodes))
+        EojeolParagraph(result)
       }
-      // TODO: mutable 에 직접 넣는거 찾아보자.. 새로운 list 리턴 안하는...
-      result.append(Eojeol(eojeolNodes))
-      result
     }
   }
 

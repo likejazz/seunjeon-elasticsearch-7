@@ -30,10 +30,8 @@ object CompressedMorpheme {
     return uncompressStringArray.toArray
   }
 
-  def compress(morphemes: Seq[Morpheme]): Array[CompressedMorpheme] = {
-    val compressedMorphemes = morphemes.par.map(new CompressedMorpheme(_))
-    return compressedMorphemes.toArray;
-  }
+  def compress(morphemes: Seq[BasicMorpheme]): Array[CompressedMorpheme] =
+    morphemes.par.map(new CompressedMorpheme(_)).toArray
 }
 
 /**
@@ -42,72 +40,67 @@ object CompressedMorpheme {
   *
   * @param morpheme
   */
-@SerialVersionUID(1001L)
-class CompressedMorpheme(morpheme: Morpheme) extends Serializable {
-  val logger = Logger(LoggerFactory.getLogger(classOf[CompressedMorpheme].getName))
+class CompressedMorpheme(morpheme: Morpheme) extends Morpheme with Serializable {
+  private val logger = Logger(LoggerFactory.getLogger(classOf[CompressedMorpheme].getName))
 
-  var leftId: Short = morpheme.leftId
-  var rightId: Short = morpheme.rightId
-  var cost: Int = morpheme.cost
+  private var surface: Array[Byte] = CompressionHelper.compressStr(morpheme.getSurface)
+  private var leftId: Short = morpheme.getLeftId
+  private var rightId: Short = morpheme.getRightId
+  private var cost: Int = morpheme.getCost
+  private var feature: mutable.WrappedArray[String] = CompressedMorpheme.deDupeFeatureArray(morpheme.getFeature)
 
-  var _mType: Byte = morpheme.mType.id.toByte
-
-  def mType = MorphemeType(Byte.byte2int(_mType))
+  private var mType: Byte = morpheme.getMType.id.toByte
 
   //storing poses as bytes instead of array of enums
-  private var _poses: Array[Byte] = {
-    val buffer = ByteBuffer.allocate(morpheme.poses.length)
+  private var poses: Array[Byte] = {
+    val buffer = ByteBuffer.allocate(morpheme.getPoses.length)
     buffer.rewind()
-    for (pose <- morpheme.poses) {
+    for (pose <- morpheme.getPoses) {
       buffer.put(pose.id.byteValue())
     }
     buffer.array()
   }
 
-  def poses = {
-    val posesArr: util.ArrayList[Pos] = new util.ArrayList[Pos];
-    for (pose <- _poses) {
+  override def getSurface: String = CompressionHelper.uncompressStr(surface)
+  override def deComposite(): Seq[Morpheme] = BasicMorpheme.deComposite(feature(7))
+  override def getLeftId: Short = leftId
+  override def getRightId: Short = rightId
+  override def getCost: Int = cost
+  override def getFeature: mutable.WrappedArray[String] = feature
+  override def getMType = MorphemeType(Byte.byte2int(mType))
+  override def getPoses: mutable.WrappedArray[Pos] = {
+    val posesArr: util.ArrayList[Pos] = new util.ArrayList[Pos]
+    for (pose <- poses) {
       posesArr.add(Pos(Byte.byte2int(pose)))
     }
     wrapRefArray(posesArr.toArray).asInstanceOf[mutable.WrappedArray[Pos]]
   }
 
-  private var _surface: Array[Byte] = CompressionHelper.compressStr(morpheme.surface)
+//  def feature_=(value: mutable.WrappedArray[String]) = _feature = CompressedMorpheme.deDupeFeatureArray(value)
 
-  def surface = CompressionHelper.uncompressStr(_surface)
-
-  def surface_=(value: String) = _surface = CompressionHelper.compressStr(value)
-
-  private var _feature: mutable.WrappedArray[String] = CompressedMorpheme.deDupeFeatureArray(morpheme.feature)
-
-  def feature: mutable.WrappedArray[String] =_feature
-
-  def feature_=(value: mutable.WrappedArray[String]) = _feature = CompressedMorpheme.deDupeFeatureArray(value)
-
-  def uncompressed = new Morpheme(surface, leftId, rightId, cost, feature, mType, poses)
+  def uncompressed = BasicMorpheme(this)
 
   @throws(classOf[IOException])
   private def writeObject(out: ObjectOutputStream): Unit = {
-    out.writeObject(_surface)
+    out.writeObject(surface)
     out.writeShort(leftId)
     out.writeShort(rightId)
     out.writeInt(cost)
-
-    out.writeObject(_feature)
-    out.writeByte(_mType)
-    out.writeObject(_poses)
+    out.writeObject(feature)
+    out.writeByte(mType)
+    out.writeObject(poses)
   }
 
   @throws(classOf[IOException])
   private def readObject(in: ObjectInputStream): Unit = {
-    _surface = in.readObject().asInstanceOf[Array[Byte]]
+    surface = in.readObject().asInstanceOf[Array[Byte]]
     leftId = in.readShort()
     rightId = in.readShort()
     cost = in.readInt()
 
-    _feature = in.readObject().asInstanceOf[mutable.WrappedArray[String]]
-    _mType = in.readByte()
-    _poses = in.readObject().asInstanceOf[Array[Byte]]
+    feature = in.readObject().asInstanceOf[mutable.WrappedArray[String]]
+    mType = in.readByte()
+    poses = in.readObject().asInstanceOf[Array[Byte]]
   }
 
 }

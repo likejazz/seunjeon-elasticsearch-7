@@ -100,7 +100,7 @@ object DictBuilder {
                      dictPath + File.separator + DICT_MAPPER_FILENAME,
                      dictPath + File.separator + TERM_TRIE_FILENAME)
     println("building LexiconDict OK. " +
-      s"(${lexiconDict.getDictionaryInfo()})")
+      s"(${lexiconDict.getDictionaryInfo})")
   }
 
   private def clear(): Unit = {

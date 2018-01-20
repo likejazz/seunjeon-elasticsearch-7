@@ -9,8 +9,8 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
   */
 class SerializeTermDictTest  extends FunSuite with BeforeAndAfter {
   test("serialize TermDict") {
-    val m1 = Morpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
-    val m2 = Morpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
+    val m1 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
+    val m2 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
 
     val serial = Array(m1, m2)
 
@@ -25,7 +25,7 @@ class SerializeTermDictTest  extends FunSuite with BeforeAndAfter {
       new BufferedInputStream(new FileInputStream("testDict.dat"), 16*1024))
     val size = input.readInt()
     val restored = for (idx <- 0 until size) yield {
-      input.readObject().asInstanceOf[Morpheme]
+      input.readObject().asInstanceOf[BasicMorpheme]
     }
     input.close()
     restored.foreach(println)
