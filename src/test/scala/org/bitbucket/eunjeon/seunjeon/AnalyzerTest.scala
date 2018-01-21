@@ -35,7 +35,7 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("userdic-surface from file") {
-    assert(Seq(
+    assert(Stream(
       "버:NNP",
       "카:NNG",
       "충:NNG",
@@ -50,17 +50,20 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   }
 
   test("userdic-surface from iterator") {
-    assert(Seq(
-      "어:IC",
-      "그:NP",
-      "로:JKB",
-      "좀:MAG",
-      "끌:VV",
-      "고:EC",
-      "있:VX",
-      "어:EC",
-      "봐:VX+EF",
-      ".:SF") == Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos))
+    assert(
+      Analyzer.parse("어그로좀끌고있어봐.").map(getSurfacePos) ===
+      Stream(
+        "어:IC",
+        "그:NP",
+        "로:JKB",
+        "좀:MAG",
+        "끌:VV",
+        "고:EC",
+        "있:VX",
+        "어:EC",
+        "봐:VX+EF",
+        ".:SF"))
+
     Analyzer.setUserDict(Seq("어그로,-500", "갠소").toIterator)
     assert(Seq(
       "어그로:NNG",
@@ -120,11 +123,11 @@ class AnalyzerTest extends FunSuite with BeforeAndAfter {
   test("hanja") {
     assert(
       Analyzer.parse("柳英浩 郭鎬英 abc").map(getSurfacePos) ===
-        List("柳英浩:SH", "郭鎬英:SH", "abc:SL")
+        Stream("柳英浩:SH", "郭鎬英:SH", "abc:SL")
     )
   }
 
   def getSurfacePos(termNode: LNode): String = {
-    s"${termNode.morpheme.getSurface}:${termNode.morpheme.getFeature.head}"
+    s"${termNode.morpheme.getSurface}:${termNode.morpheme.getFeatureHead}"
   }
 }

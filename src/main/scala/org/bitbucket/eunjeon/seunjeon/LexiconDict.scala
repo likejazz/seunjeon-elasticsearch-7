@@ -21,7 +21,6 @@ import java.util.regex.Pattern
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
-import scala.collection.parallel.immutable.ParVector
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.Try
@@ -46,7 +45,7 @@ object LexiconDict {
       NngUtil.nngLeftId,
       NngUtil.nngRightId,
       cost,
-      wrapRefArray(feature),
+      wrapRefArray(feature).mkString(","),
       MorphemeType(feature),
       wrapRefArray(Pos.poses(feature)))
   }
@@ -124,7 +123,7 @@ class LexiconDict {
                   leftId.toShort,
                   rightId.toShort,
                   cost.toShort,
-                  wrapRefArray(feature.toArray),
+                  feature.mkString(","),
                   MorphemeType(feature),
                   wrapRefArray(Pos.poses(feature)))
             }
@@ -195,17 +194,18 @@ class LexiconDict {
   }
 
   def save(termDictPath: String, dictMapperPath: String, triePath: String): Unit = {
-    val termDictStore =
-      new BufferedOutputStream(new FileOutputStream(termDictPath), 32*1024)
-    CompressionHelper.compressObjectAndSave(termDict.map(x => new CompressedMorpheme(x)), termDictStore)
+    val termDictStore = new ObjectOutputStream(
+      new BufferedOutputStream(new FileOutputStream(termDictPath), 16*1024))
+    termDictStore.writeObject(termDict.map(x => new CompressedMorpheme(x)))
     termDictStore.close()
 
-    val dictMapperStore =
-      new BufferedOutputStream(new FileOutputStream(dictMapperPath), 32*1024)
-    CompressionHelper.compressObjectAndSave(dictMapper, dictMapperStore)
+    val dictMapperStore = new ObjectOutputStream(
+      new BufferedOutputStream(new FileOutputStream(dictMapperPath), 16*1024))
+    dictMapperStore.writeObject(dictMapper)
     dictMapperStore.close()
 
     trie.write(new java.io.File(triePath))
+
   }
 
   def load(termDictCompress: Boolean): LexiconDict = {
@@ -232,24 +232,24 @@ class LexiconDict {
                    trieStream: InputStream,
                    termDictCompress: Boolean): Unit = {
     // FIXME: 사전 로딩이 3초에서 9초로 느려짐... posid 추가하면서 느려짐..
-
-//    /* creating parallel vector containing the termDictStream, dictMapperStream so that they can
-//     be loaded parallel by decompressing them */
-//    val pv: ParVector[InputStream] = ParVector(termDictStream, dictMapperStream).par
     var startTime = System.nanoTime()
-    val compressedMorphemes = CompressionHelper.uncompressAndReadObject(termDictStream).asInstanceOf[Array[Morpheme]]
+    val termDictIn = new ObjectInputStream(new BufferedInputStream(termDictStream, 16*1024))
+    val compressedMorphemes = termDictIn.readObject().asInstanceOf[Array[Morpheme]]
     termDict = if (termDictCompress) compressedMorphemes else compressedMorphemes.map(x => BasicMorpheme(x))
+    termDictIn.close()
     var elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"terms loading is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
-    dictMapper = CompressionHelper.uncompressAndReadObject(dictMapperStream).asInstanceOf[Array[Array[Int]]]
+    val dictMapperIn = new ObjectInputStream(new BufferedInputStream(dictMapperStream, 16*1024))
+    dictMapper = dictMapperIn.readObject().asInstanceOf[Array[Array[Int]]]
+    dictMapperIn.close()
     elapsedTime = (System.nanoTime() - startTime) / (1000*1000)
     logger.info(s"mapper loading is completed. ($elapsedTime ms)")
 
     startTime = System.nanoTime()
     trie = DoubleArrayTrie(trieStream)
-    elapsedTime = System.nanoTime() - startTime
-    logger.info(s"double-array trie loading is completed. ($elapsedTime ns)")
+    logger.info(s"double-array trie loading is completed. ($elapsedTime ms)")
+
   }
 }

@@ -9,8 +9,8 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
   */
 class SerializeTermDictTest  extends FunSuite with BeforeAndAfter {
   test("serialize TermDict") {
-    val m1 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
-    val m2 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@"), MorphemeType.COMMON, Array(Pos.N))
+    val m1 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@").mkString(","), MorphemeType.COMMON, Array(Pos.N))
+    val m2 = BasicMorpheme("hello", 1, 2, 100, Array("!", "@").mkString(","), MorphemeType.COMMON, Array(Pos.N))
 
     val serial = Array(m1, m2)
 

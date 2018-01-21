@@ -46,8 +46,10 @@ object LNode {
     }
   }
 
+  // TODO: remove it from dict. and no see feature(0) in run-time.
+  //  its cause of resource(processing, usage memory)
   private def isHideMorpheme(morpheme: Morpheme): Boolean = {
-    morpheme.getSurface == "아" && morpheme.getFeature(0) == "EC"
+    morpheme.getSurface == "아" && morpheme.getFeatureHead == "EC"
   }
 
   private def isJamo(char:Char): Boolean = {

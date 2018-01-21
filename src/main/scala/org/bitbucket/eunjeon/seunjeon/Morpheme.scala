@@ -11,9 +11,10 @@ trait Morpheme {
   def getRightId: Short
   def getCost: Int
 
-  def getFeature: mutable.WrappedArray[String]
+  def getFeature: String
+  def getFeatureHead: String
   def getMType: MorphemeType
-  def getPoses:mutable.WrappedArray[Pos]
+  def getPoses: mutable.WrappedArray[Pos]
 
   def deComposite(): Seq[Morpheme]
 

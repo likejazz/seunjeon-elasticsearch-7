@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import java.nio.ByteBuffer
+import java.nio.charset.Charset
 import java.util
 
 object CompressedMorpheme {
@@ -19,15 +20,6 @@ object CompressedMorpheme {
       result_features.append(CompressionHelper.getStrCached(feature_value));
     }
     return wrapRefArray(result_features.toArray)
-  }
-
-  def unCompressFeatureArray(compressedArray: Array[Array[Byte]]): Array[String] = {
-    val uncompressStringArray = ArrayBuffer[String]();
-    for (i <- 0 until compressedArray.length) {
-      val compressedValue = compressedArray(i)
-      uncompressStringArray.append(CompressionHelper.uncompressStr(compressedValue));
-    }
-    return uncompressStringArray.toArray
   }
 
   def compress(morphemes: Seq[BasicMorpheme]): Array[CompressedMorpheme] =
@@ -43,11 +35,11 @@ object CompressedMorpheme {
 class CompressedMorpheme(morpheme: Morpheme) extends Morpheme with Serializable {
   private val logger = Logger(LoggerFactory.getLogger(classOf[CompressedMorpheme].getName))
 
-  private var surface: Array[Byte] = CompressionHelper.compressStr(morpheme.getSurface)
+  private var surface: Array[Byte] = morpheme.getSurface.getBytes(CompressionHelper.UTF_8)
   private var leftId: Short = morpheme.getLeftId
   private var rightId: Short = morpheme.getRightId
   private var cost: Int = morpheme.getCost
-  private var feature: mutable.WrappedArray[String] = CompressedMorpheme.deDupeFeatureArray(morpheme.getFeature)
+  private var feature: mutable.WrappedArray[String] = CompressedMorpheme.deDupeFeatureArray(morpheme.getFeature.split(","))
 
   private var mType: Byte = morpheme.getMType.id.toByte
 
@@ -61,22 +53,21 @@ class CompressedMorpheme(morpheme: Morpheme) extends Morpheme with Serializable 
     buffer.array()
   }
 
-  override def getSurface: String = CompressionHelper.uncompressStr(surface)
+  override def getSurface: String = new String(surface, CompressionHelper.UTF_8)
   override def deComposite(): Seq[Morpheme] = BasicMorpheme.deComposite(feature(7))
   override def getLeftId: Short = leftId
   override def getRightId: Short = rightId
   override def getCost: Int = cost
-  override def getFeature: mutable.WrappedArray[String] = feature
+  override def getFeature: String = feature.mkString(",")
+  override def getFeatureHead: String = feature.head
   override def getMType = MorphemeType(Byte.byte2int(mType))
   override def getPoses: mutable.WrappedArray[Pos] = {
     val posesArr: util.ArrayList[Pos] = new util.ArrayList[Pos]
-    for (pose <- poses) {
-      posesArr.add(Pos(Byte.byte2int(pose)))
+    for (pos <- poses) {
+      posesArr.add(Pos(Byte.byte2int(pos)))
     }
     wrapRefArray(posesArr.toArray).asInstanceOf[mutable.WrappedArray[Pos]]
   }
-
-//  def feature_=(value: mutable.WrappedArray[String]) = _feature = CompressedMorpheme.deDupeFeatureArray(value)
 
   def uncompressed = BasicMorpheme(this)
 

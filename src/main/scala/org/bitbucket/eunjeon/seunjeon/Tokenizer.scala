@@ -128,7 +128,7 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
     var unknownIdx = 1
     val nodes = new Array[LNode](categoryLength)
     while (unknownIdx <= categoryLength) {
-      val tmp: Morpheme = BasicMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx), charset.morpheme)
+      val tmp: Morpheme = UnkMorpheme(charset.str.substring(termOffset, termOffset + unknownIdx), charset.morpheme)
       val unknownTerm = if (compress) new CompressedMorpheme(tmp) else tmp
       nodes(unknownIdx-1) = LNode(unknownTerm, charsetOffset + termOffset, charsetOffset + termOffset + unknownTerm.getSurface.length)
       unknownIdx += 1
@@ -137,7 +137,7 @@ class Tokenizer(lexiconDict: LexiconDict, connectionCostDict: ConnectionCostDict
   }
 
   private def getGroupTermNode(charsetOffset: Int, charset: CharSet): LNode = {
-    val fullLengthTerm = BasicMorpheme.apply(charset.str, charset.morpheme)
+    val fullLengthTerm = UnkMorpheme.apply(charset.str, charset.morpheme)
     LNode(fullLengthTerm, charsetOffset, charsetOffset + fullLengthTerm.getSurface.length)
   }
 }

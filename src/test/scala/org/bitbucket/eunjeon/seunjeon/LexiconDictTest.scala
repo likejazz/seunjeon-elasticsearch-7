@@ -13,7 +13,7 @@ class LexiconDictTest extends FunSuite {
 
     val nngCompoundTerm = LexiconDict.buildNNGTerm("삼성+전자", -100)
     assert(nngCompoundTerm.getSurface === "삼성전자")
-    assert(nngCompoundTerm.getFeature.toString === "WrappedArray(NNG, *, F, 삼성+전자, Compound, *, *, 삼성/NNG/*+전자/NNG/*)")
+    assert(nngCompoundTerm.getFeature === "NNG,*,F,삼성+전자,Compound,*,*,삼성/NNG/*+전자/NNG/*")
     assert(nngCompoundTerm.getMType === MorphemeType.COMPOUND)
 
     val nngEscapeTerm = LexiconDict.buildNNGTerm("""C\+\+""", -100)

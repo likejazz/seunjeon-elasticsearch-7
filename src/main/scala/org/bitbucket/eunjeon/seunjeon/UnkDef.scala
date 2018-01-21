@@ -20,12 +20,12 @@ object UnkDef {
   private def line2Morpheme(str: String) = {
     val arr = str.split(",")
     val feature = arr.slice(4, arr.length)
-    BasicMorpheme(
+    UnkMorpheme(
       arr(0),
       arr(1).toShort,
       arr(2).toShort,
       arr(3).toShort,
-      feature,
+      feature.mkString(","),
       MorphemeType(feature),
       Pos.poses(feature))
   }

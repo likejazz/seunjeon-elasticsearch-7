@@ -4,7 +4,7 @@ object MorphemeType extends Enumeration {
   type MorphemeType = Value
   val COMMON, COMPOUND, INFLECT, PREANALYSIS = Value
 
-  def apply(feature:Seq[String]): MorphemeType = {
+  def apply(feature: Seq[String]): MorphemeType = {
     if (feature(4) == "*") {
       COMMON
     } else {

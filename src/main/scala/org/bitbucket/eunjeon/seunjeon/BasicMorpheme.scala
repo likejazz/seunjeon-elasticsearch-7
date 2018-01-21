@@ -17,7 +17,7 @@ object BasicMorpheme {
             leftId: Short,
             rightId: Short,
             cost: Int,
-            feature: mutable.WrappedArray[String],
+            feature: String,
             mType: MorphemeType,
             poses: mutable.WrappedArray[Pos]) = {
     new BasicMorpheme().
@@ -41,10 +41,6 @@ object BasicMorpheme {
       setPoses(morpheme.getPoses)
   }
 
-  def apply(surface:String, morpheme: Morpheme): Morpheme = {
-    BasicMorpheme.apply(morpheme).setSurface(surface)
-  }
-
   def deComposite(feature7:String): Seq[BasicMorpheme] = {
     try {
       for (feature7 <- feature7.split("[+]")) yield BasicMorpheme.createFromFeature7(feature7)
@@ -59,7 +55,7 @@ object BasicMorpheme {
     *
     * @param feature7  "은전/NNG/\*"
     */
-  def createFromFeature7(feature7:String): BasicMorpheme = {
+  def createFromFeature7(feature7: String): BasicMorpheme = {
     val splited = feature7.split("/")
 
     new BasicMorpheme().
@@ -67,7 +63,7 @@ object BasicMorpheme {
       setLeftId(-1).
       setRightId(-1).
       setCost(0).
-      setFeature(Array[String](splited(1))).
+      setFeature(splited(1)).
       setMType(MorphemeType.COMMON).
       setPoses(Array(Pos(splited(1))))
 
@@ -87,9 +83,12 @@ class BasicMorpheme extends Morpheme with Serializable {
   private var leftId: Short = _
   private var rightId: Short = _
   private var cost: Int = _
-  private var feature: mutable.WrappedArray[String] = _
+  private var feature: String = _
   private var mType: MorphemeType = _
   private var poses: mutable.WrappedArray[Pos] = _
+
+  private var composite: String = _
+  private var featureHead: String = _
 
   def setSurface(s: String): BasicMorpheme = {
     surface = s
@@ -111,8 +110,12 @@ class BasicMorpheme extends Morpheme with Serializable {
     this
   }
 
-  def setFeature(f: mutable.WrappedArray[String]): BasicMorpheme = {
+  def setFeature(f: String): BasicMorpheme = {
     feature = f
+    val splitedFeature = f.split(",")
+
+    composite = if (splitedFeature.length >= 7) splitedFeature(7) else null
+    featureHead = if (splitedFeature.nonEmpty) splitedFeature(0) else null
     this
   }
 
@@ -126,15 +129,16 @@ class BasicMorpheme extends Morpheme with Serializable {
     this
   }
 
-  def getSurface: String = surface
-  def getLeftId: Short = leftId
-  def getRightId: Short = rightId
-  def getCost: Int = cost
-  def getFeature: mutable.WrappedArray[String] = feature
-  def getMType: MorphemeType = mType
-  def getPoses:mutable.WrappedArray[Pos] = poses
+  override def getSurface: String = surface
+  override def getLeftId: Short = leftId
+  override def getRightId: Short = rightId
+  override def getCost: Int = cost
+  override def getFeature: String = feature
+  override def getFeatureHead: String = featureHead
+  override def getMType: MorphemeType = mType
+  override def getPoses: mutable.WrappedArray[Pos] = poses
 
-  def deComposite(): Seq[Morpheme] = BasicMorpheme.deComposite(feature(7))
+  override def deComposite(): Seq[Morpheme] = BasicMorpheme.deComposite(composite)
 
   @throws(classOf[IOException])
   private def writeObject(out: ObjectOutputStream): Unit = {
@@ -143,7 +147,7 @@ class BasicMorpheme extends Morpheme with Serializable {
     out.writeShort(rightId)
     out.writeInt(cost)
 
-    out.writeUTF(feature.mkString(","))
+    out.writeUTF(feature)
     out.writeInt(mType.id)
     out.writeUTF(poses.map(_.id).mkString(","))
   }
@@ -155,7 +159,7 @@ class BasicMorpheme extends Morpheme with Serializable {
     rightId = in.readShort()
     cost = in.readInt()
 
-    feature = wrapRefArray(in.readUTF().split(","))
+    feature = in.readUTF()
     mType = MorphemeType(in.readInt())
     poses = wrapRefArray(in.readUTF().split(",").map(id => Pos(id.toInt)))
   }

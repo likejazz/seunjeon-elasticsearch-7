@@ -25,8 +25,8 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
   val text = input
   var startingNodes = build2DimNodes(text.length+2)  // for BOS + EOS
   var endingNodes = build2DimNodes(text.length+2)    // for BOS + EOS
-  var bos = new LNode(BasicMorpheme("BOS", 0, 0, 0, Array("BOS"), MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
-  var eos = new LNode(BasicMorpheme("EOS", 0, 0, 0, Array("EOS"), MorphemeType.COMMON, Array(Pos.BOS)), text.length, text.length)
+  var bos = new LNode(BasicMorpheme("BOS", 0, 0, 0, "", MorphemeType.COMMON, Array(Pos.BOS)), 0, 0, 0)
+  var eos = new LNode(BasicMorpheme("EOS", 0, 0, 0, "", MorphemeType.COMMON, Array(Pos.BOS)), text.length, text.length)
   startingNodes.head += bos
   endingNodes.head += bos
   startingNodes.last += eos
@@ -58,7 +58,7 @@ class Lattice(input:String, connectingCostDict:ConnectionCostDict) {
       val eIdx = idx + 1
       if (endingNodes(eIdx).isEmpty && startingNodes(eIdx + 1).nonEmpty) {
         val categoryMorpheme = CharSetDef.getCategoryTerm(text(eIdx))
-        val morpheme = BasicMorpheme(text(idx).toString, categoryMorpheme._2)
+        val morpheme = UnkMorpheme(text(idx).toString, categoryMorpheme._2)
         // TODO: idx 무지 헷깔림
         add(LNode(morpheme, idx, idx + 1))
       }
