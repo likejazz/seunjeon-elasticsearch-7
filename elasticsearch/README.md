@@ -28,7 +28,7 @@ $ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysi
 | 6.1.1.0                         | 6.1.1                | es 버전업으로인한 패치 |
 | 6.0.0.1                         | 6.0.1                | 어절 position 오류 수정 |
 | 6.0.0.0                         | 6.0.0                | list 필드 형태소분석시 offset 오류로 es6.0에서 에러나서 죽던 문제 해결 |
-| 5.4.1.1                         | 5.4.1                | 사전 로딩 오류로 오분석 되던 문제 수정<br/>한자 SY로 분석되는 오류 수정 |
+| 5.4.1.1                         | 5.4.1                | 사전 로딩 오류로 오분석 되던 문제 수정. 한자 SY로 분석되는 오류 수정 |
 | 5.4.1.0                         | 5.4.1                | 사용자사전 인덱스별로 별도 로딩(시스템 사전만 singleton) |
 | 5.1.1.1                         | 5.1.1                | 사용자 사전에 복합명사 등록 기능 추가  |
 | 5.1.1.0                         | 5.1.1                | 추가 기능 없음 |
@@ -141,7 +141,7 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 ## java options
 | 옵션인자      | 설명  | 기본값 |
 | ------------- | ----- | ---- |
-| seunjeon.compress | 사전 압축모드. "true" 또는 "false"을 값으로 받습니다.| -Xmx1g 이하에서는 기본값이 "true" 가 됩니다.<br> <i>ES_JAVA_OPTS="-Dseunjeon.compress=true" ./bin/elasticsearch</i> |
+| seunjeon.compress | 사전 압축모드. "true" 또는 "false"을 값으로 받습니다.| -Xmx1g 이하에서는 기본값이 "true" 가 됩니다. _ES_JAVA_OPTS="-Dseunjeon.compress=true" ./bin/elasticsearch_ |
 
 
 ## elasticsearch 플러그인 개발
