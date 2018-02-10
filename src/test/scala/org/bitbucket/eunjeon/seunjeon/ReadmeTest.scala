@@ -6,7 +6,6 @@ class ReadmeTest extends FunSuite {
   test("readme") {
     // 형태소 분석
     Analyzer.parse("아버지가방에들어가신다.").foreach(println)
-
     // 어절 분석
     Analyzer.parseEojeol("아버지가방에들어가신다.").foreach(println)
     // or
@@ -31,5 +30,8 @@ class ReadmeTest extends FunSuite {
     ggilggi.map(_.deCompound()).foreach(println)  // 낄끼+빠빠
 
     Analyzer.parse("C++").map(_.deInflect()).foreach(println) // C++
+
+    // 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
+    CompressedAnalyzer.parse("아버지가방에들어가신다").foreach(println)
   }
 }

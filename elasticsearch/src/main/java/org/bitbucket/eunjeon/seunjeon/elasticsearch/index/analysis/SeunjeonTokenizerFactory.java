@@ -23,7 +23,6 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
         super(indexSettings, name, settings);
 
         this.options = TokenizerOptions.create(name).
-                setCompress(settings.getAsBoolean("compress", TokenizerOptions.COMPRESS)).
                 setUserDictPath(getFullPath(env, settings.get("user_dict_path", null))).
                 setUserWords(settings.getAsList("user_words", Collections.emptyList())).
                 setDeCompound(settings.getAsBoolean("decompound", TokenizerOptions.DECOMPOUND)).

@@ -47,5 +47,10 @@ public class ReadmeJavaTest {
                 System.out.println(node2);  // 낄끼+빠빠
             }
         }
+
+        // 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
+        for (LNode node : CompressedAnalyzer.parseJava("아버지가방에들어가신다.")) {
+            System.out.println(node);
+        }
     }
 }

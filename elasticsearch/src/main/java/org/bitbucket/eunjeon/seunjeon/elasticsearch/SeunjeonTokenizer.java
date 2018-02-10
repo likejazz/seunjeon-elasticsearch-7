@@ -33,7 +33,6 @@ public class SeunjeonTokenizer extends Tokenizer {
 
         initAttribute();
         tokenizerHelper = new TokenizerHelper(
-                options.getCompress(),
                 options.getDeCompound(),
                 options.getDeInflect(),
                 options.getIndexEojeol(),
@@ -99,8 +98,7 @@ public class SeunjeonTokenizer extends Tokenizer {
         while (-1 != (n = input.read(buffer))) {
             sw.write(buffer, 0, n);
         }
-        String docString = sw.toString().toLowerCase();
-        return docString;
+        return sw.toString().toLowerCase();
     }
 
 }

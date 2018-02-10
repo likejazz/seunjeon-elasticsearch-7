@@ -18,12 +18,13 @@ bash <(curl -s https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/s
 
 ### elasticsearch 2.4.1 이하
 ```bash
-$ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.4.0.1
+$ ./bin/elasticsearch-plugin install org.bitbucket.eunjeon/elasticsearch-analysis-seunjeon/2.6.1.1
 ```
 
 ## Release
 | elasticsearch-analysis-seunjeon | target elasticsearch | release note |
 | ------------------------------- | ---------------------| ------------ |
+| 6.1.1.1                         | 6.1.1                | heap memory 사용 최적화 |
 | 6.1.1.0                         | 6.1.1                | es 버전업으로인한 패치 |
 | 6.0.0.1                         | 6.0.1                | 어절 position 오류 수정 |
 | 6.0.0.0                         | 6.0.0                | list 필드 형태소분석시 offset 오류로 es6.0에서 에러나서 죽던 문제 해결 |
@@ -136,6 +137,11 @@ curl -XGET "${ES}/${ESIDX}/_analyze?analyzer=korean&pretty" -d '낄끼빠빠 c++
 | XS  | 접미사 |
 | XR  | 어근 |
   * [mecab-ko-dic 2.0 품사태그표](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit?usp=sharing)
+
+## java options
+| 옵션인자      | 설명  | 기본값 |
+| ------------- | ----- | ---- |
+| seunjeon.compress | 사전 압축모드. "true" 또는 "false"을 값으로 받습니다.| -Xmx1g 이하에서는 기본값이 "true" 가 됩니다.<br> <i>ES_JAVA_OPTS="-Dseunjeon.compress=true" ./bin/elasticsearch</i> |
 
 
 ## elasticsearch 플러그인 개발

@@ -1,17 +1,31 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch
 
 import java.util
+import java.util.InvalidPropertiesFormatException
 
+import org.apache.logging.log4j.Logger
 import org.bitbucket.eunjeon.seunjeon._
 import org.bitbucket.eunjeon.seunjeon.Pos.Pos
+import org.elasticsearch.common.logging.ESLoggerFactory
 
 import scala.collection.JavaConverters._
 
 
 object TokenizerHelper {
+  val logger: Logger = ESLoggerFactory.getLogger(TokenizerHelper.getClass.getName)
 
-  lazy val lexiconDict: LexiconDict = new LexiconDict().load(termDictCompress = false)
-  lazy val compressedLexiconDict: LexiconDict = new LexiconDict().load(termDictCompress = true)
+  val compress: Boolean = System.getProperty("seunjeon.compress") match {
+    case "true" => true
+    case "false" => false
+    case null => Runtime.getRuntime.maxMemory() <= 1024 * 1024 * 1024  // 1g
+    case x => throw new InvalidPropertiesFormatException(s"'eunjeon.compress' expect true or false. but got '$x'")
+  }
+  logger.info(s"seunjeon lexiconDict compress: $compress")
+
+  lazy val lexiconDict: LexiconDict =
+    if (compress) new LexiconDict().load(termDictCompress = true)
+    else new LexiconDict().load(termDictCompress = false)
+
   lazy val connectionCostDict: ConnectionCostDict = new ConnectionCostDict().load()
 
   val INDEX_POSES: Set[Pos] = Set[Pos](
@@ -75,19 +89,17 @@ object TokenizerHelper {
 }
 
 
-class TokenizerHelper(compress: Boolean,
-                      deCompound:Boolean,
+class TokenizerHelper(deCompound:Boolean,
                       deInflect:Boolean,
                       indexEojeol:Boolean,
                       posTagging:Boolean,
                       indexPoses:Set[Pos]) {
   def this() {
-    this(false, true, true, true, true, TokenizerHelper.INDEX_POSES)
+    this(true, true, true, true, TokenizerHelper.INDEX_POSES)
   }
 
   val tokenizer: Tokenizer =
-    if (compress) new Tokenizer(TokenizerHelper.compressedLexiconDict, TokenizerHelper.connectionCostDict, compress)
-    else new Tokenizer(TokenizerHelper.lexiconDict, TokenizerHelper.connectionCostDict, compress)
+    new Tokenizer(TokenizerHelper.lexiconDict, TokenizerHelper.connectionCostDict, TokenizerHelper.compress)
 
   def setUserDict(userWords: util.List[String]): Unit = {
     tokenizer.setUserDict(new LexiconDict().loadFromIterator(userWords.asScala.iterator))

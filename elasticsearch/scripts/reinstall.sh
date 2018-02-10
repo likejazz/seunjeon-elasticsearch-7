@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLUGIN_VERSION=6.1.1.0
+PLUGIN_VERSION=6.1.1.1
 
 script_dir=$(cd "$(dirname "$0")" && pwd)
 

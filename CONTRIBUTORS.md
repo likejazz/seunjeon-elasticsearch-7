@@ -10,3 +10,5 @@
     * 특수문자 연속출연시 분석 버그 수정
 * **[장정운](https://bitbucket.org/jujang/)**
     * double array trie 탐색 성능 개선 및 코드 리팩토링
+* **[Vengadanathan](https://bitbucket.org/vengadan_amzn/)**
+    * 압축 모드 lexiconDict 구현

@@ -209,6 +209,7 @@ class LexiconDict {
   }
 
   def load(termDictCompress: Boolean): LexiconDict = {
+    logger.info(s"LexiconDict loading... compress mode: $termDictCompress")
     val termDictStream = new BufferedInputStream(classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_DICT), 32*1024)
     val dictMapperStream = new BufferedInputStream(classOf[LexiconDict].getResourceAsStream(DictBuilder.DICT_MAPPER), 32*1024)
     val trieStream = classOf[LexiconDict].getResourceAsStream(DictBuilder.TERM_TRIE)

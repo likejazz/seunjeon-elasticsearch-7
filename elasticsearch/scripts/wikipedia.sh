@@ -1,10 +1,11 @@
 FILE_DATE=20171127
 #WIKI_TYPE="kowikibooks"
 #WIKI_TYPE="kowiktionary"
-WIKI_TYPE="kowikinews"
+#WIKI_TYPE="kowikinews"
+WIKI_TYPE="kowiki"
 INDEX_NAME=${WIKI_TYPE}_content
 ZIP_FILE=${WIKI_TYPE}-${FILE_DATE}-cirrussearch-content.json.gz
-CURL="curl --silent -H Content-Type:application/json"
+CURL="curl -s -H 'Content-Type: application/x-ndjson'"
 if [ ! -f $ZIP_FILE ]; then
     wget http://dumps.wikimedia.org/other/cirrussearch/${FILE_DATE}/${ZIP_FILE}
 fi
@@ -23,7 +24,10 @@ $CURL -XPUT localhost:9200/${INDEX_NAME} -d '{
           "default":{ "type":"custom", "tokenizer":"seunjeon_tokenizer" }
         },
         "tokenizer": {
-          "seunjeon_tokenizer": { "type": "seunjeon_tokenizer" }
+          "seunjeon_tokenizer": { 
+            "type": "seunjeon_tokenizer",
+            "compress": false
+          }
         }
       },
       "number_of_shards": 1,
@@ -40,6 +44,6 @@ sleep 5
 #}'
 
 date
-zcat < ${ZIP_FILE} | $CURL http://localhost:9200/${INDEX_NAME}/_bulk --data-binary @-
+gunzip -c ${ZIP_FILE} | $CURL http://localhost:9200/${INDEX_NAME}/_bulk --data-binary @-
 date
 

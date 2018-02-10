@@ -61,6 +61,13 @@ class TokenizerHelperTest extends FunSuite {
         )
     )
   }
+
+  test("tokenizer") {
+    val tokenizerHelper = new TokenizerHelper(true, true, true, true, TokenizerHelper.INDEX_POSES)
+    val result = tokenizerHelper.tokenize("안녕하세요.")
+    result.forEach(x => println(x))
+  }
+
   /*
   test("_toLuceneTokens-eojeolFalse,posFalse") {
     val input: Seq[OffsetNode] = Seq(

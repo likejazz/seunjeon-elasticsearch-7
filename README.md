@@ -8,6 +8,7 @@
 ## Release
 | version | scala(java)          | note          |
 |---------|----------------------|---------------|
+| 1.5.0   | 2.12(1.8)            | CompressAnalyzer 추가. <br>parseParagraph() 추가.<br>문서를 문단 단위로 분석하여 메모리 사용 효율을 늘림.  |
 | 1.4.0   | 2.12(1.8)            | 기능 변화 없음.(변수명 변경 및 클래스 추상화)<br>scala_2.11(jdk_1.7)은 지원하지 않습니다.  |
 | 1.3.1   | 2.11(1.7), 2.12(1.8) | 사전 누락으로 인한 오분석 수정, 한자 분석 버그 수정  |
 | 1.3.0   | 2.11(1.7), 2.12(1.8) | 사용자 사전에 복합명사 등록 기능 추가  |
@@ -21,28 +22,27 @@
     <dependency>
         <groupId>org.bitbucket.eunjeon</groupId>
         <artifactId>seunjeon_2.12</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
     </dependency>
 </dependencies>
 ```
 
 ### SBT
 ```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.4.0"
+libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.5.0"
 ```
 
 ### 사용
 #### scala
 ```scala
-import org.bitbucket.eunjeon.seunjeon.Analyzer
+package org.bitbucket.eunjeon.seunjeon
 
 // 형태소 분석
 Analyzer.parse("아버지가방에들어가신다.").foreach(println)
-
 // 어절 분석
 Analyzer.parseEojeol("아버지가방에들어가신다.").foreach(println)
 // or
-Analyzer.parseEojeol(Analyzer.parse("아버지가방에들어가신다.")).foreach(println)
+Analyzer.parseEojeol(Analyzer.parseParagraph("아버지가방에들어가신다.")).foreach(println)
 
 /**
   * 사용자 사전 추가
@@ -55,23 +55,27 @@ Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼+빠빠,-100", """C\
 Analyzer.parse("덕후냄새가 난다.").foreach(println)
 
 // 활용어 원형
-Analyzer.parse("빨라짐").flatMap(_.deInflect()).foreach(println)
+Analyzer.parse("빨라짐").map(_.deInflect()).foreach(println)
 
 // 복합명사 분해
 val ggilggi = Analyzer.parse("낄끼빠빠")
 ggilggi.foreach(println)  // 낄끼빠빠
-ggilggi.flatMap(_.deCompound()).foreach(println)  // 낄끼+빠빠
+ggilggi.map(_.deCompound()).foreach(println)  // 낄끼+빠빠
 
-Analyzer.parse("C++").flatMap(_.deInflect()).foreach(println) // C++
+Analyzer.parse("C++").map(_.deInflect()).foreach(println) // C++
+
+// 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
+CompressedAnalyzer.parse("아버지가방에들어가신다").foreach(println)
 ```
 품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
 
 #### java
 ```java
-import org.bitbucket.eunjeon.seunjeon.Analyzer;
+package org.bitbucket.eunjeon.seunjeon;
 
-class Smaple {
-    public void main(String[] args) {
+public class ReadmeJavaTest {
+    @Test
+    public void testReadme() {
         // 형태소 분석
         for (LNode node : Analyzer.parseJava("아버지가방에들어가신다.")) {
             System.out.println(node);
@@ -110,6 +114,11 @@ class Smaple {
             for (LNode node2: node.deCompoundJava()) {
                 System.out.println(node2);  // 낄끼+빠빠
             }
+        }
+
+        // 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
+        for (LNode node : CompressedAnalyzer.parseJava("아버지가방에들어가신다.")) {
+            System.out.println(node);
         }
     }
 }

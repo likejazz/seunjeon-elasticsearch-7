@@ -54,7 +54,7 @@ lazy val seunjeon = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "seunjeon",
-    version := "1.4.0",
+    version := "1.5.0",
     isSnapshot := true,
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
@@ -76,7 +76,7 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
 
     scalaVersion := "2.12.0",
 
-    version := s"${esVersion}.0",
+    version := s"${esVersion}.1",
 
     javacOptions ++= Seq("-source", esJavaVersion, "-target", esJavaVersion),
 
