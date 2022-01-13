@@ -40,25 +40,25 @@ if [ "$ES_VERSION" == "" ] || [ "$PLUGIN_VERSION" == "" ]; then
 fi
 
 
-ZIP_NAME="elasticsearch-analysis-seunjeon-${PLUGIN_VERSION}.zip"
-TMP_DIR="/tmp/elasticsearch-analysis-seunjeon"
-mkdir -p $TMP_DIR/elasticsearch
+BUILT_ZIP_NAME="analysis-seunjeon-assembly-${PLUGIN_VERSION}.zip"
+ZIP_NAME="analysis-seunjeon-${PLUGIN_VERSION}.zip"
+TMP_DIR="/tmp/analysis-seunjeon"
+mkdir -p $TMP_DIR
 
 ########################################################################################################################
 # download zip
-REMOTE_FILE_NAME="https://oss.sonatype.org/service/local/repositories/releases/content/org/bitbucket/eunjeon/elasticsearch-analysis-seunjeon/${PLUGIN_VERSION}/${ZIP_NAME}"
-wget -O ${TMP_DIR}/${ZIP_NAME} $REMOTE_FILE_NAME
+REMOTE_FILE_NAME="https://github.com/likejazz/seunjeon-elasticsearch-7/releases/download/${PLUGIN_VERSION}/${BUILT_ZIP_NAME}"
+curl -L -o ${TMP_DIR}/${ZIP_NAME} $REMOTE_FILE_NAME
 if [ "$?" -ne "0" ]; then
     echo "invalid path $REMOTE_FILE_NAME"
     exit 1
 fi
 
-
 pushd $TMP_DIR
 
 ########################################################################################################################
 # build properties file
-PROPERTI_FILE="elasticsearch/plugin-descriptor.properties"
+PROPERTI_FILE="plugin-descriptor.properties"
 
 cat > $PROPERTI_FILE << EOF
 description=The Korean(seunjeon) analysis plugin.
@@ -71,7 +71,7 @@ EOF
 
 ########################################################################################################################
 # zipping...
-zip -r $ZIP_NAME elasticsearch
+zip $ZIP_NAME $PROPERTI_FILE
 if [ "$?" -ne "0" ]; then
     exit 1
 fi
