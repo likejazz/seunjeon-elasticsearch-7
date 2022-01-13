@@ -1,11 +1,11 @@
 package org.bitbucket.eunjeon.seunjeon.elasticsearch;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.*;
 import org.apache.lucene.analysis.util.RollingCharBuffer;
 import org.apache.lucene.util.AttributeFactory;
-import org.elasticsearch.common.logging.ESLoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,7 +29,7 @@ public class SeunjeonTokenizer extends Tokenizer {
 
     public SeunjeonTokenizer(TokenizerOptions options) {
         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
-        logger = ESLoggerFactory.getLogger(options.getName());
+        logger = LogManager.getLogger(options.getName());
 
         initAttribute();
         tokenizerHelper = new TokenizerHelper(
