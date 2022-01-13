@@ -6,7 +6,7 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.12.0",   // default
   publishMavenStyle := true,
   publishArtifact in Test := false,
-  useGpg := true,
+  // useGpg := true,
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
     if (version.value.trim.endsWith("SNAPSHOT"))
@@ -66,7 +66,8 @@ lazy val seunjeon = (project in file(".")).
   )
 
 val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
-val esVersion = "6.1.1"
+val esVersion = "7.16.2"
+// val esVersion = "6.1.1"
 val esJavaVersion = "1.8"
 
 lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
@@ -112,8 +113,8 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
       val zipFile = file(jarFile.getPath.substring(0, jarFile.getPath.length - jarFile.ext.length - 1) + ".zip")
       IO.zip(
         List(
-          (propertiesFile, s"elasticsearch/${propertiesFile.getName}"),
-          (jarFile, s"elasticsearch/${jarFile.getName}")),
+          (propertiesFile, s"${propertiesFile.getName}"),
+          (jarFile, s"${jarFile.getName}")),
         zipFile)
       zipFile
     },
