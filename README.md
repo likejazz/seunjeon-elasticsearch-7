@@ -1,143 +1,161 @@
-# seunjeon
-[mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic) 기반으로 만들어진 JVM 상에서 돌아가는 한국어 형태소분석기입니다. 기본적으로 java와 scala 인터페이스를 제공합니다. 사전이 패키지 내에 포함되어 있기 때문에 별도로 [mecab-ko-dic](https://bitbucket.org/eunjeon/mecab-ko-dic)을 설치할 필요가 없습니다.
-특징으로는 (시스템 사전에 등록되어 있는 단어에 한하여) 복합명사 분해와 활용어 원형 찾기가 가능합니다. (속도도 빨라염)
+# seunjeon for Elasticsearch 7 or newer
+analysis-seunjeon(은전한닢) is very useful Korean analyzer, especially for Elasticsearch. Unfortunately [original seunjeon repo](https://bitbucket.org/eunjeon/seunjeon/) hasn't been upgraded since 2018 and doesn't work with the latest version of Elasticsearch. So I've patched the module to work properly in Elasticsearch 7 and It's very easy to use as shown below:
 
-## elasticsearch
-[여기](https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/)를 참고하세요.
-
-## Release
-| version | scala(java)          | note          |
-|---------|----------------------|---------------|
-| 1.5.0   | 2.12(1.8)            | CompressAnalyzer 추가. parseParagraph() 추가. 메모리 사용 효율을 늘림.  |
-| 1.4.0   | 2.12(1.8)            | 기능 변화 없음.(변수명 변경 및 클래스 추상화)<br>scala_2.11(jdk_1.7)은 지원하지 않습니다.  |
-| 1.3.1   | 2.11(1.7), 2.12(1.8) | 사전 누락으로 인한 오분석 수정, 한자 분석 버그 수정  |
-| 1.3.0   | 2.11(1.7), 2.12(1.8) | 사용자 사전에 복합명사 등록 기능 추가  |
-| 1.2.0   | 2.11(1.7), 2.12(1.8) | 추가기능 없음 |
-| 1.1.1   | 2.10(1.7), 2.11(1.7) |               |
-
-
-### Maven
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.bitbucket.eunjeon</groupId>
-        <artifactId>seunjeon_2.12</artifactId>
-        <version>1.5.0</version>
-    </dependency>
-</dependencies>
+## How to Install
+If you install version 7.16.2.0 on Elasticsearch 7.16.2:
+```bash
+# Don't panic if you get a CRC warning.
+$ bash <(curl -s https://raw.githubusercontent.com/likejazz/seunjeon-elasticsearch-7/master/elasticsearch/scripts/downloader.sh) \
+    -e 7.16.2 -p 7.16.2.0
+$ bin/elasticsearch-plugin install \
+    file://`pwd`/analysis-seunjeon-7.16.2.0.zip
 ```
 
-### SBT
-```scala
-libraryDependencies += "org.bitbucket.eunjeon" %% "seunjeon" % "1.5.0"
+## Release History
+
+| analysis-seunjeon version | Elasticsearch version | release note | date |
+| ------------------------------- | ---------------------| ------------ | -- |
+| 7.16.2.0                        | 7.16.2               | Patched to work properly on Elasticsearch 7 | Jan 13, 2022 |
+
+## How to Use
 ```
-
-### 사용
-#### scala
-```scala
-package org.bitbucket.eunjeon.seunjeon
-
-// 형태소 분석
-Analyzer.parse("아버지가방에들어가신다.").foreach(println)
-// 어절 분석
-Analyzer.parseEojeol("아버지가방에들어가신다.").foreach(println)
-// or
-Analyzer.parseEojeol(Analyzer.parseParagraph("아버지가방에들어가신다.")).foreach(println)
-
-/**
-  * 사용자 사전 추가
-  * surface,cost
-  *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
-  *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
-  *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
-  */
-Analyzer.setUserDict(Seq("덕후", "버카충,-100", "낄끼+빠빠,-100", """C\+\+""").toIterator)
-Analyzer.parse("덕후냄새가 난다.").foreach(println)
-
-// 활용어 원형
-Analyzer.parse("빨라짐").map(_.deInflect()).foreach(println)
-
-// 복합명사 분해
-val ggilggi = Analyzer.parse("낄끼빠빠")
-ggilggi.foreach(println)  // 낄끼빠빠
-ggilggi.map(_.deCompound()).foreach(println)  // 낄끼+빠빠
-
-Analyzer.parse("C++").map(_.deInflect()).foreach(println) // C++
-
-// 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
-CompressedAnalyzer.parse("아버지가방에들어가신다").foreach(println)
-```
-품사태그는 [여기](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit#gid=589544265)를 참고하세요.
-
-#### java
-```java
-package org.bitbucket.eunjeon.seunjeon;
-
-public class ReadmeJavaTest {
-    @Test
-    public void testReadme() {
-        // 형태소 분석
-        for (LNode node : Analyzer.parseJava("아버지가방에들어가신다.")) {
-            System.out.println(node);
+PUT seunjeon-test
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "tokenizer": {
+          "seunjeon_tokenizer": {
+            "type": "seunjeon_tokenizer",
+            "index_eojeol": false,
+            "decompound": true,
+            "pos_tagging": false,
+            "index_poses": [
+              "UNK",
+              "EP",
+              "I",
+              "M",
+              "N",
+              "SL",
+              "SH",
+              "SN",
+              "V",
+              "VCP",
+              "XP",
+              "XS",
+              "XR"
+            ]
+          }
+        },
+        "analyzer": {
+          "korean": {
+            "type": "custom",
+            "tokenizer": "seunjeon_tokenizer"
+          }
         }
-
-        // 어절 분석
-        for (Eojeol eojeol: Analyzer.parseEojeolJava("아버지가방에들어가신다.")) {
-            System.out.println(eojeol);
-            for (LNode node: eojeol.nodesJava()) {
-                System.out.println(node);
-            }
-        }
-
-        /**
-         * 사용자 사전 추가
-         * surface,cost
-         *   surface: 단어명. '+' 로 복합명사를 구성할 수 있다.
-         *           '+'문자 자체를 사전에 등록하기 위해서는 '\+'로 입력. 예를 들어 'C\+\+'
-         *   cost: 단어 출연 비용. 작을수록 출연할 확률이 높다.
-         */
-        Analyzer.setUserDict(Arrays.asList("덕후", "버카충,-100", "낄끼+빠빠,-100").iterator());
-        for (LNode node : Analyzer.parseJava("덕후냄새가 난다.")) {
-            System.out.println(node);
-        }
-
-        // 활용어 원형
-        for (LNode node : Analyzer.parseJava("빨라짐")) {
-            for (LNode node2: node.deInflectJava()) {
-                System.out.println(node2);
-            }
-        }
-
-        // 복합명사 분해
-        for (LNode node : Analyzer.parseJava("낄끼빠빠")) {
-            System.out.println(node);   // 낄끼빠빠
-            for (LNode node2: node.deCompoundJava()) {
-                System.out.println(node2);  // 낄끼+빠빠
-            }
-        }
-
-        // 압축모드 분석(heap memory 사용 최소화. 속도는 상대적으로 느림. -Xmx512m 이하 추천)
-        for (LNode node : CompressedAnalyzer.parseJava("아버지가방에들어가신다.")) {
-            System.out.println(node);
-        }
+      }
     }
+  }
+}
+
+GET seunjeon-test/_analyze
+{
+  "text": "홍대입구에서 강남역까지",
+  "analyzer": "korean"
+}
+--
+{
+  "tokens" : [
+    {
+      "token" : "홍대",
+      "start_offset" : 0,
+      "end_offset" : 2,
+      "type" : "N",
+      "position" : 0
+    },
+    {
+      "token" : "입구",
+      "start_offset" : 2,
+      "end_offset" : 4,
+      "type" : "N",
+      "position" : 1
+    },
+    {
+      "token" : "강남",
+      "start_offset" : 7,
+      "end_offset" : 9,
+      "type" : "N",
+      "position" : 2
+    },
+    {
+      "token" : "역",
+      "start_offset" : 9,
+      "end_offset" : 10,
+      "type" : "N",
+      "position" : 3
+    }
+  ]
 }
 ```
 
-## Group
-[https://groups.google.com/forum/#!forum/eunjeon](https://groups.google.com/forum/#!forum/eunjeon) 질문과 개발 참여 환영합니다.
+## Settings
+| setting      | desc  | default |
+| ------------- | ----- | ---- |
+| `user_words`    | 사용자 사전        | `[]`     |
+| `user_dict_path`| 사용자 사전 파일, base directory는 ES_HOME/config 입니다. 사전파일 예제는 [user_dict.csv](https://bitbucket.org/eunjeon/seunjeon/raw/master/elasticsearch/scripts/user_dict.csv)를 참고하세요. |  |
+| `decompound`    | 복합명사 분해      | `true` |
+| `deinflect`     | 활용어의 원형 추출 | `true` |
+| `index_eojeol`  | 어절 추출     | `true` |
+| `index_poses`   | 추출할 품사        | `["N", "SL", "SH", "SN", "XR", "V", "M", "UNK"]` |
+| `pos_tagging`   | 품사태깅, 키워드에 품사를 붙여서 토큰을 뽑습니다.        | `true` |
+| `max_unk_length`  | unknown 키워드로 뽑을 수 있는 최대 길이(한글) | 8 |
 
-## 형태소분석기 개발
-```sh
-# 사전 다운로드
-./scripts/download-dict.sh mecab-ko-dic-2.0.1-20150920
+* 사용사 사전은 하나만 관리하기 떄문에 여러개의 tokenizer를 생성해도 마지막 로드된 사전만 유지됩니다.
+* `user_words`와 `user_dict_path`를 함께 설정할 경우 `user_words`는 무시되고 `user_dict_path`만 적용됩니다.
+* `"pos_tagging": true` 의 경우 키워드와 품사가 함께 토큰(e.g. `자전거/N`)으로 나오기 때문에 stopword filter나 synonym filter 사용시 적용이 안될 수 있습니다. `"pos_tagging": false`로 설정을 하여 사용하거나, filter 사전을 `자전거/N`의 형태로 만들어야 합니다.
 
-# 사전 빌드(mecab-ko-dic/* -> src/main/resources/*.dat)
-sbt -J-Xmx2G "run-main org.bitbucket.eunjeon.seunjeon.DictBuilder"
+## 품사태그표
+| 품사 태그 | 설명 |
+| --- | --- |
+| UNK | 미지어 |
+| EP  | 선어말어미 |
+| E   | 어미 |
+| I   | 독립언 |
+| J   | 관계언 |
+| M   | 수식언 |
+| N   | 체언 |
+| S   | 부호 |
+| SL  | 외국어 |
+| SH  | 한자 |
+| SN  | 숫자 |
+| V   | 용언 |
+| VCP | 긍정지정사 |
+| XP  | 접두사 |
+| XS  | 접미사 |
+| XR  | 어근 |
+  * [mecab-ko-dic 2.0 품사태그표](https://docs.google.com/spreadsheets/d/1-9blXKjtjeKZqsf4NzHeYJCrr49-nXeRF6D80udfcwY/edit?usp=sharing)
 
-# jar 생성
-sbt package
+## JVM options
+| setting      | desc  | default |
+| ------------- | ----- | ---- |
+| `seunjeon.compress` | 사전 압축모드, `true` 또는 `false`를 값으로 받습니다.| `-Xmx1g` 이하에서는 기본값이 `true`가 됩니다. `_ES_JAVA_OPTS="-Dseunjeon.compress=true" ./bin/elasticsearch` |
+
+## How to Build
+```bash
+# Download Dictionary
+$ ./scripts/download-dict.sh mecab-ko-dic-2.0.1-20150920
+
+# Build Dictionary(mecab-ko-dic/* -> src/main/resources/*.dat)
+$ sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
+
+# Make zip archive
+$ sbt
+> project elasticsearch
+> esZip
 ```
+## References
+- [Official seunjeon Bitbucket](https://bitbucket.org/eunjeon/seunjeon/)
+- [seunjeon for OpenSearch](https://bitbucket.org/soosinha/seunjeon-opensearch/)
 
 ## License
-Copyright 2015 유영호, 이용운. 아파치 라이센스 2.0에 따라 소프트웨어를 사용, 재배포 할 수 있습니다. 더 자세한 사항은 http://www.apache.org/licenses/LICENSE-2.0 을 참조하시기 바랍니다.
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
