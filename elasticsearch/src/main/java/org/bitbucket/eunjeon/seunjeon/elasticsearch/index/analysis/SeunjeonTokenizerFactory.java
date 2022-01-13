@@ -20,7 +20,7 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
                                     Environment env,
                                     String name,
                                     Settings settings) {
-        super(indexSettings, name, settings);
+        super(indexSettings, settings, name);
 
         this.options = TokenizerOptions.create(name).
                 setUserDictPath(getFullPath(env, settings.get("user_dict_path", null))).
