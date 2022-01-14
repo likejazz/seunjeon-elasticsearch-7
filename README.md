@@ -2,10 +2,10 @@
 analysis-seunjeon(은전한닢) is the best Korean analyzer, especially useful for Elasticsearch. Unfortunately [original seunjeon repo](https://bitbucket.org/eunjeon/seunjeon/) hasn't been upgraded since 2018 and doesn't work with the latest version of Elasticsearch. So I've patched the module to work properly in Elasticsearch 7 and It's very easy to use as shown below:
 
 ## How to Install
-If you install analysis-seunjeon version 7.16.2.0 on Elasticsearch 7.16.2:
+If you install analysis-seunjeon version 7.16.2.0 on Elasticsearch 7.16.3:
 ```bash
 # Don't panic if you get a CRC warning.
-$ bash <(curl -s https://raw.githubusercontent.com/likejazz/seunjeon-elasticsearch-7/master/elasticsearch/scripts/downloader.sh) -e 7.16.2 -p 7.16.2.0
+$ bash <(curl -s https://raw.githubusercontent.com/likejazz/seunjeon-elasticsearch-7/master/elasticsearch/scripts/downloader.sh) -e 7.16.3 -p 7.16.2.0
 $ bin/elasticsearch-plugin install file://`pwd`/analysis-seunjeon-7.16.2.0.zip
 ```
 
@@ -154,6 +154,7 @@ $ sbt
 ```
 ## References
 - [Official seunjeon Bitbucket](https://bitbucket.org/eunjeon/seunjeon/)
+- [은전한닢 프로젝트](http://eunjeon.blogspot.com/)
 - [seunjeon for OpenSearch](https://bitbucket.org/soosinha/seunjeon-opensearch/)
 
 ## License
