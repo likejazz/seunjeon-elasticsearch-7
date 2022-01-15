@@ -151,6 +151,7 @@ $ sbt
 > esZip
 ```
 ## References
+- [엘라스틱서치 7을 위한 은전한닢 형태소 분석기](https://docs.likejazz.com/seunjeon-elasticsearch-7/)
 - [Official seunjeon Bitbucket](https://bitbucket.org/eunjeon/seunjeon/)
 - [은전한닢 프로젝트](http://eunjeon.blogspot.com/)
 - [seunjeon for OpenSearch](https://bitbucket.org/soosinha/seunjeon-opensearch/)
