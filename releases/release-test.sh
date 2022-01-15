@@ -10,3 +10,8 @@ docker run \
     elasticsearch-seunjeon
 
 # curl -XGET "http://localhost:9200/_cat/plugins?v"
+
+# curl -XPOST "http://localhost:9200/_analyze" -H 'Content-Type: application/json' -d '{
+# "text": "한글분석테스트",
+# "tokenizer": "seunjeon_tokenizer"
+# }' | jq
