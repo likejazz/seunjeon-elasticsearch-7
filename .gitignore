@@ -4,3 +4,5 @@ mecab-ko-dic*
 target
 project/project
 project/target
+releases/analysis-seunjeon*
+releases/plugin-descriptor.properties
