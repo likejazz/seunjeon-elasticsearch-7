@@ -11,6 +11,7 @@ $ bin/elasticsearch-plugin install https://github.com/likejazz/seunjeon-elastics
 
 | Supported Elasticsearch version | release note | release date |
 | --------------------------------| ------------ | ------------ |
+| 8.0.0                           | Releases for Elasticsearch 8 | Feb 22, 2022 |
 | 7.16.3, 7.16.2, 7.9.1           | Patched to work properly on Elasticsearch 7 | Jan 13, 2022 |
 
 ## How to Use
@@ -144,6 +145,11 @@ $ ./scripts/download-dict.sh mecab-ko-dic-2.1.1-20180720
 
 # Build Dictionary(mecab-ko-dic/* -> src/main/resources/*.dat)
 $ sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
+
+### How to Release
+```
+$ zip analysis-seunjeon-8.0.0.zip analysis-seunjeon-8.0.0.jar plugin-descriptor.properties
+```
 
 # Make zip archive
 $ sbt
