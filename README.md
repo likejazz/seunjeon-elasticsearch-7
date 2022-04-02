@@ -11,7 +11,7 @@ $ bin/elasticsearch-plugin install https://github.com/likejazz/seunjeon-elastics
 
 | Supported Elasticsearch version | release note | release date |
 | --------------------------------| ------------ | ------------ |
-| 8.0.0                           | Releases for Elasticsearch 8 | Feb 22, 2022 |
+| 8.0.0, 8.1.2                    | Releases for Elasticsearch 8 | Feb 22, 2022 |
 | 7.16.3, 7.16.2, 7.9.1           | Patched to work properly on Elasticsearch 7 | Jan 13, 2022 |
 
 ## How to Use
