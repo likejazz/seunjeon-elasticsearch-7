@@ -149,14 +149,17 @@ $ sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
 
 ### How to Release
 ```
+$ cd elasticsearch/target
 $ zip analysis-seunjeon-8.0.0.zip analysis-seunjeon-8.0.0.jar plugin-descriptor.properties
 ```
 
 # Make zip archive
+```
 $ sbt
 > project elasticsearch
 > esZip
 ```
+
 ## References
 - [엘라스틱서치 7을 위한 은전한닢 형태소 분석기](https://docs.likejazz.com/seunjeon-elasticsearch-7/)
 - [Official seunjeon Bitbucket](https://bitbucket.org/eunjeon/seunjeon/)
