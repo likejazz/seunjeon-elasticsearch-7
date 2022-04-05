@@ -145,6 +145,7 @@ $ ./scripts/download-dict.sh mecab-ko-dic-2.1.1-20180720
 
 # Build Dictionary(mecab-ko-dic/* -> src/main/resources/*.dat)
 $ sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
+```
 
 ### How to Release
 ```
